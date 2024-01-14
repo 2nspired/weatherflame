@@ -1,5 +1,6 @@
-## Weather App
+## Weather Application
 
+This is another edit. We will publish this to Vercel.
 This is where I will be practicing me development.
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
