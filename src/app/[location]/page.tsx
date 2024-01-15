@@ -30,8 +30,12 @@ async function getLocation(location: string) {
   };
 }
 
-export default async function Home() {
-  const location = await getLocation("Honolulu");
+export default async function Location({
+  params,
+}: {
+  params: { location: string };
+}) {
+  const location = await getLocation(params.location);
   const weather = await getWeather(location);
   return (
     <main className="flex flex-col items-center justify-between">
