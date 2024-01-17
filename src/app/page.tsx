@@ -1,5 +1,11 @@
+import { weatherKey } from "./utils";
+import { getLocation } from "./utils";
+// moved the below functions to the utils.ts folder.
+import { getWeather } from "./utils";
 import Image from "next/image";
-const weatherKey = process.env.WEATHER_API;
+
+/*
+const weatherKey = process.env.WEATHER_API as string;
 async function getWeather(location: {
   cityName: string;
   country: string;
@@ -15,23 +21,10 @@ async function getWeather(location: {
   console.log(resJson);
   return resJson;
 }
-
-async function getLocation(location: string) {
-  const URL = `http://api.openweathermap.org/geo/1.0/direct?q=${location}&appid=${weatherKey}`;
-  const res = await fetch(URL);
-  const resJson = await res.json();
-  console.log("test test test:", resJson);
-  return {
-    cityName: resJson[0].name,
-    country: resJson[0].country,
-    state: resJson[0].state,
-    lat: resJson[0].lat,
-    lon: resJson[0].lon,
-  };
-}
+*/
 
 export default async function Home() {
-  const location = await getLocation("Honolulu");
+  const location = await getLocation("Honolulu", weatherKey);
   const weather = await getWeather(location);
   return (
     <main className="flex flex-col items-center justify-between">
