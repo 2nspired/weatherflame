@@ -2,7 +2,7 @@
 export const weatherKey = process.env.WEATHER_API as string;
 
 // gets location information
-export async function getLocation(location: string, weatherKey:string) {
+export async function getLocation(location: string) {
     const URL = `http://api.openweathermap.org/geo/1.0/direct?q=${location}&appid=${weatherKey}`;
     const res = await fetch(URL);
     const resJson = await res.json();
