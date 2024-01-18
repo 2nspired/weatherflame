@@ -1,7 +1,8 @@
-// creates a variable string from the API key located in the .env file needed to access the OpenWeather API. 
+
+
+
 export const weatherKey = process.env.WEATHER_API as string;
 
-// gets location information
 export async function getLocation(location: string) {
     const URL = `http://api.openweathermap.org/geo/1.0/direct?q=${location}&appid=${weatherKey}`;
     const res = await fetch(URL);
@@ -15,9 +16,6 @@ export async function getLocation(location: string) {
       lon: resJson[0].lon,
     };
   }
-
-  // gets weather information based on a location obtained from getLocation()
-  // move getWeather function to the below 
 
   export async function getWeather(location: {
   cityName: string;
