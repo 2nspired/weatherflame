@@ -1,9 +1,11 @@
 import { getLocation } from "../utils";
 import { getWeather } from "../utils";
+import { getTime } from "../utils";
 import Image from "next/image";
 
 export default async function WeatherTile() {
   const location = await getLocation("austin");
+  const time = await getTime(location.latRounded, location.lonRounded);
   const weather = await getWeather(location);
   return (
     <main className="flex flex-col items-center justify-between bg-gray-500">
@@ -14,6 +16,9 @@ export default async function WeatherTile() {
         <div className="text-l py-2">
           lat and long: {location.lat}, {location.lon}
         </div>
+        <div className="text-l py-2">time: {time.time}</div>
+        <div className="text-l py-2">date: {time.date}</div>
+        <div className="text-l py-2">day of week: {time.dayOfWeek}</div>
         <div className="text-l py-2">temperature: {weather.main.temp}</div>
         <div className="text-l py-2">humidity: {weather.main.humidity}</div>
         <div className="text-l py-2">feels like: {weather.main.feels_like}</div>
