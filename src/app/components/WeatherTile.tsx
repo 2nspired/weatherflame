@@ -1,12 +1,16 @@
-import { getLocation } from "../utils";
-import { getWeather } from "../utils";
-import { getTime } from "../utils";
-import Image from "next/image";
+import { getLocation } from "../../server/utils";
+import { getWeather } from "../../server/utils";
+import { getTime } from "../../server/utils";
+// import Image from "next/image";
+import { getFireWeatherIndex } from "../../server/utils";
 
 export default async function WeatherTile() {
   const location = await getLocation("austin");
   const time = await getTime(location.latRounded, location.lonRounded);
   const weather = await getWeather(location);
+  // const fireWeatherIndex = await getFireWeatherIndex(location);
+  // console.log("fire weather index:", fireWeatherIndex);
+
   return (
     <main className="flex flex-col items-center justify-between bg-gray-500">
       <div className="my-8 rounded-xl bg-gray-100 p-2 shadow-lg">
@@ -27,6 +31,7 @@ export default async function WeatherTile() {
         <div className="text-l py-2">clouds: {weather.clouds.all}</div>
         <div className="text-l py-2">sunrise: {weather.sys.sunrise}</div>
         <div className="text-l py-2">sunset: {weather.sys.sunset}</div>
+
         <div className="text-l py-2">
           short description: {weather.weather[0].description}
         </div>
