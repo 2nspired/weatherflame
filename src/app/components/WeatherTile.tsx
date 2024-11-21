@@ -1,8 +1,8 @@
-import { getLocation } from "../../server/utils";
-import { getWeather } from "../../server/utils";
-import { getTime } from "../../server/utils";
+import { getLocation } from "../utilities/utils";
+import { getWeather } from "../utilities/utils";
+import { getTime } from "../utilities/utils";
 // import Image from "next/image";
-import { getFireWeatherIndex } from "../../server/utils";
+import { getFireWeatherIndex } from "../utilities/utils";
 
 export default async function WeatherTile() {
   const location = await getLocation("austin");

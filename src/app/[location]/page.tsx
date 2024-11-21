@@ -1,3 +1,7 @@
+// import createClient from "openapi-fetch";
+// import type { paths, components } from "../types/weatherGov.js";
+// import { fetchWeatherAlerts } from "./api/weatherAlertAPI.js";
+
 export default function Location() {
   return <div>Location</div>;
 }

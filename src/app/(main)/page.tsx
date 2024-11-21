@@ -1,6 +1,8 @@
+// fetch client.ts
+
 import createClient from "openapi-fetch";
-import type { paths, components } from "./types/weatherGov.js";
-import { fetchWeatherAlerts } from "../server/api/weatherAlertAPI";
+import type { paths, components } from "../types/weatherGov.js";
+import { fetchWeatherAlerts } from "../../server/api/weatherAlertApi";
 
 //  TYPES
 // --------------------------------------------------------------
@@ -26,13 +28,13 @@ export default async function Home() {
   const params: WeatherAlertParams = {
     status: ["actual"],
     message_type: ["alert"],
-    // event: [
-    //   "Extreme Fire Danger",
-    //   "Fire Warning",
-    //   "Fire Weather Watch",
-    //   "Extreme Fire Dange",
-    //   "Flood Watch",
-    // ],
+    event: [
+      "Extreme Fire Danger",
+      "Fire Warning",
+      "Fire Weather Watch",
+      "Extreme Fire Dange",
+      "Flood Watch",
+    ],
     // code: ["FRW", "HWA", "HWW"],
     limit: 5,
   };
