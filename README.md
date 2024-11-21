@@ -1,43 +1,35 @@
 ## Weather Application
 
-This is the Fourth CHANGE
+What I'm building
 
-This is another edit. We will publish this to Vercel.
-This is where I will be practicing me development.
+1. I want to build an app that you can easily check fire data for your local area.
+2. I'd like it to auto request your current location
+3. I would like it to show your fire rating based on your location using lat and long
+4. come up with a nice interface
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Research national weather service and see what is provided
 
-## Getting Started
+https://www.weather.gov/documentation/services-web-api
 
-First, run the development server:
+Check out NOAA
+https://www.ncdc.noaa.gov/cdo-web/webservices/v2
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+event codes for national weather service:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+https://www.weather.gov/dsb/eventcodes#:~:text=Naming%20Convention%20for%20EAS%20Event,S%20for%20STATEMENTS
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Alerts return
+Enumerations:
+• query.status: ["actual", "exercise", "system", "test", "draft"]
+• query.message_type: ["alert", "update", "cancel"]
+• query.region: ["AL", "AT", "GL", "GM", "PA", "PI"]
+• query.urgency: ["Immediate", "Expected", "Future", "Past", "Unknown"]
+• query.severity: ["Extreme", "Severe", "Moderate", "Minor", "Unknown"]
+• query.certainty: ["Observed", "Likely", "Possible", "Unlikely", "Unknown"] 2. Regex Patterns:
+• query.event: ^[A-Za-z0-9 ]+$
+	•	query.code: ^\w{3}$
+• query.point: ^(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)$
+	•	query.zone: ^(A[KLMNRSZ]|C[AOT]|D[CE]|F[LM]|G[AMU]|I[ADLN]|K[SY]|L[ACEHMOS]|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[AHKMRSWZ]|S[CDL]|T[NX]|UT|V[AIT]|W[AIVY]|[HR]I)[CZ]\d{3}$ 3. Conflicting Parameters:
+• region_type, point, region, area, zone: Cannot be used together.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+API FAQ
