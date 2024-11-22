@@ -1,13 +1,9 @@
-// import createClient from "openapi-fetch";
-// import type { paths, components } from "../types/weatherGov.js";
-// import { fetchWeatherAlerts } from "./api/weatherAlertAPI.js";
+// const weatherKey = process.env.WEATHER_API;
 
 export default function Location() {
-  return <div>Location</div>;
+  return <div>Location - being reworked</div>;
 }
 
-// import Image from "next/image";
-// const weatherKey = process.env.WEATHER_API;
 // async function getWeather(location: {
 //   cityName: string;
 //   country: string;
@@ -15,12 +11,9 @@ export default function Location() {
 //   lat: number;
 //   lon: number;
 // }) {
-//   const part = "";
 //   const URL = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${weatherKey}&units=imperial`;
-//   console.log(location);
 //   const res = await fetch(URL);
 //   const resJson = await res.json();
-//   console.log(resJson);
 //   return resJson;
 // }
 
@@ -28,7 +21,6 @@ export default function Location() {
 //   const URL = `http://api.openweathermap.org/geo/1.0/direct?q=${location}&appid=${weatherKey}`;
 //   const res = await fetch(URL);
 //   const resJson = await res.json();
-//   console.log("test test test:", resJson);
 //   return {
 //     cityName: resJson[0].name,
 //     country: resJson[0].country,
@@ -38,11 +30,13 @@ export default function Location() {
 //   };
 // }
 
-// export default async function Location({
-//   params,
-// }: {
-//   params: { location: string };
-// }) {
+// interface LocationProps {
+//   params: {
+//     location: string;
+//   };
+// }
+
+// export default async function Location({ params }: LocationProps) {
 //   const location = await getLocation(params.location);
 //   const weather = await getWeather(location);
 //   return (
@@ -50,16 +44,7 @@ export default function Location() {
 //       <div className="mt-24 rounded p-5 shadow-lg">
 //         <div className="py-2 text-lg">City: {location.cityName}</div>
 //         <div className="py-4 text-lg">State: {location.state}</div>
-//         <div className="py-2 text-sm">
-//           latitude and longitude: {location.lat}, {location.lon}
-//         </div>
-//         <div className="py-6 text-2xl">temperature: {weather.main.temp}</div>
-//         <div className="py-6 text-2xl">humidity: {weather.main.humidity}</div>
-//         <div className="py-4 text-base">feels like</div>
-//         <div className="py-2 text-sm">wind speed</div>
-//         <div className="py-2 text-base">
-//           short description: {weather.weather[0].description}
-//         </div>
+//         <div className="py-2 text-sm">Temperature: {weather.main.temp}°F</div>
 //       </div>
 //     </main>
 //   );

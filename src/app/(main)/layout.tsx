@@ -4,8 +4,7 @@ import Script from "next/script";
 
 // import Banner from './_components/Banner';
 // import DevWindowBreakpoint from "./_components/DevWindowBreakpoint";
-import Footer from "./_components/Footer";
-import Header from "./_components/Header";
+
 // import MaintenanceMode from "./_components/MaintenanceMode";
 
 type LayoutProps = Readonly<{
@@ -21,12 +20,8 @@ export default async function MainLayout({ children }: LayoutProps) {
 
   return (
     <>
-      <div className="flex min-h-full flex-col">
-        <Header />
-        <main className="shadow-page flex flex-grow flex-col items-center">
-          {children}
-        </main>
-        <Footer />
+      <div className="flex min-h-screen flex-col">
+        <main className="flex flex-grow flex-col">{children}</main>
       </div>
     </>
   );

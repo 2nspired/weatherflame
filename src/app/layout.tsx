@@ -1,3 +1,6 @@
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -15,8 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="h-full">
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} h-full font-sans antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
