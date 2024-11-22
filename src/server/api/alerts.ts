@@ -35,10 +35,12 @@ export async function fetchWeatherAlerts(params: WeatherAlertParams) {
 
     if (response.status === 200 && data && data.features.length > 0) {
       return data.features;
-    } else {
-      console.error(error);
+    } else if (response.status !== 200 || !data || data.features.length === 0) {
+      console.log("No alerts found", error);
       return [];
     }
+
+    return [];
   } catch (error) {
     console.error(error);
     return [];
