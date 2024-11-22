@@ -1,4 +1,4 @@
-import type { paths } from "../app/types/weatherGov.d.ts";
+import type { paths } from "~/app/types/weatherGov.d.ts";
 
 import createClient from "openapi-fetch";
 
