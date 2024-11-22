@@ -1,6 +1,6 @@
-import type { paths, components } from "../../app/types/weatherGov.d.ts";
+import type { paths, components } from "../../app/types/weatherGov.js";
 
-import { fetchClient } from "../fetchClient";
+import { fetchClient } from "../fetchClient.js";
 
 // TYPES
 // --------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 import createClient from "openapi-fetch";
 import type { paths, components } from "~/app/types/weatherGov";
-import { fetchWeatherAlerts } from "~/server/api/weatherAlertApi";
+import { fetchWeatherAlerts } from "~/server/api/weatherAlertAPI";
 
 //  TYPES
 // --------------------------------------------------------------
