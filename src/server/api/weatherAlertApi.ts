@@ -1,6 +1,5 @@
-import type { paths, components } from "~/app/types/weatherGov.js";
-
-import { fetchClient } from "~/server/fetchClient";
+import type { paths, components } from "~/app/types/weatherGov.d.ts";
+import createClient from "openapi-fetch";
 
 // TYPES
 // --------------------------------------------------------------
@@ -14,6 +13,15 @@ type AlertFeatureType =
 
 //  REQUESTS
 // --------------------------------------------------------------
+
+export const fetchClient = createClient<paths, "application/geo+json">({
+  baseUrl: "https://api.weather.gov",
+  headers: {
+    "User-Agent": "weatherflame.com, thomastrudzinski@gmail.com",
+    host: "api.weather.gov",
+    accept: "application/geo+json",
+  },
+});
 
 export async function fetchWeatherAlerts(params: WeatherAlertParams) {
   try {
