@@ -1,7 +1,23 @@
 // import Footer from "./_components/Footer";
 // import Header from "./_components/Header";
 
-export default function Home() {
+import { getLocationByZip, getLocationByName } from "~/server/api/location";
+
+export default async function Home() {
+  console.log(
+    "BY ZIP ------->>>>> RUN",
+    await getLocationByZip({ zip: "90210", countryCode: "us" }),
+  );
+
+  console.log(
+    "BYNAME ------->>>>>",
+    await getLocationByName({
+      city: "san antonio",
+      stateCode: "tx",
+      countryCode: "us",
+    }),
+  );
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-red-700 font-mono text-white">
       {/* <Header /> */}

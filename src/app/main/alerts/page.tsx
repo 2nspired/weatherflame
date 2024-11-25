@@ -1,16 +1,12 @@
-// fetch client.ts
+import {
+  fetchWeatherAlerts,
+  type AlertFeatureResponse,
+  type Alert,
+  type AlertParams,
+} from "~/server/api/alerts";
 
-import createClient from "openapi-fetch";
-import type { paths, components } from "~/app/types/weatherGov";
-import { fetchWeatherAlerts } from "~/server/api/alerts";
 //  TYPES
 // --------------------------------------------------------------
-type AlertParams = paths["/alerts/active"]["get"]["parameters"]["query"];
-
-type Alert = components["schemas"]["Alert"];
-
-type AlertFeatureResponse =
-  components["responses"]["AlertCollection"]["content"]["application/geo+json"]["features"];
 
 const AlertPropExclude = [
   "@id",
@@ -25,15 +21,6 @@ const AlertPropExclude = [
 // --------------------------------------------------------------
 
 export default async function Home() {
-  const client = createClient<paths, "application/geo+json">({
-    baseUrl: "https://api.weather.gov",
-    headers: {
-      "User-Agent": "weatherflame.com, thomastrudzinski@gmail.com",
-      host: "api.weather.gov",
-      accept: "application/geo+json",
-    },
-  });
-
   const params: AlertParams = {
     status: ["actual"],
     message_type: ["alert", "update"],
