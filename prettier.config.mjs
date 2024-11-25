@@ -36,4 +36,8 @@ const sortConfig = {
   importOrderTypeScriptVersion: "5.0.0",
 };
 
-export default { ...config, ...sortConfig };
+const plugins = {
+  plugins: ["prettier-plugin-tailwindcss"],
+};
+
+export default { ...config, ...sortConfig, ...plugins };
