@@ -3,20 +3,21 @@
 // TYPES
 // --------------------------------------------------------------
 
+// BY ZIP
 type GeoLocateByZipParams = {
   zip: string;
   countryCode: string; // ISO 3166-1 alpha-2
   limit?: number;
 };
 interface LocationByZip {
-  cityName: string;
+  name: string;
   country: string;
   state: string;
   lat: number;
-  latRounded: number;
   lon: number;
-  lonRounded: number;
 }
+
+// BY NAME
 
 type GeoLocateByName = {
   city: string;
@@ -37,34 +38,46 @@ interface LocationByName {
   state: string;
 }
 
+// REQUESTS
 // --------------------------------------------------------------
 
 export const weatherKey = process.env.WEATHER_API as string;
 
 export async function getLocationByZip(params: GeoLocateByZipParams) {
   const url = `http://api.openweathermap.org/geo/1.0/zip?zip=${params.zip},${params.countryCode}&appid=${weatherKey}`;
-  console.log(url);
+  // console.log("LOCATION BY ZIP URL ------------>>>>>>>", url);
 
   try {
     const res = await fetch(url);
-    const resJson = await res.json();
-
-    return resJson as LocationByZip;
+    console.log("ZIP RESPONSE ----->>>> 11111", res);
+    const resJson: LocationByZip = await res.json();
+    if (res.ok && resJson) {
+      return resJson;
+    } else {
+      console.error("LOCATION BY ZIP RESPONSE ERROR", res, resJson);
+      return [];
+    }
   } catch (error) {
     console.error(error);
-    return undefined;
+    return [];
   }
 }
 
-// TODO: format location if it has a space to replace with a '+'
 export async function getLocationByName(params: GeoLocateByName) {
-  const url = `http://api.openweathermap.org/geo/1.0/direct?q=${params.city},${params.stateCode}, ${params.countryCode}&appid=${weatherKey}`;
+  const city = params.city.replace(" ", "+");
+
+  const url = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${params.stateCode},${params.countryCode}&appid=${weatherKey}`;
+  // console.log("LOCATION BY NAME URL --------->>>>>>>", url);
 
   try {
     const res = await fetch(url);
-    const resJson = await res.json();
-
-    return resJson as LocationByName;
+    const resJson: LocationByName[] = await res.json();
+    if (res.ok && resJson.length > 0) {
+      return resJson[0];
+    } else {
+      console.error("LOCATION BY NAME RESPONSE ERROR", res, resJson);
+      return [];
+    }
   } catch (error) {
     console.error(error);
     return undefined;

@@ -4,11 +4,11 @@ import createClient from "openapi-fetch";
 // TYPES
 // --------------------------------------------------------------
 
-type WeatherAlertParams = paths["/alerts/active"]["get"]["parameters"]["query"];
+export type AlertParams = paths["/alerts/active"]["get"]["parameters"]["query"];
 
-type AlertType = components["schemas"]["Alert"];
+export type Alert = components["schemas"]["Alert"];
 
-type AlertFeatureType =
+export type AlertFeatureResponse =
   components["responses"]["AlertCollection"]["content"]["application/geo+json"]["features"];
 
 //  REQUESTS
@@ -23,7 +23,9 @@ export const fetchClient = createClient<paths, "application/geo+json">({
   },
 });
 
-export async function fetchWeatherAlerts(params: WeatherAlertParams) {
+export async function fetchWeatherAlerts(
+  params: AlertParams,
+): Promise<AlertFeatureResponse> {
   try {
     const { response, data, error } = await fetchClient.GET("/alerts/active", {
       params: {

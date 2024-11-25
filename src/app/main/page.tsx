@@ -5,15 +5,15 @@ import { getLocationByZip, getLocationByName } from "~/server/api/location";
 
 export default async function Home() {
   console.log(
-    "BYZIP ------->>>>>",
+    "BY ZIP ------->>>>> RUN",
     await getLocationByZip({ zip: "90210", countryCode: "us" }),
   );
 
   console.log(
     "BYNAME ------->>>>>",
     await getLocationByName({
-      city: "Los Angeles",
-      stateCode: "CA",
+      city: "san antonio",
+      stateCode: "tx",
       countryCode: "us",
     }),
   );
