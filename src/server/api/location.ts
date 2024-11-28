@@ -1,21 +1,25 @@
+"use server";
+
 // Geocoding API - OpenWeatherMap: https://openweathermap.org/api/geocoding-api
+
+import { z } from "zod";
 
 // TYPES
 // --------------------------------------------------------------
 
 // BY ZIP
-type GeoLocateByZipParams = {
+export type GeoLocateByZipParams = {
   zip: string;
   countryCode: string; // ISO 3166-1 alpha-2
   limit?: number;
 };
-interface LocationByZip {
+export type LocationByZip = {
   name: string;
   country: string;
   state: string;
   lat: number;
   lon: number;
-}
+} | null;
 
 // BY NAME
 
@@ -43,23 +47,31 @@ interface LocationByName {
 
 export const weatherKey = process.env.WEATHER_API as string;
 
-export async function getLocationByZip(params: GeoLocateByZipParams) {
+// TODO: ADD ERROR HANDLING TO SERVER SIDE API CALLS
+// export const zipCodeSchema = z.object({
+//   zipcode: z
+//     .string()
+//     .regex(/^\d{5}$/, "Invalid ZIP code format. Must be 5 digits."),
+// });
+
+export async function getLocationByZip(
+  params: GeoLocateByZipParams,
+): Promise<LocationByZip | null> {
   const url = `http://api.openweathermap.org/geo/1.0/zip?zip=${params.zip},${params.countryCode}&appid=${weatherKey}`;
-  // console.log("LOCATION BY ZIP URL ------------>>>>>>>", url);
 
   try {
     const res = await fetch(url);
-    console.log("ZIP RESPONSE ----->>>> 11111", res);
     const resJson: LocationByZip = await res.json();
+
     if (res.ok && resJson) {
       return resJson;
     } else {
       console.error("LOCATION BY ZIP RESPONSE ERROR", res, resJson);
-      return [];
+      return null;
     }
   } catch (error) {
-    console.error(error);
-    return [];
+    console.error("LOCATION BY ZIP ERROR", error);
+    return null;
   }
 }
 
@@ -67,7 +79,6 @@ export async function getLocationByName(params: GeoLocateByName) {
   const city = params.city.replace(" ", "+");
 
   const url = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${params.stateCode},${params.countryCode}&appid=${weatherKey}`;
-  // console.log("LOCATION BY NAME URL --------->>>>>>>", url);
 
   try {
     const res = await fetch(url);
