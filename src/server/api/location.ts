@@ -2,8 +2,6 @@
 
 // Geocoding API - OpenWeatherMap: https://openweathermap.org/api/geocoding-api
 
-import { z } from "zod";
-
 // TYPES
 // --------------------------------------------------------------
 
@@ -48,11 +46,6 @@ interface LocationByName {
 export const weatherKey = process.env.WEATHER_API as string;
 
 // TODO: ADD ERROR HANDLING TO SERVER SIDE API CALLS
-// export const zipCodeSchema = z.object({
-//   zipcode: z
-//     .string()
-//     .regex(/^\d{5}$/, "Invalid ZIP code format. Must be 5 digits."),
-// });
 
 export async function getLocationByZip(
   params: GeoLocateByZipParams,
