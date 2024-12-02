@@ -2,7 +2,10 @@
 // import Header from "./_components/Header";
 
 import Landing from "~/app/main/_components/Landing";
-import { getLocationByZip, getLocationByName } from "~/server/api/location";
+// import {
+//   getLocationByZip,
+//   getLocationByName,
+// } from "~/server/api/routers/location";
 
 export default async function Home() {
   // console.log(

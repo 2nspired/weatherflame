@@ -20,7 +20,7 @@ const AlertPropExclude = [
 
 // --------------------------------------------------------------
 
-export default async function Home() {
+export default async function Alerts() {
   const params: AlertParams = {
     status: ["actual"],
     message_type: ["alert", "update"],

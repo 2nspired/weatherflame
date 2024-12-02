@@ -1,5 +1,7 @@
 "use server";
 
+import { z } from "zod";
+
 // Geocoding API - OpenWeatherMap: https://openweathermap.org/api/geocoding-api
 
 // TYPES
@@ -40,12 +42,75 @@ interface LocationByName {
   state: string;
 }
 
-// REQUESTS
 // --------------------------------------------------------------
 
-export const weatherKey = process.env.WEATHER_API as string;
+export const weatherKey = process.env.OPENWEATHER_API as string;
 
-// TODO: ADD ERROR HANDLING TO SERVER SIDE API CALLS
+// export const geoLocation = createTRPCRouter({
+// ----------------------------------------------------------
+// GET LOCATION BY ZIPCODE
+// ----------------------------------------------------------
+// getGeoByZip: publicProcedure
+//   .input(
+//     z.object({
+//       zip: z.string().length(5),
+//       countryCode: z.string(),
+//       limit: z.number().optional(),
+//     }),
+//   )
+//   .query(async ({ input }) => {
+//     const url = `http://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},${input.countryCode}&appid=${weatherKey}`;
+
+//     try {
+//       const res = await fetch(url);
+//       const resJson: LocationByZip = await res.json();
+//       console.log("LOCATION BY ZIP", resJson);
+
+//       if (res.ok && resJson) {
+//         return resJson;
+//       } else {
+//         console.error("LOCATION BY ZIP RESPONSE ERROR", res, resJson);
+//         return null;
+//       }
+//     } catch (error) {
+//       console.error("LOCATION BY ZIP ERROR", error);
+//       return null;
+//     }
+//   }),
+
+// ----------------------------------------------------------
+// GET LOCATION BY LOCATION NAME
+// ----------------------------------------------------------
+
+//   getGeoByName: publicProcedure
+//     .input(
+//       z.object({
+//         city: z.string(),
+//         stateCode: z.string(),
+//         countryCode: z.string(),
+//         limit: z.number().optional(),
+//       }),
+//     )
+//     .query(async ({ input }) => {
+//       const url = `http://api.openweathermap.org/geo/1.0/direct?q=${input.city.replace(" ", "+")},${input.stateCode},${input.countryCode}&appid=${weatherKey}`;
+
+//       try {
+//         const res = await fetch(url);
+//         const resJson: LocationByName[] = await res.json();
+//         if (res.ok && resJson.length > 0) {
+//           return resJson[0];
+//         } else {
+//           console.error("LOCATION BY NAME RESPONSE ERROR", res, resJson);
+//           return null;
+//         }
+//       } catch (error) {
+//         console.error(error);
+//         return null;
+//       }
+//     }),
+// });
+
+// ORIGINAL CODE - GET LOCATION BY ZIP
 
 export async function getLocationByZip(
   params: GeoLocateByZipParams,
@@ -67,6 +132,8 @@ export async function getLocationByZip(
     return null;
   }
 }
+
+// ORIGNAL CODE - GET LOCATION BY CITY NAME
 
 export async function getLocationByName(params: GeoLocateByName) {
   const city = params.city.replace(" ", "+");
