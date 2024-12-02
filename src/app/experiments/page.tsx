@@ -6,6 +6,8 @@ import { Suspense } from "react";
 import { ClientGreeting } from "~/app/experiments/_components/client-greeting";
 
 export default async function Experiments() {
+  void trpc.hello.prefetch({ text: "Thomas" });
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-slate-700 font-mono text-white">
       {/* <Header /> */}
