@@ -1,5 +1,6 @@
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { TRPCProvider } from "~/server/trpc/trpc-client";
 
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
@@ -22,7 +23,7 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} h-full font-sans antialiased`}
       >
-        {children}
+        <TRPCProvider>{children}</TRPCProvider>
       </body>
     </html>
   );
