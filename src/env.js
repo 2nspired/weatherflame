@@ -1,7 +1,8 @@
-import { createEnv } from "@t3-oss/env-nextjs";
+import { createEnv } from "@t3-oss/env-core"; // https://env.t3.gg/docs/introduction
 import { z } from "zod";
 
 export const env = createEnv({
+  clientPrefix: "NEXT_PUBLIC_",
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars.
