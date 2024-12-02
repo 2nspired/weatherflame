@@ -11,7 +11,12 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
+    "@tanstack/react-query": "^5.62.0",
+    "@trpc/client": "^11.0.0-rc.648",
+    "@trpc/react-query": "^11.0.0-rc.648",
+    "@trpc/server": "^11.0.0-rc.648",
     "class-variance-authority": "^0.7.0",
+    "client-only": "^0.0.1",
     "clsx": "^2.1.1",
     "geist": "^1.3.1",
     "lucide-react": "^0.460.0",
@@ -19,8 +24,10 @@
     "openapi-fetch": "^0.13.0",
     "react": "^18",
     "react-dom": "^18",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^2.5.5",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
