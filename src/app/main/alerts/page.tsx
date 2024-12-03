@@ -69,7 +69,7 @@ const Alert = ({ alert }: { alert: AlertFeatureResponse[0] }) => {
           AlertPropExclude.includes(prop) ? null : (
             <div key={prop} className="items-center py-1">
               <div className="pr-1 text-sm font-extrabold">{`${prop}:`}</div>
-              <div className="w-full flex-grow-0 break-words">{`${alertProps[prop]}`}</div>
+              <div className="w-full grow-0 break-words">{`${alertProps[prop]}`}</div>
             </div>
           ),
         )}

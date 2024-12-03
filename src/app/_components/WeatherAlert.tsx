@@ -1,5 +1,5 @@
 // import WeatherAlert from '../components/WeatherAlert';
-import type { components } from '../types/weatherGov.d.ts';
+import type { components } from '../types/weatherGov.js';
 
 // import type { components, paths } from '../types/weatherGov.d.ts';
 

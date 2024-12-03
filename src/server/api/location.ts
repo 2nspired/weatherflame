@@ -43,7 +43,7 @@ interface LocationByName {
 // REQUESTS
 // --------------------------------------------------------------
 
-export const weatherKey = process.env.WEATHER_API as string;
+export const weatherKey = process.env.WEATHER_API!;
 
 // TODO: ADD ERROR HANDLING TO SERVER SIDE API CALLS
 
@@ -54,7 +54,7 @@ export async function getLocationByZip(
 
   try {
     const res = await fetch(url);
-    const resJson: LocationByZip = await res.json();
+    const resJson: LocationByZip = (await res.json()) as any;
 
     if (res.ok && resJson) {
       return resJson;
