@@ -3,7 +3,6 @@
 
 import Landing from "~/app/main/_components/Landing";
 import { getLocationByZip, getLocationByName } from "~/server/api/location";
-import pluginReact, { rules } from "eslint-plugin-react";
 
 export default async function Experiments() {
   // console.log(
@@ -18,8 +17,7 @@ export default async function Experiments() {
   //     stateCode: "tx",
   //     countryCode: "us",
   //   }),
-  // );
-  console.log(pluginReact.configs);
+  // )
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-slate-700 font-mono text-white">
       {/* <Header /> */}
