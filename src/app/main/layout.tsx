@@ -1,4 +1,4 @@
-import Script from "next/script";
+import Script from 'next/script';
 
 // import { isDev, isProd } from '~/utils/platform';
 

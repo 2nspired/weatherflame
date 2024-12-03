@@ -1,8 +1,9 @@
 // import Footer from "./_components/Footer";
 // import Header from "./_components/Header";
 
-import Landing from "~/app/main/_components/Landing";
-import { getLocationByZip, getLocationByName } from "~/server/api/location";
+import Landing from '~/app/main/_components/Landing';
+
+// import { getLocationByName, getLocationByZip } from '~/server/api/location';
 
 export default async function Home() {
   // console.log(
@@ -32,3 +33,5 @@ export default async function Home() {
     </main>
   );
 }
+
+console.log('123456789101234567891012345678910');

@@ -33,3 +33,5 @@ Enumerations:
 • region_type, point, region, area, zone: Cannot be used together.
 
 API FAQ
+
+ESLINT AND PRETTIER SETUP: https://www.youtube.com/watch?v=oVzvXW8LWqg&ab_channel=DRVGOtheDEV

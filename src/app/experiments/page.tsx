@@ -1,8 +1,8 @@
 // import Footer from "./_components/Footer";
 // import Header from "./_components/Header";
 
-import Landing from "~/app/main/_components/Landing";
-import { getLocationByZip, getLocationByName } from "~/server/api/location";
+import Landing from '~/app/main/_components/Landing';
+import { getLocationByName, getLocationByZip } from '~/server/api/location';
 
 export default async function Experiments() {
   // console.log(

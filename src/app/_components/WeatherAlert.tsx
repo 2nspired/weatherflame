@@ -1,14 +1,16 @@
-import WeatherAlert from "../components/WeatherAlert";
-import type { paths, components } from "../types/weatherGov.d.ts";
+// import WeatherAlert from '../components/WeatherAlert';
+import type { components } from '../types/weatherGov.d.ts';
+
+// import type { components, paths } from '../types/weatherGov.d.ts';
 
 type AlertCollectionResponse =
-  components["responses"]["AlertCollection"]["content"]["application/geo+json"]["features"];
+  components['responses']['AlertCollection']['content']['application/geo+json']['features'];
 
 // ["features"];
 
 // --------------------------------------------------------------
 export default function WeatherAlerts(alertsData: AlertCollectionResponse) {
-  console.log("ALERTS ALERTS ALERTS PASSED TO COMPONENT ------>", alertsData);
+  console.log('ALERTS ALERTS ALERTS PASSED TO COMPONENT ------>', alertsData);
   return (
     <div>
       {alertsData.map((alert) => (

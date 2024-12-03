@@ -1,4 +1,4 @@
-"use server";
+'use server';
 
 // Geocoding API - OpenWeatherMap: https://openweathermap.org/api/geocoding-api
 
@@ -59,17 +59,17 @@ export async function getLocationByZip(
     if (res.ok && resJson) {
       return resJson;
     } else {
-      console.error("LOCATION BY ZIP RESPONSE ERROR", res, resJson);
+      console.error('LOCATION BY ZIP RESPONSE ERROR', res, resJson);
       return null;
     }
   } catch (error) {
-    console.error("LOCATION BY ZIP ERROR", error);
+    console.error('LOCATION BY ZIP ERROR', error);
     return null;
   }
 }
 
 export async function getLocationByName(params: GeoLocateByName) {
-  const city = params.city.replace(" ", "+");
+  const city = params.city.replace(' ', '+');
 
   const url = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${params.stateCode},${params.countryCode}&appid=${weatherKey}`;
 
@@ -79,7 +79,7 @@ export async function getLocationByName(params: GeoLocateByName) {
     if (res.ok && resJson.length > 0) {
       return resJson[0];
     } else {
-      console.error("LOCATION BY NAME RESPONSE ERROR", res, resJson);
+      console.error('LOCATION BY NAME RESPONSE ERROR', res, resJson);
       return [];
     }
   } catch (error) {
