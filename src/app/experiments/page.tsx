@@ -4,7 +4,7 @@
 import Landing from "~/app/main/_components/Landing";
 import { getLocationByZip, getLocationByName } from "~/server/api/location";
 
-export default async function Home() {
+export default async function Experiments() {
   // console.log(
   //   "BY ZIP ------->>>>> RUN",
   //   await getLocationByZip({ zip: "90210", countryCode: "us" }),
@@ -17,8 +17,7 @@ export default async function Home() {
   //     stateCode: "tx",
   //     countryCode: "us",
   //   }),
-  // );
-
+  // )
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-slate-700 font-mono text-white">
       {/* <Header /> */}
