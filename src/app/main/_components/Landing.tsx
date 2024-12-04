@@ -1,12 +1,13 @@
 'use client';
 
 // TODO: DETERMINE ZOD ISSUES
-import { redirect } from 'next/navigation';
+// import { redirect } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button } from '~/app/main/_components/shadcn/button';
+// import { Button } from '~/app/main/_components/shadcn/button';
 import { Input } from '~/app/main/_components/shadcn/input';
-import { getLocationByZip, type LocationByZip } from '~/server/api/location';
+
+// import { getLocationByZip, type LocationByZip } from '~/server/api/routers/location';
 
 // ------------------------------------------------------------
 
@@ -18,21 +19,21 @@ export default function Landing() {
   //   console.log("SUBMITTED ZIPCODE", zipcode);
   // }
 
-  async function handleSubmit() {
-    try {
-      const data: LocationByZip | null = await getLocationByZip({
-        zip: zipcode,
-        countryCode: 'US',
-      });
-      if (data && 'lat' in data && 'lon' in data) {
-        redirect(`/main/alerts?lat=${data.lat}&long=${data.lon}`);
-      } else {
-        console.error('Error: Could not get location data from zip code', data);
-      }
-    } catch (error) {
-      console.error('Error fetching location:', error);
-    }
-  }
+  // async function handleSubmit() {
+  //   try {
+  //     const data: LocationByZip | null = await getLocationByZip({
+  //       zip: zipcode,
+  //       countryCode: 'US',
+  //     });
+  //     if (data && 'lat' in data && 'lon' in data) {
+  //       redirect(`/main/alerts?lat=${data.lat}&long=${data.lon}`);
+  //     } else {
+  //       console.error('Error: Could not get location data from zip code', data);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching location:', error);
+  //   }
+  // }
 
   return (
     <>
@@ -47,15 +48,15 @@ export default function Landing() {
         value={zipcode}
         onChange={(e) => setZipcode(e.target.value)}
       />
-
-      <Button onClick={handleSubmit} type="submit">
-        {/* 
+      {/* 
+      <Button onClick={handleSubmit} type="submit"> */}
+      {/* 
             TODO: Add react-query and loading state
             <Loader2 className="animate-spin" />
             Please wait Submit 
             */}
-        Submit
-      </Button>
+      {/* Submit
+      </Button> */}
     </>
   );
 }
