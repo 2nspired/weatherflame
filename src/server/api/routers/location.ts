@@ -27,7 +27,7 @@ export type GeoLocateByName = {
   stateCode: string; // ISO 3166-1 alpha-2
   countryCode: string; // ISO 3166-1 alpha-2
   limit?: number;
-};
+} | null;
 interface LocalNames {
   [key: string]: string | undefined;
   en: string;
@@ -43,6 +43,8 @@ interface GeoByName {
 
 // --------------------------------------------------------------
 
+// ROUTER
+
 export const geoLocation = createTRPCRouter({
   // ----------------------------------------------------------
   // GET LOCATION BY ZIPCODE
@@ -50,7 +52,7 @@ export const geoLocation = createTRPCRouter({
   getGeoByZip: publicProcedure
     .input(
       z.object({
-        zip: z.string().length(5),
+        zip: z.string().length(5).optional(),
         countryCode: z.string(),
         limit: z.number().optional(),
       }),
@@ -59,13 +61,14 @@ export const geoLocation = createTRPCRouter({
       const url = `http://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},${input.countryCode}&appid=${process.env.OPENWEATHER_API}`;
 
       try {
+        // const resJson = await fetchJson<GeoByZip>(url);
         const res = await fetch(url);
-        const resJson: GeoByZip = await res.json();
+        const resJson = (await res.json()) as GeoByZip;
 
         if (res.ok && resJson) {
           return resJson;
         } else {
-          console.error('LOCATION BY ZIP RESPONSE ERROR', res, resJson);
+          console.error('LOCATION BY ZIP RESPONSE ERROR', resJson);
           return null;
         }
       } catch (error) {
@@ -91,13 +94,14 @@ export const geoLocation = createTRPCRouter({
       const url = `http://api.openweathermap.org/geo/1.0/direct?q=${input.city.replace(' ', '+')},${input.stateCode},${input.countryCode}&appid=${process.env.OPENWEATHER_API}`;
 
       try {
+        // const resJson = await fetchJson<GeoByName>(url);
         const res = await fetch(url);
-        const resJson: GeoByName[] = await res.json();
+        const resJson = (await res.json()) as GeoByName;
 
-        if (res.ok && resJson.length > 0) {
-          return resJson[0];
+        if (resJson) {
+          return resJson;
         } else {
-          console.error('LOCATION BY NAME RESPONSE ERROR', res, resJson);
+          console.error('LOCATION BY NAME RESPONSE ERROR', resJson);
           return null;
         }
       } catch (error) {
