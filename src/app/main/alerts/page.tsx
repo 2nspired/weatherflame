@@ -1,36 +1,36 @@
 import {
   fetchWeatherAlerts,
-  type AlertFeatureResponse,
   type Alert,
+  type AlertFeatureResponse,
   type AlertParams,
-} from "~/server/api/alerts";
+} from '~/server/api/alerts';
 
 //  TYPES
 // --------------------------------------------------------------
 
 const AlertPropExclude = [
-  "@id",
-  "@type",
-  "geocode",
-  "references",
-  "sender",
-  "parameters",
-  "VTEC",
+  '@id',
+  '@type',
+  'geocode',
+  'references',
+  'sender',
+  'parameters',
+  'VTEC',
 ];
 
 // --------------------------------------------------------------
 
 export default async function Home() {
   const params: AlertParams = {
-    status: ["actual"],
-    message_type: ["alert", "update"],
+    status: ['actual'],
+    message_type: ['alert', 'update'],
     event: [
-      "Extreme Fire Danger",
-      "Fire Warning",
-      "Fire Weather Watch",
-      "Extreme Fire Dange",
-      "Flood Watch",
-      "Flood Warning",
+      'Extreme Fire Danger',
+      'Fire Warning',
+      'Fire Weather Watch',
+      'Extreme Fire Dange',
+      'Flood Watch',
+      'Flood Warning',
     ],
     // code: ["FRW", "HWA", "HWW"],
     limit: 5,
@@ -69,7 +69,7 @@ const Alert = ({ alert }: { alert: AlertFeatureResponse[0] }) => {
           AlertPropExclude.includes(prop) ? null : (
             <div key={prop} className="items-center py-1">
               <div className="pr-1 text-sm font-extrabold">{`${prop}:`}</div>
-              <div className="w-full flex-grow-0 break-words">{`${alertProps[prop]}`}</div>
+              <div className="w-full grow-0 break-words">{`${alertProps[prop]}`}</div>
             </div>
           ),
         )}

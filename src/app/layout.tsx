@@ -1,28 +1,23 @@
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import { GeistMono } from 'geist/font/mono';
+import { GeistSans } from 'geist/font/sans';
+import type { Metadata } from 'next';
 
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import { TRPCReactProvider } from '~/trpc/client';
 
-const inter = Inter({ subsets: ["latin"] });
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Weather Flame",
-  description: "Compare weather information by location",
+  title: 'Weather Flame',
+  description: 'Compare weather information by location',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} h-full font-sans antialiased`}
       >
-        {children}
+        <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
   );

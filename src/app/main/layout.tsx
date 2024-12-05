@@ -1,5 +1,3 @@
-import Script from "next/script";
-
 // import { isDev, isProd } from '~/utils/platform';
 
 // import Banner from './_components/Banner';
@@ -11,7 +9,7 @@ type LayoutProps = Readonly<{
   children: React.ReactNode;
 }>;
 
-const MAINTENANCE_MODE = false;
+// const MAINTENANCE_MODE = false;
 
 export default async function MainLayout({ children }: LayoutProps) {
   //   if (MAINTENANCE_MODE && isProd) {
@@ -21,7 +19,7 @@ export default async function MainLayout({ children }: LayoutProps) {
   return (
     <>
       <div className="flex min-h-screen flex-col bg-red-700 font-mono">
-        <main className="flex flex-grow flex-col">{children}</main>
+        <main className="flex grow flex-col">{children}</main>
       </div>
     </>
   );
