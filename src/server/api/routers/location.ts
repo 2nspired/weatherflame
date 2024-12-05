@@ -52,7 +52,7 @@ export const geoLocation = createTRPCRouter({
   getGeoByZip: publicProcedure
     .input(
       z.object({
-        zip: z.string().length(5).optional(),
+        zip: z.string().length(5),
         countryCode: z.string(),
         limit: z.number().optional(),
       }),
