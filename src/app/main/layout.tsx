@@ -1,3 +1,7 @@
+// TODO: DEV MODE
+// TODO: DEV WINDOW BREAKPOINT UTILITY
+// TODO: MAINTENANCE MODE
+
 // import { isDev, isProd } from '~/utils/platform';
 
 // import Banner from './_components/Banner';
@@ -18,32 +22,9 @@ export default async function MainLayout({ children }: LayoutProps) {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-red-700 font-mono">
-        <main className="flex grow flex-col">{children}</main>
+      <div className="flex min-h-screen flex-col bg-blue-600 font-mono">
+        <main className="flex grow flex-col justify-center">{children}</main>
       </div>
     </>
   );
 }
-
-//  ORIGINAL
-
-// return (
-//     <>
-//       <div className="flex min-h-full flex-col">
-//         {isDev && <DevWindowBreakpoint />}
-//         <Banner />
-//         <Header />
-//         <main className="flex flex-grow flex-col items-center shadow-page">
-//           {children}
-//         </main>
-//         <Footer />
-//       </div>
-//       <Toaster />
-//       <Script
-//         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7365990025454219"
-//         strategy="afterInteractive"
-//         crossOrigin="anonymous"
-//       ></Script>
-//     </>
-//   );
-// }

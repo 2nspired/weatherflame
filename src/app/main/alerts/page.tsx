@@ -1,3 +1,5 @@
+// TODO: See if using searchParams makes more sense to use and just have an alerts page that pulls in search params from the url, we don't necessarily need dynamic routes for this. I don't think. We pass the search params at the end of the route and then pull them in on the page. Pass in search params. Can use TRPC to load the initial data.
+
 import {
   fetchWeatherAlerts,
   type Alert,
@@ -42,6 +44,7 @@ export default async function Home() {
     <main className="flex w-full flex-col">
       {/* Container */}
       <div className="p-10">
+        <h1 className="font-bold">ALERTS LANDING ALL</h1>
         {/* Component */}
         {alertsData &&
           alertsData.length > 0 &&

@@ -1,30 +1,18 @@
-// import Footer from "./_components/Footer";
-// import Header from "./_components/Header";
-import Landing from '~/app/main/_components/Landing';
+// TODO: Add a guard that only allows me to access this page with a password.
 
-// import { api } from '~/trpc/server';
+import InputLocation from '~/app/main/_components/InputLocation';
 
 export default async function Experiments() {
-  // const getGeoByZip = await api.location.getGeoByZip({ zip: '90210', countryCode: 'US' });
-  // console.log('PAGE RETURN ------------->>>>>>>>>> getGeoByZip', getGeoByZip);
-
-  // const getGeoByName = await api.location.getGeoByName({
-  //   city: 'Franklin',
-  //   stateCode: 'TN',
-  //   countryCode: 'US',
-  // });
-  // console.log('PAGE RETURN ------------->>>>>>>>>> getGeoByNAMMMEEEEEEE', getGeoByName);
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-green-700 font-mono text-white">
-      {/* <Header /> */}
-      Experiments
-      {/* Content */}
+      <h2 className="py-3 text-lg">Experiments</h2>
       <div className="flex flex-col items-center justify-center">
-        <Landing />
+        <div className="items- flex flex-row">
+          <h1 className="px-6 pb-4 pt-6 text-5xl md:text-6xl ">weatherflame</h1>
+        </div>
+        <InputLocation />
       </div>
-      <div className="mt-12 pl-3">coming soon...</div>
-      {/* <Footer /> */}
+      <p className="mt-12 pl-3">you really shouldn&apos;t be in here...</p>
     </main>
   );
 }
