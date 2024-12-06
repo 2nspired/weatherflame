@@ -20,8 +20,6 @@ const AlertPropExclude = [
   'VTEC',
 ];
 
-// --------------------------------------------------------------
-
 export default async function Home() {
   const params: AlertParams = {
     status: ['actual'],
@@ -39,11 +37,10 @@ export default async function Home() {
   };
 
   const alertsData = await fetchWeatherAlerts(params);
-
   return (
-    <main className="flex w-full flex-col">
+    <main className="flex min-h-screen w-full flex-col bg-violet-600 text-white md:p-10">
       {/* Container */}
-      <div className="p-10">
+      <div className="w-full max-w-4xl">
         <h1 className="font-bold">ALERTS LANDING ALL</h1>
         {/* Component */}
         {alertsData &&
@@ -63,10 +60,9 @@ export default async function Home() {
 
 const Alert = ({ alert }: { alert: AlertFeatureResponse[0] }) => {
   const alertProps = alert.properties;
-  // console.log("ALERT PROPS ------>", alert);
 
   return (
-    <div className="w-full text-xs text-white">
+    <div className="w-full text-xs">
       {alertProps &&
         Object.keys(alertProps).map((prop) =>
           AlertPropExclude.includes(prop) ? null : (

@@ -44,18 +44,17 @@ export default async function Alerts() {
   };
 
   const alertsData = await fetchWeatherAlerts(queryParams);
-  // console.log('ALERTS DATA ------>', alertsData[0]?.properties);
 
   return (
-    <main className="flex flex-col bg-green-600 p-4 md:p-10">
-      <h1 className="font-bold">ALERTS DYNAMIC ROUTE</h1>
+    <main className="flex min-h-screen w-full flex-col bg-cyan-500 p-4 md:p-10">
       {/* Container */}
       <div className="w-full max-w-4xl">
+        <h1 className="font-bold">ALERTS DYNAMIC ROUTE</h1>
         {/* Component */}
         {alertsData &&
           alertsData.length > 0 &&
           alertsData.map((alert) => (
-            <div key={alert.id} className="my-4 w-full border p-3">
+            <div key={alert.id} className="my-4 border border-black p-3">
               <Alert alert={alert} />
             </div>
           ))}
@@ -72,8 +71,8 @@ const Alert = ({ alert }: { alert: AlertFeatureResponse[0] }) => {
   // console.log("ALERT PROPS ------>", alert);
 
   return (
-    <main className="min-h-full max-w-full bg-green-500">
-      <div className="text-xs text-white">
+    <main className="min-h-full max-w-full">
+      <div className="text-xs">
         {alertProps &&
           Object.keys(alertProps).map((prop) =>
             AlertPropExclude.includes(prop) ? null : (

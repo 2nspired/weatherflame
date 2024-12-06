@@ -22,8 +22,8 @@ export default async function MainLayout({ children }: LayoutProps) {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-blue-600 font-mono">
-        <main className="flex grow flex-col justify-center">{children}</main>
+      <div className="flex min-h-screen flex-col font-mono">
+        <main className="flex grow flex-col">{children}</main>
       </div>
     </>
   );
