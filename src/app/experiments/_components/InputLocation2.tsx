@@ -25,9 +25,11 @@ export default function InputLocation2() {
       });
 
       if (data) {
-        const geo = `${data.lat},${data.lon}`;
-        console.log(`/main/alerts/${geo}`);
-        router.push(`/main/alerts/${geo}`);
+        const searchParams = new URLSearchParams({
+          lat: data.lat.toString(),
+          lon: data.lon.toString(),
+        });
+        router.push(`/experiments/alerts?${searchParams}`);
       }
     } catch (error) {
       console.error('Error fetching geo coordinates:', error);
