@@ -1,5 +1,3 @@
-// TODO: See if using searchParams makes more sense to use and just have an alerts page that pulls in search params from the url, we don't necessarily need dynamic routes for this. I don't think. We pass the search params at the end of the route and then pull them in on the page. Pass in search params. Can use TRPC to load the initial data.
-
 import {
   fetchWeatherAlerts,
   type Alert,
@@ -20,7 +18,9 @@ const AlertPropExclude = [
   'VTEC',
 ];
 
-export default async function Home() {
+// --------------------------------------------------------------
+
+export default async function Alerts() {
   const params: AlertParams = {
     status: ['actual'],
     message_type: ['alert', 'update'],
@@ -37,11 +37,11 @@ export default async function Home() {
   };
 
   const alertsData = await fetchWeatherAlerts(params);
+
   return (
-    <main className="flex min-h-screen w-full flex-col bg-violet-600 text-white md:p-10">
+    <main className="flex w-full flex-col">
       {/* Container */}
-      <div className="w-full max-w-4xl">
-        <h1 className="font-bold">ALERTS LANDING ALL</h1>
+      <div className="p-10">
         {/* Component */}
         {alertsData &&
           alertsData.length > 0 &&
@@ -60,15 +60,16 @@ export default async function Home() {
 
 const Alert = ({ alert }: { alert: AlertFeatureResponse[0] }) => {
   const alertProps = alert.properties;
+  // console.log("ALERT PROPS ------>", alert);
 
   return (
-    <div className="w-full text-xs">
+    <div className="w-full text-xs text-white">
       {alertProps &&
         Object.keys(alertProps).map((prop) =>
           AlertPropExclude.includes(prop) ? null : (
             <div key={prop} className="items-center py-1">
               <div className="pr-1 text-sm font-extrabold">{`${prop}:`}</div>
-              <div className="w-full grow-0 break-words">{`${alertProps[prop]}`}</div>
+              <div className="w-full flex-grow-0 break-words">{`${alertProps[prop]}`}</div>
             </div>
           ),
         )}
