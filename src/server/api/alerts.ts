@@ -1,13 +1,13 @@
 import createClient from 'openapi-fetch';
 
-import type { components, paths } from '~/app/types/weatherGov.d.ts';
+import type { components, paths } from '~/app/types/weather-gov/weatherGov';
 
 // TYPES
 // --------------------------------------------------------------
 
 export type AlertParams = paths['/alerts/active']['get']['parameters']['query'];
 
-export type Alert = components['schemas']['Alert'];
+export type AlertType = components['schemas']['Alert'];
 
 export type AlertFeatureResponse =
   components['responses']['AlertCollection']['content']['application/geo+json']['features'];

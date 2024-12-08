@@ -47,7 +47,7 @@ interface GeoByName {
 
 // ROUTER
 
-export const geoLocation = createTRPCRouter({
+export const locationRouter = createTRPCRouter({
   // ----------------------------------------------------------
   // GET LOCATION BY ZIPCODE
   // ----------------------------------------------------------
@@ -63,19 +63,19 @@ export const geoLocation = createTRPCRouter({
       const url = `http://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},${input.countryCode}&appid=${process.env.OPENWEATHER_API}`;
 
       try {
-        // const resJson = await fetchJson<GeoByZip>(url);
         const res = await fetch(url);
         const resJson = (await res.json()) as GeoByZip;
 
         if (res.ok && resJson) {
+          console.log('LOCATION BY ZIP RESPONSE', resJson);
           return resJson;
         } else {
           console.error('LOCATION BY ZIP RESPONSE ERROR', resJson);
-          return null;
+          throw new Error('Failed to fetch geo coordinates');
         }
       } catch (error) {
         console.error('LOCATION BY ZIP ERROR', error);
-        return null;
+        throw new Error('Failed to fetch geo coordinates');
       }
     }),
 
@@ -104,11 +104,108 @@ export const geoLocation = createTRPCRouter({
           return resJson;
         } else {
           console.error('LOCATION BY NAME RESPONSE ERROR', resJson);
-          return null;
+          throw new Error('Failed to fetch geo coordinates');
         }
       } catch (error) {
         console.error('LOCATION BY NAME ERROR', error);
-        return null;
+        throw new Error('Failed to fetch geo coordinates');
+      }
+    }),
+
+  // ----------------------------------------------------------
+  // GET LOCATION BY GEO COORDINATES
+  // ----------------------------------------------------------
+
+  getReverseGeo: publicProcedure
+    .input(
+      z.object({
+        lat: z.number(),
+        lon: z.number(),
+        limit: z.number().optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${input.lat}&lon=${input.lon}&limit=${input.limit}&appid=${process.env.OPENWEATHER_API}`;
+
+      try {
+        const res = await fetch(url);
+        const resJson = (await res.json()) as GeoByZip;
+
+        if (res.ok && resJson) {
+          return resJson;
+        } else {
+          console.error('REVERSE GEO RESPONSE ERROR', resJson);
+          throw new Error('Failed to fetch geo coordinates');
+        }
+      } catch (error) {
+        console.error('REVERSE GEO ERROR', error);
+        throw new Error('Failed to fetch geo coordinates');
+      }
+    }),
+
+  // ----------------------------------------------------------
+  // GET ZONE IDS BY LOCATION COORDINATES (PUBLIC, COUNTY, FIRE)
+  // ----------------------------------------------------------
+  // Pulls various public, county, and fire zone IDs based on the location coordinates
+  getWeatherZoneByGeo: publicProcedure
+    .input(
+      z.object({
+        lat: z.string(),
+        lon: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      console.log('ZONE BY GEO INPUTS', input);
+
+      const url = `http://api.weather.gov/zones?point=${input.lat},${input.lon}`;
+      console.log('URL', url);
+      try {
+        const res = await fetch(url);
+        const resJson = await res.json();
+
+        if (res.ok && resJson) {
+          return resJson;
+        } else {
+          console.error('ZONE BY GEO RESPONSE ERROR', resJson);
+          throw new Error('Failed to fetch zone IDs');
+        }
+      } catch (error) {
+        console.error('ZONE BY GEO ERROR', error);
+        throw new Error('Failed to fetch zone IDs');
+      }
+    }),
+
+  // ----------------------------------------------------------
+  // GET ZONE IDS BY LOCATION COORDINATES (PUBLIC, COUNTY, FIRE) - NOT WEATHER ZONES
+  // ----------------------------------------------------------
+  // Pulls various public, county, and fire zone IDs based on the location coordinates
+
+  getZoneByGeo: publicProcedure
+    .input(
+      z.object({
+        lat: z.string(),
+        lon: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      console.log('ZONE BY GEO INPUTS', input);
+
+      const url = `http://api.weather.gov/zones?point=${input.lat},${input.lon}`;
+      console.log('URL', url);
+      try {
+        const res = await fetch(url);
+        const resJson = await res.json();
+        console.log('ZONE BY GEO RESPONSE', resJson);
+
+        if (res.ok && resJson) {
+          return resJson;
+        } else {
+          console.error('ZONE BY GEO RESPONSE ERROR', resJson);
+          throw new Error('Failed to fetch zone IDs');
+        }
+      } catch (error) {
+        console.error('ZONE BY GEO ERROR', error);
+        throw new Error('Failed to fetch zone IDs');
       }
     }),
 });
