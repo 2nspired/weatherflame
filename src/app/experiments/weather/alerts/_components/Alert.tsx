@@ -4,10 +4,12 @@
 // TODO: TRPC IS NOT RETURNING ALERTS, SOMETHING WITH NOT FEEDING IT INITIAL DATA from PAGE I THINK.
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { set } from 'zod';
 
-import type { components, paths } from '~/app/types/weather-gov/weatherGov';
-import { type TRPCInputs, type TRPCOutputs } from '~/server/api/root';
+import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
+import type { components } from '~/app/types/weather-gov/weatherGov';
+// import type { components, paths } from '~/app/types/weather-gov/weatherGov';
+import { type TRPCInputs } from '~/server/api/root';
+// import { type TRPCInputs, type TRPCOutputs } from '~/server/api/root';
 import { api } from '~/trpc/client';
 
 type AlertParams = TRPCInputs['alerts']['getAlerts'];
@@ -34,6 +36,8 @@ export default function Alert() {
     zone: zones,
   });
 
+  console.log(setAlertParams);
+
   const clientTRPC = api.alerts.getAlerts.useQuery(alertParams, {
     enabled: zones.length > 0,
   });
@@ -45,6 +49,9 @@ export default function Alert() {
   return (
     <div className="flex flex-col space-y-3">
       <h1 className="text-xl">alert component</h1>
+      <h1 className="text-xl">
+        <BreadcrumbRoute />
+      </h1>
       <p>{`countyZone: ${searchParams.get('county')}`}</p>
       <p>{`fireZone: ${searchParams.get('fire')}`}</p>
       <p>{`publicZone: ${searchParams.get('public')}`}</p>

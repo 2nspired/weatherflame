@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
 
-import Alert from '~/app/experiments/alerts/_components/Alert';
-import { api } from '~/trpc/server';
+import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
+
+// import Alert from '~/app/experiments/weather/alerts/_components/Alert';
 
 // --------------------------------------------------------------
 
@@ -10,9 +11,10 @@ export default async function Alerts() {
   // RENDER
 
   return (
-    <main className="flex min-h-screen w-full flex-col bg-cyan-500 p-4 md:p-10">
+    <main className="flex min-h-screen w-full flex-col space-y-3 bg-cyan-700 p-4 md:p-10">
       <Suspense fallback={<div>Loading...</div>}>
-        <Alert />
+        <BreadcrumbRoute />
+        {/* <Alert /> */}
         {/* <Alert data={prefetchedData} /> */}
       </Suspense>
     </main>

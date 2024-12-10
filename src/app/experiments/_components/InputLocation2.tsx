@@ -2,22 +2,21 @@
 
 // TODO: Add zod error handling and return messages
 // TODO: Setup to handle geoByName
-// TODO: Add error handling for invalid zipcodes
+// TODO: Add error handling for invalid zipcodes and names
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button } from '~/app/main/_components/shadcn/button';
 import { Input } from '~/app/main/_components/shadcn/input';
-import { type WeatherApiResponse } from '~/app/types/weather-gov/locationTypes';
 import { api } from '~/trpc/client';
+import { abbreviateState } from '~/utilities/abbreviateState';
 
 // ------------------------------------------------------------
-
-// TODO: REMOVE UNUSED SEARCH PARAMS
 
 export default function InputLocation2() {
   const [zipcode, setZipcode] = useState<string>('');
   const fetchGeoByZip = api.location.getGeoByZip.useMutation();
+  const fetchGeoByName = api.location.getGeoByName.useMutation();
   const fetchZoneByGeo = api.location.getZoneByGeo.useMutation();
   const router = useRouter();
 
@@ -28,29 +27,24 @@ export default function InputLocation2() {
         countryCode: 'US',
       });
 
-      if (geoData) {
-        const searchParams = new URLSearchParams();
-        searchParams.append('lat', geoData.lat.toString());
-        searchParams.append('lon', geoData.lon.toString());
-        searchParams.append('name', geoData.name);
-        searchParams.append('state', geoData.state);
-        searchParams.append('country', geoData.country);
-        searchParams.append('zip', zipcode);
-        searchParams.append('zonetest', 'CAZ250');
+      const nameData = await fetchGeoByName.mutateAsync({
+        name: geoData.name,
+        countryCode: geoData.country,
+      });
 
-        const zoneData: WeatherApiResponse = await fetchZoneByGeo.mutateAsync({
-          lat: geoData.lat.toString(),
-          lon: geoData.lon.toString(),
-        });
+      const state = nameData[0] ? abbreviateState(nameData[0].state) : '';
 
-        if (zoneData) {
-          zoneData.features.forEach((zone) => {
-            searchParams.append(`${zone.properties.type}`, zone.properties.id);
-            console.log('zoneData:', searchParams);
-          });
+      const zoneData = await fetchZoneByGeo.mutateAsync({
+        lat: geoData.lat.toString(),
+        lon: geoData.lon.toString(),
+      });
 
-          router.push(`/experiments/alerts?${searchParams}`);
-        }
+      const zones: string = zoneData.features.map((zone) => zone.properties.id).join('-');
+
+      if (geoData && state && zones) {
+        router.push(
+          `/experiments/weather/alerts/${geoData.country}/${state}/${geoData.name}/${zipcode}/${zones}`,
+        );
       }
     } catch (error) {
       console.error('Error fetching geo coordinates:', error);
