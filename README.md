@@ -1,5 +1,9 @@
 ## Weather Application
 
+tool for alert searches: https://alerts.weather.gov/?reset=true
+
+NOAA glossary https://forecast.weather.gov/glossary.php?letter=a
+
 What I'm building
 
 1. I want to build an app that you can easily check fire data for your local area.

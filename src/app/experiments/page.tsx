@@ -1,6 +1,6 @@
 // TODO: Add a guard that only allows me to access this page with a password.
 
-import InputLocation from '~/app/main/_components/InputLocation';
+import InputLocation2 from '~/app/experiments/_components/InputLocation2';
 
 export default async function Experiments() {
   return (
@@ -10,7 +10,7 @@ export default async function Experiments() {
         <div className="items- flex flex-row">
           <h1 className="px-6 pb-4 pt-6 text-5xl md:text-6xl ">weatherflame</h1>
         </div>
-        <InputLocation />
+        <InputLocation2 />
       </div>
       <p className="mt-12 pl-3">you really shouldn&apos;t be in here...</p>
     </main>

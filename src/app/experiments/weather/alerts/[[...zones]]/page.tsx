@@ -1,34 +1,56 @@
-// import {
-//   fetchWeatherAlerts,
-//   type AlertFeatureResponse,
-//   type AlertParams,
-// } from '~/server/api/alerts';
+import { Suspense } from 'react';
 
-// //  TYPES
-// // --------------------------------------------------------------
+import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
 
-// const AlertPropExclude = [
-//   '@id',
-//   '@type',
-//   'geocode',
-//   'references',
-//   'sender',
-//   'parameters',
-//   'VTEC',
-// ];
+// import Alert from '~/app/experiments/weather/alerts/_components/Alert';
 
 // --------------------------------------------------------------
-// TODO: Will have to figure out how to call based on location. So need to find a way to pull location identifier from geo location.
 
-// export const dynamic = 'auto';
-
+export const dynamic = 'auto';
 export default async function Alerts() {
-  return <div>Alerts GEO ROUTE - DISABLED</div>;
+  // RENDER
+
+  return (
+    <main className="flex min-h-screen w-full flex-col space-y-3 bg-cyan-700 p-4 md:p-10">
+      <Suspense fallback={<div>Loading...</div>}>
+        <BreadcrumbRoute />
+        {/* <Alert /> */}
+        {/* <Alert data={prefetchedData} /> */}
+      </Suspense>
+    </main>
+  );
 }
 
+// Components
+// --------------------------------------------------------------
+
+// const LocalAlert = ({ alert }: { alert: AlertFeatureResponse[0] }) => {
+//   const alertProps = alert.properties;
+//   // console.log("ALERT PROPS ------>", alert);
+
+//   return (
+//     <main className="min-h-full max-w-full">
+//       <div className="text-xs">
+//         {alertProps &&
+//           Object.keys(alertProps).map((prop) =>
+//             AlertPropExclude.includes(prop) ? null : (
+//               <div key={prop} className="items-center py-1">
+//                 <div className="pr-1 text-sm font-extrabold">{`${prop}:`}</div>
+//                 <div className="w-full grow-0 break-words">{`${alertProps[prop]}`}</div>
+//               </div>
+//             ),
+//           )}
+//       </div>
+//     </main>
+//   );
+// };
+
+// ORIGINAL CODE BELOW
+//
 // export default async function Alerts() {
+//   // TODO: Will have to figure out how to call based on location. So need to find a way to pull location identifier from geo location.
+
 //   const queryParams: AlertParams = {
-//     // point: params.geo.split('-').join(','),
 //     status: ['actual'],
 //     message_type: ['alert', 'update'],
 //     event: [
@@ -41,8 +63,8 @@ export default async function Alerts() {
 //       // 'Extreme Fire Dange',
 //       // 'Flood Watch',
 //       // 'Flood Warning',
+//       // code: ["FRW", "HWA", "HWW"],
 //     ],
-//     // code: ["FRW", "HWA", "HWW"],
 //     limit: 5,
 //   };
 
@@ -58,7 +80,7 @@ export default async function Alerts() {
 //           alertsData.length > 0 &&
 //           alertsData.map((alert) => (
 //             <div key={alert.id} className="my-4 border border-black p-3">
-//               <Alert alert={alert} />
+//               <LocalAlert alert={alert} />
 //             </div>
 //           ))}
 //       </div>
@@ -69,7 +91,7 @@ export default async function Alerts() {
 // // Components
 // // --------------------------------------------------------------
 
-// const Alert = ({ alert }: { alert: AlertFeatureResponse[0] }) => {
+// const LocalAlert = ({ alert }: { alert: AlertFeatureResponse[0] }) => {
 //   const alertProps = alert.properties;
 //   // console.log("ALERT PROPS ------>", alert);
 
