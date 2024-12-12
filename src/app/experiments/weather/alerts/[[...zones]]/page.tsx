@@ -1,21 +1,46 @@
 import { Suspense } from 'react';
 
-import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
-
-// import Alert from '~/app/experiments/weather/alerts/_components/Alert';
+// import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
+import Alert from '~/app/experiments/weather/alerts/_components/Alert';
+import { api } from '~/trpc/server';
 
 // --------------------------------------------------------------
 
 export const dynamic = 'auto';
-export default async function Alerts() {
-  // RENDER
+export const revalidate = 5;
+
+export default async function Alerts({
+  params,
+}: {
+  params: Promise<{ zones: string[] }>;
+}) {
+  const routeParams = await params;
+
+  if (!routeParams.zones || routeParams.zones.length === 0) {
+    // TODO: CAN I COMPARE ZONES AGAINST A LIST OF VALID ZONES? I WOULD NEED TO GET A LIST OF ZONES.
+    console.error('Zones parameter is missing or invalid');
+    return <div>Invalid request. Please check the URL.</div>;
+  }
+
+  // TODO: IS THERE A BETTER DEFAULT VALUE I CAN USE AS A FALLBACK?
+  const zones = (await params).zones.splice(-1)[0]?.split('-') ?? [];
+
+  const prefetchedData = await api.alerts.getAlerts({
+    zone: zones,
+  });
+
+  if (!prefetchedData || prefetchedData.length < 0) {
+    <div>No active alerts at this time</div>;
+  }
+
+  // console.log('PREFETCHED ALERTS', prefetchedData);
 
   return (
-    <main className="flex min-h-screen w-full flex-col space-y-3 bg-cyan-700 p-4 md:p-10">
+    <main className="flex min-h-screen w-full flex-col space-y-3 bg-white p-4 md:p-10">
       <Suspense fallback={<div>Loading...</div>}>
-        <BreadcrumbRoute />
+        {/* <BreadcrumbRoute /> */}
         {/* <Alert /> */}
-        {/* <Alert data={prefetchedData} /> */}
+        <Alert prefetchedData={prefetchedData} zones={zones} />
       </Suspense>
     </main>
   );
