@@ -108,8 +108,10 @@ const fetchClient = createClient<paths, 'application/geo+json'>({
 
 export const alertRouter = createTRPCRouter({
   // ----------------------------------------------------------
-  // GET ACTIVE WEATHER ALERTS
+  // GET ACTIVE WEATHER ALERTS - MAIN
   // ----------------------------------------------------------
+
+  // TODO:
   getAlerts: publicProcedure
     .input(
       z.object({
@@ -117,6 +119,7 @@ export const alertRouter = createTRPCRouter({
         status: z
           .array(z.enum(['actual', 'exercise', 'system', 'test', 'draft']))
           .optional(),
+        // POINT: incompatible with: area, region, region_type, zone
         point: z
           .string()
           .regex(/^(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)$/)
@@ -124,9 +127,13 @@ export const alertRouter = createTRPCRouter({
         message_type: z.array(z.enum(['alert', 'update', 'cancel'])).optional(),
         event: z.array(z.string().regex(/^[A-Za-z0-9 ]+$/)).optional(),
         code: z.array(z.string().regex(/^\w{3}$/)).optional(),
+        // AREA: incompatible with: point, region, region_type, zone
         area: z.array(z.union([landAreaSchema, marineAreaSchema])).optional(),
+        // REGION: incompatible with: area, point, region_type, zone
         region: z.array(z.enum(['AL', 'AT', 'GL', 'GM', 'PA', 'PI'])).optional(),
+        // REGION TYPE: incompatible with: area, point, region, zone
         region_type: z.enum(['land', 'marine']).optional(),
+        // ZONE: incompatible with: area, point, region, region_type
         zone: z
           .array(
             z
@@ -151,7 +158,7 @@ export const alertRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input }) => {
-      console.log('ALERT PARAMS INPUTS', input);
+      // console.log('ALERT PARAMS INPUTS', input);
 
       try {
         const { response, data, error } = await fetchClient.GET('/alerts/active', {
@@ -166,18 +173,18 @@ export const alertRouter = createTRPCRouter({
           return data.features;
         } else if (response.status !== 200 || !data || data.features.length === 0) {
           console.log('No alerts found', error);
-          return null;
+          return [];
         }
 
-        return null;
+        return [];
       } catch (error) {
         console.error(error);
-        return null;
+        return [];
       }
     }),
 
   // ----------------------------------------------------------
-  // GET ACTIVE WEATHER ALERTS BY WEATHER ZONE
+  // GET ACTIVE WEATHER ALERTS BY SPECIFIC WEATHER ZONE
   // ----------------------------------------------------------
 
   getAlertsByZone: publicProcedure
@@ -188,7 +195,7 @@ export const alertRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input }) => {
-      console.log('ALERT PARAMS INPUTS', input);
+      // console.log('ALERT PARAMS INPUTS', input);
 
       try {
         const { response, data, error } = await fetchClient.GET(
