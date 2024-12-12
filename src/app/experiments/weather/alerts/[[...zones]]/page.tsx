@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
+// import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
 import Alert from '~/app/experiments/weather/alerts/_components/Alert';
 import { api } from '~/trpc/server';
 
@@ -14,8 +14,6 @@ export default async function Alerts({
 }: {
   params: Promise<{ zones: string[] }>;
 }) {
-  [];
-
   const routeParams = await params;
 
   if (!routeParams.zones || routeParams.zones.length === 0) {
