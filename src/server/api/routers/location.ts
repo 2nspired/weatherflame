@@ -184,7 +184,7 @@ export const locationRouter = createTRPCRouter({
     }),
 
   // ----------------------------------------------------------
-  // GET ZONE IDS BY LOCATION COORDINATES (PUBLIC, COUNTY, FIRE
+  // GET ZONE IDS BY LOCATION COORDINATES (PUBLIC, COUNTY, FIRE)
 
   // Pulls various public, county, and fire zone IDs based on the location coordinates
   // https://www.weather.gov/documentation/services-web-api

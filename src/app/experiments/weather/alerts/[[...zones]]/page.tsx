@@ -22,7 +22,7 @@ export default async function Alerts({
     return <div>Invalid request. Please check the URL.</div>;
   }
 
-  // TODO: IS THERE A BETTER DEFAULT VALUE I CAN USE AS A FALLBACK?
+  // TODO: IS THERE A BETTER DEFAULT VALUE I CAN USE AS A FALLBACK? OR SHOULD I REDIRECT BASED ON WEATHER
   const zones = (await params).zones.splice(-1)[0]?.split('-') ?? [];
 
   const prefetchedData = await api.alerts.getAlerts({

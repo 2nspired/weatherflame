@@ -1,3 +1,9 @@
+// const weatherKey = process.env.WEATHER_API;
+
+export default function Alerts() {
+  return <div>Alerts/[[...zones]] - being reworked</div>;
+}
+
 // import {
 //   fetchWeatherAlerts,
 //   type AlertFeatureResponse,
@@ -21,10 +27,6 @@
 // TODO: Will have to figure out how to call based on location. So need to find a way to pull location identifier from geo location.
 
 // export const dynamic = 'auto';
-
-export default async function Alerts() {
-  return <div>Alerts GEO ROUTE - DISABLED</div>;
-}
 
 // export default async function Alerts() {
 //   const queryParams: AlertParams = {

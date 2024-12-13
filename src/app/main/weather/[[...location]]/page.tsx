@@ -1,7 +1,7 @@
 // const weatherKey = process.env.WEATHER_API;
 
-export default function Location() {
-  return <div>Location - being reworked</div>;
+export default function Weather() {
+  return <div>Weather/[[...location]] - being reworked</div>;
 }
 
 // async function getWeather(location: {

@@ -9,25 +9,35 @@ import { useState } from 'react';
 import { Button } from '~/app/main/_components/shadcn/button';
 import { Input } from '~/app/main/_components/shadcn/input';
 import { api } from '~/trpc/client';
+import { abbreviateState } from '~/utilities/abbreviateState';
 
 // ------------------------------------------------------------
 
 export default function InputLocation() {
   const [zipcode, setZipcode] = useState<string>('96815');
+
   const fetchGeoByZip = api.location.getGeoByZip.useMutation();
+  const fetchGeoByName = api.location.getGeoByName.useMutation();
   const router = useRouter();
 
   const handleSubmit = async () => {
     try {
-      const data = await fetchGeoByZip.mutateAsync({
+      const geoData = await fetchGeoByZip.mutateAsync({
         zip: zipcode,
         countryCode: 'US',
       });
 
-      if (data) {
-        const geo = `${data.lat},${data.lon}`;
-        console.log(`/main/alerts/${geo}`);
-        router.push(`/main/alerts/${geo}`);
+      const nameData = await fetchGeoByName.mutateAsync({
+        name: geoData.name,
+        countryCode: geoData.country,
+      });
+
+      const state = nameData[0] ? abbreviateState(nameData[0].state) : '';
+
+      if (geoData && state) {
+        router.push(
+          `/main/weather/alerts/${geoData.country}/${state}/${geoData.name}/${zipcode}`,
+        );
       }
     } catch (error) {
       console.error('Error fetching geo coordinates:', error);
