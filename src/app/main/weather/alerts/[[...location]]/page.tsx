@@ -1,6 +1,85 @@
-// const weatherKey = process.env.WEATHER_API;
+import { api } from 'src/trpc/server';
 
-export default function Alerts() {
+export default async function Alerts({
+  params,
+}: {
+  params: Promise<{ location: string }>;
+}) {
+  const routeParams = await params;
+  const locationParam = routeParams.location.slice(-1)[0];
+
+  console.log('ROUTE PARAMS', routeParams);
+  console.log('LOCATION PARAM', locationParam);
+
+  if (!routeParams.location || routeParams.location.length === 0) {
+    console.error('Location parameter is missing or invalid');
+    return <div>Invalid request. Please check the URL.</div>;
+  }
+
+  const getZipData = async () => {
+    if (!locationParam || locationParam.length === 0 || isNaN(Number(locationParam))) {
+      return null;
+    }
+
+    const zipData = await api.location.getGeoByZip({
+      zip: locationParam,
+      countryCode: 'US',
+    });
+
+    return zipData;
+  };
+
+  const zipData = await getZipData();
+  console.log('ZIP DATA', zipData);
+
+  const getWeatherData = async () => {
+    if (!zipData?.lat || !zipData?.lon) {
+      console.error('Invalid zip data');
+      return null;
+    }
+    const weatherData = await api.weather.getWeatherByPoint({
+      point: `${zipData.lat},${zipData.lon}`,
+    });
+    return weatherData;
+  };
+
+  const weatherData = await getWeatherData();
+  console.log('WEATHER DATA', weatherData);
+
+  const getZoneData = async () => {
+    if (!zipData?.lat || !zipData?.lon) {
+      console.error('Invalid zip data');
+      return null;
+    }
+
+    const zoneData = await api.location.getZoneByGeo({
+      lat: zipData.lat.toString(),
+      lon: zipData.lon.toString(),
+    });
+    return zoneData;
+  };
+
+  const zoneData = await getZoneData();
+  console.log('ZONE DATA', zoneData);
+
+  const getAlertData = async () => {
+    if (!zoneData?.features) {
+      console.error('Invalid zone data');
+      return null;
+    }
+
+    const zoneCodes = zoneData.features.map((zone) => zone.properties.id);
+    console.log('ZONE CODES', zoneCodes);
+
+    const alertData = await api.alerts.getAlerts({
+      zone: zoneCodes,
+    });
+    return alertData;
+  };
+
+  const alertData = await getAlertData();
+  console.log('ALERT DATA', alertData);
+
   return <div>Alerts/[[...zones]] - being reworked</div>;
 }
 

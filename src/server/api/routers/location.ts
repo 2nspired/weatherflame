@@ -30,6 +30,7 @@ export type GeoLocateByName = {
 interface LocalNames extends Record<string, string | undefined> {
   en: string;
 }
+
 type GeoByName = Array<{
   name: string;
   local_names: LocalNames;

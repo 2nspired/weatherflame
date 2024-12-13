@@ -22,21 +22,21 @@ export default function InputLocation() {
 
   const handleSubmit = async () => {
     try {
-      const geoData = await fetchGeoByZip.mutateAsync({
+      const zipData = await fetchGeoByZip.mutateAsync({
         zip: zipcode,
         countryCode: 'US',
       });
 
       const nameData = await fetchGeoByName.mutateAsync({
-        name: geoData.name,
-        countryCode: geoData.country,
+        name: zipData.name,
+        countryCode: zipData.country,
       });
 
       const state = nameData[0] ? abbreviateState(nameData[0].state) : '';
 
-      if (geoData && state) {
+      if (zipData && state) {
         router.push(
-          `/main/weather/alerts/${geoData.country}/${state}/${geoData.name}/${zipcode}`,
+          `/main/weather/alerts/${zipData.country}/${state}/${zipData.name}/${zipcode}`,
         );
       }
     } catch (error) {
