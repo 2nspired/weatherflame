@@ -19,7 +19,7 @@ export type AlertFeatureResponse =
 export type AlertFeature =
   components['responses']['AlertCollection']['content']['application/geo+json']['features'][0];
 
-export default function Alert({
+export default function AlertsDisplay({
   prefetchedData,
   zones,
 }: {
@@ -43,7 +43,7 @@ export default function Alert({
 
   return (
     <div className="flex flex-col space-y-3">
-      <h1 className="text-xl">alert component</h1>
+      <h1 className="text-xl">AlertsDisplay component</h1>
       <h1 className="text-xl">
         <BreadcrumbRoute />
       </h1>

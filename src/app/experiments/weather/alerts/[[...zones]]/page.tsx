@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 
 // import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
-import Alert from '~/app/experiments/weather/alerts/_components/Alert';
+import Alert from '~/app/main/weather/alerts/_components/AlertsDisplay';
 import { api } from '~/trpc/server';
 
 // --------------------------------------------------------------
@@ -22,7 +22,7 @@ export default async function Alerts({
     return <div>Invalid request. Please check the URL.</div>;
   }
 
-  // TODO: IS THERE A BETTER DEFAULT VALUE I CAN USE AS A FALLBACK?
+  // TODO: IS THERE A BETTER DEFAULT VALUE I CAN USE AS A FALLBACK? OR SHOULD I REDIRECT BASED ON WEATHER
   const zones = (await params).zones.splice(-1)[0]?.split('-') ?? [];
 
   const prefetchedData = await api.alerts.getAlerts({

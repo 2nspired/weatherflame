@@ -30,6 +30,7 @@ export type GeoLocateByName = {
 interface LocalNames extends Record<string, string | undefined> {
   en: string;
 }
+
 type GeoByName = Array<{
   name: string;
   local_names: LocalNames;
@@ -184,7 +185,7 @@ export const locationRouter = createTRPCRouter({
     }),
 
   // ----------------------------------------------------------
-  // GET ZONE IDS BY LOCATION COORDINATES (PUBLIC, COUNTY, FIRE
+  // GET ZONE IDS BY LOCATION COORDINATES (PUBLIC, COUNTY, FIRE)
 
   // Pulls various public, county, and fire zone IDs based on the location coordinates
   // https://www.weather.gov/documentation/services-web-api

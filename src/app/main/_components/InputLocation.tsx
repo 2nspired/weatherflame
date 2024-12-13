@@ -9,25 +9,42 @@ import { useState } from 'react';
 import { Button } from '~/app/main/_components/shadcn/button';
 import { Input } from '~/app/main/_components/shadcn/input';
 import { api } from '~/trpc/client';
+import { abbreviateState } from '~/utilities/abbreviateState';
 
 // ------------------------------------------------------------
 
 export default function InputLocation() {
   const [zipcode, setZipcode] = useState<string>('96815');
+
   const fetchGeoByZip = api.location.getGeoByZip.useMutation();
+  const fetchGeoByName = api.location.getGeoByName.useMutation();
   const router = useRouter();
 
   const handleSubmit = async () => {
     try {
-      const data = await fetchGeoByZip.mutateAsync({
+      const zipData = await fetchGeoByZip.mutateAsync({
         zip: zipcode,
         countryCode: 'US',
       });
 
-      if (data) {
-        const geo = `${data.lat},${data.lon}`;
-        console.log(`/main/alerts/${geo}`);
-        router.push(`/main/alerts/${geo}`);
+      const nameData = await fetchGeoByName.mutateAsync({
+        name: zipData.name,
+        countryCode: zipData.country,
+      });
+
+      // TODO: handle if no name data is returned. Need to dynamically build the url based on what is available
+      const state = nameData[0] ? abbreviateState(nameData[0].state) : '';
+      console.log('zipData:', zipData);
+
+      console.log(
+        'url:',
+        `/main/weather/alerts/${zipData.country}/${state}/${zipData.name}/${zipcode}`,
+      );
+
+      if (zipData && state) {
+        router.push(
+          `/main/weather/alerts/${zipData.country}/${state}/${zipData.name}/${zipcode}`,
+        );
       }
     } catch (error) {
       console.error('Error fetching geo coordinates:', error);
