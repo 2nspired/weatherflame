@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 
 // import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
-import Alert from '~/app/experiments/weather/alerts/_components/Alert';
+import Alert from '~/app/main/weather/alerts/_components/AlertsDisplay';
 import { api } from '~/trpc/server';
 
 // --------------------------------------------------------------

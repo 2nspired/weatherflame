@@ -32,7 +32,14 @@ export default function InputLocation() {
         countryCode: zipData.country,
       });
 
+      // TODO: handle if no name data is returned. Need to dynamically build the url based on what is available
       const state = nameData[0] ? abbreviateState(nameData[0].state) : '';
+      console.log('zipData:', zipData);
+
+      console.log(
+        'url:',
+        `/main/weather/alerts/${zipData.country}/${state}/${zipData.name}/${zipcode}`,
+      );
 
       if (zipData && state) {
         router.push(
