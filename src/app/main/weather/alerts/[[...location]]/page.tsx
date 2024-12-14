@@ -15,33 +15,54 @@ export default async function AlertsPage({
     console.error('Location parameter is missing or invalid');
     return <div>Invalid request. Please check the URL.</div>;
   }
-
+  // FIXME: Fix this, if the last level of an array is not available.
   const locationParam = routeParams.location.slice(-1)[0];
+  console.log('PARAMS', routeParams);
+  console.log('LOCATION PARAM', locationParam);
 
-  // console.log('ROUTE PARAMS', routeParams);
-  // console.log('LOCATION PARAM', locationParam);
+  if (!locationParam || locationParam.length === 0) {
+    console.error('Location parameter is missing or invalid');
+  }
 
-  const getZipData = async () => {
-    if (!locationParam || locationParam.length === 0 || isNaN(Number(locationParam))) {
+  const getGeoData = async () => {
+    if (!locationParam && locationParam?.length === 0) {
       return null;
     }
-    return await api.location.getGeoByZip({
-      zip: locationParam,
-      countryCode: 'US',
-    });
+    if (
+      typeof locationParam === 'string' &&
+      locationParam?.length === 5 &&
+      !isNaN(Number(locationParam))
+    ) {
+      return await api.location.getGeoByZip({
+        zip: locationParam,
+        countryCode: 'US',
+      });
+    }
+
+    // FIXME: NEED VALIDATION FOR LOCATION NAME PARAM - OR TO IGNORE IF ROUTEPARAMS.LENGTH < 4
+    if (
+      typeof locationParam === 'string' &&
+      locationParam?.length !== 0 &&
+      isNaN(Number(locationParam))
+    ) {
+      const nameData = await api.location.getGeoByName({
+        name: locationParam,
+        countryCode: 'US',
+      });
+      return nameData?.[0] ?? null;
+    }
   };
 
-  const zipData = await getZipData();
+  const geoData = await getGeoData();
 
   const getAlertZones = async () => {
-    if (!zipData?.lat || !zipData?.lon) {
-      console.error('Invalid zip data');
+    if (!geoData?.lat || !geoData?.lon) {
       return null;
     }
 
     return await api.location.getZoneByGeo({
-      lat: zipData.lat.toString(),
-      lon: zipData.lon.toString(),
+      lat: geoData.lat.toString(),
+      lon: geoData.lon.toString(),
     });
   };
 
@@ -52,9 +73,9 @@ export default async function AlertsPage({
     <div className="p-6">
       <div>
         <div>
-          {zipData && (
+          {geoData && (
             <div>
-              <WeatherDisplay lat={zipData.lat} lon={zipData.lon} />
+              <WeatherDisplay lat={geoData.lat} lon={geoData.lon} />
               <AlertsDisplay zones={alertZones} />
             </div>
           )}

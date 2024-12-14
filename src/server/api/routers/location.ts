@@ -87,8 +87,10 @@ export const locationRouter = createTRPCRouter({
   getGeoByZip: publicProcedure
     .input(
       z.object({
-        zip: z.string().length(5),
-        countryCode: z.string(),
+        zip: z
+          .string()
+          .length(5, { message: 'Zip code must be exactly 5 characters long' }),
+        countryCode: z.string({ message: 'Country code is required' }),
         limit: z.number().optional(),
       }),
     )
@@ -119,7 +121,7 @@ export const locationRouter = createTRPCRouter({
   getGeoByName: publicProcedure
     .input(
       z.object({
-        name: z.string(),
+        name: z.string({ message: 'Location name is required' }),
         stateCode: z.string().optional(),
         countryCode: z.string().optional(),
         limit: z.number().optional(),
@@ -161,8 +163,8 @@ export const locationRouter = createTRPCRouter({
   getReverseGeo: publicProcedure
     .input(
       z.object({
-        lat: z.number(),
-        lon: z.number(),
+        lat: z.number({ message: 'Latitude is required' }),
+        lon: z.number({ message: 'Longitude is required' }),
         limit: z.number().optional(),
       }),
     )
@@ -194,8 +196,8 @@ export const locationRouter = createTRPCRouter({
   getZoneByGeo: publicProcedure
     .input(
       z.object({
-        lat: z.string(),
-        lon: z.string(),
+        lat: z.string({ message: 'Latitude is required' }),
+        lon: z.string({ message: 'Longitude is required' }),
       }),
     )
     .mutation(async ({ input }) => {
