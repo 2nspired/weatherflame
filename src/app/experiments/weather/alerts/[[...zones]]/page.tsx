@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 
 // import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
-import Alert from '~/app/main/weather/alerts/_components/AlertsDisplay';
 import { api } from '~/trpc/server';
 
 // --------------------------------------------------------------
@@ -40,7 +39,6 @@ export default async function Alerts({
       <Suspense fallback={<div>Loading...</div>}>
         {/* <BreadcrumbRoute /> */}
         {/* <Alert /> */}
-        <Alert prefetchedData={prefetchedData} zones={zones} />
       </Suspense>
     </main>
   );
