@@ -7,7 +7,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-} from '~/app/main/_components/shadcn/breadcrumb';
+} from '~/components/ui/breadcrumb';
 
 export default function BreadcrumbRoute() {
   const pathname = usePathname();
