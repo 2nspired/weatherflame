@@ -62,11 +62,11 @@ export default function InputLocation({ className }: { className?: string }) {
 
       if (zipData && nameData[0]) {
         router.push(
-          `/main/weather/alerts/${zipData.country}/${abbreviateState(nameData[0].state)}/${zipData.name}/${location}`,
+          `/weather/alerts/${zipData.country}/${abbreviateState(nameData[0].state)}/${zipData.name}/${location}`,
         );
       } else if (nameData[0] && !zipData) {
         router.push(
-          `/main/weather/alerts/${nameData[0].country}/${abbreviateState(nameData[0].state)}/${nameData[0].name}`,
+          `/weather/alerts/${nameData[0].country}/${abbreviateState(nameData[0].state)}/${nameData[0].name}`,
         );
       }
     } catch (error) {

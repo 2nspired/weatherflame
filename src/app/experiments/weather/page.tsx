@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
+import BreadcrumbRoute from '~/app/(main)/_components/BreadcrumbRoute';
 
 // --------------------------------------------------------------
 
