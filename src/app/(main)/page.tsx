@@ -5,11 +5,11 @@ import InputLocation from '~/app/(main)/_components/InputLocation';
 
 export default async function Home() {
   return (
-    <main className="flex flex-col items-center justify-center bg-yellow-200 font-mono text-gray-600">
+    <main className="flex h-full w-full grow flex-col items-center justify-around border border-black bg-yellow-200 font-mono text-gray-600">
       {/* <Header /> */}
       {/* Content */}
-      <div className="flex h-screen w-full flex-col items-center">
-        <div className="flex grow flex-col items-center justify-center">
+      <div className="flex w-full flex-col items-center">
+        <div className="my-12 flex grow flex-col items-center justify-center">
           <h1 className="text-4xl md:text-6xl">weatherflame</h1>
           <div className="mt-3">
             <h5 className="text-center font-light italic md:text-lg">
@@ -23,7 +23,7 @@ export default async function Home() {
             <InputLocation className="flex flex-row space-x-3" />
           </div>
         </div>
-        <div className="item m-6 mb-20 max-w-sm rounded-md bg-black/10 p-6 md:max-w-xl">
+        <div className="item m-6 max-w-sm rounded-md bg-black/10 p-6 md:max-w-xl">
           <h5 className="text-lg md:text-xl">Disclaimer:</h5>
           <p className="mt-2 text-xs md:text-sm">
             This is a passion project built by a curious new developer diving headfirst
