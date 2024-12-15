@@ -1,6 +1,5 @@
 'use client';
 
-// TODO: Setup to handle geoByName
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -10,10 +9,8 @@ import { Button } from '~/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
@@ -26,11 +23,11 @@ const locationSchema = z.object({
     .nonempty('Please enter a location')
     .refine(
       (value) => /^[0-9]{5}$/.test(value) || /^[a-zA-Z\s]+$/.test(value),
-      'Enter a valid ZIP code or city name',
+      'Enter a valid zipcode or city',
     ),
 });
 
-export default function InputLocation() {
+export default function InputLocation({ className }: { className?: string }) {
   const fetchGeoByZip = api.location.getGeoByZip.useMutation();
   const fetchGeoByName = api.location.getGeoByName.useMutation();
 
@@ -79,22 +76,26 @@ export default function InputLocation() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className={className}>
         <FormField
           control={form.control}
           name="location"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Zipcode</FormLabel>
+            <FormItem className="w-40">
               <FormControl>
-                <Input className="text-black" {...field} />
+                <Input
+                  placeholder="zipcode or city"
+                  className="w-40 text-sm text-black"
+                  {...field}
+                />
               </FormControl>
-              <FormDescription className="text-white">Enter a zipcode</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <div className="flex justify-center">
+          <Button type="submit">Submit</Button>
+        </div>
       </form>
     </Form>
   );
