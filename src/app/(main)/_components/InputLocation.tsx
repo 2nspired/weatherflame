@@ -1,5 +1,6 @@
 'use client';
 
+// TODO: HANDLE URL ENCODE AND DECODE BASED ON NAMES WITH SPACES IN THEM
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -36,6 +37,7 @@ export default function InputLocation({ className }: { className?: string }) {
     defaultValues: {
       location: '',
     },
+    mode: 'onChange', // Enable validation on change
   });
   const router = useRouter();
 
@@ -62,15 +64,16 @@ export default function InputLocation({ className }: { className?: string }) {
 
       if (zipData && nameData[0]) {
         router.push(
-          `/weather/alerts/${zipData.country}/${abbreviateState(nameData[0].state)}/${zipData.name}/${location}`,
+          `/weather/alerts/${encodeURIComponent(zipData.country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(zipData.name)}/${encodeURIComponent(location)}`,
         );
       } else if (nameData[0] && !zipData) {
         router.push(
-          `/weather/alerts/${nameData[0].country}/${abbreviateState(nameData[0].state)}/${nameData[0].name}`,
+          `/weather/alerts/${encodeURIComponent(nameData[0].country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(nameData[0].name)}`,
         );
       }
     } catch (error) {
       console.error('Error fetching geo data:', error);
+      alert('Failed to fetch geo coordinates. Please check your input and try again.');
     }
   };
 
@@ -84,17 +87,27 @@ export default function InputLocation({ className }: { className?: string }) {
             <FormItem className="w-40">
               <FormControl>
                 <Input
+                  disabled={fetchGeoByZip.isPending || fetchGeoByName.isPending}
                   placeholder="zipcode or city"
                   className="w-40 text-sm text-black"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <div className="min-h-[2.50rem]">
+                {form.formState.errors.location && (
+                  <FormMessage>{form.formState.errors.location.message}</FormMessage>
+                )}
+              </div>
             </FormItem>
           )}
         />
         <div className="flex justify-center">
-          <Button type="submit">Submit</Button>
+          <Button
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
+            type="submit"
+          >
+            Submit
+          </Button>
         </div>
       </form>
     </Form>

@@ -5,7 +5,7 @@ import InputLocation from '~/app/(main)/_components/InputLocation';
 
 export default async function Home() {
   return (
-    <main className="flex h-full w-full grow flex-col items-center justify-around bg-yellow-200 font-mono text-gray-600">
+    <main className="flex size-full grow flex-col items-center justify-around bg-yellow-200 font-mono text-gray-600">
       {/* <Header /> */}
       {/* Content */}
       <div className="flex w-full flex-col items-center">
