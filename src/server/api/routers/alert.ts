@@ -1,6 +1,10 @@
 import createClient from 'openapi-fetch';
 import { z } from 'zod';
 
+import {
+  landAreaSchema,
+  marineAreaSchema,
+} from '~/app/types/weather-gov/landMarineAreas';
 import type { components, paths } from '~/app/types/weather-gov/weatherGov';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
@@ -12,86 +16,6 @@ export type Alert = components['schemas']['Alert'];
 
 export type AlertFeatureResponse =
   components['responses']['AlertCollection']['content']['application/geo+json']['features'];
-
-const landAreaSchema = z.enum([
-  'AL',
-  'AK',
-  'AS',
-  'AR',
-  'AZ',
-  'CA',
-  'CO',
-  'CT',
-  'DE',
-  'DC',
-  'FL',
-  'GA',
-  'GU',
-  'HI',
-  'ID',
-  'IL',
-  'IN',
-  'IA',
-  'KS',
-  'KY',
-  'LA',
-  'ME',
-  'MD',
-  'MA',
-  'MI',
-  'MN',
-  'MS',
-  'MO',
-  'MT',
-  'NE',
-  'NV',
-  'NH',
-  'NJ',
-  'NM',
-  'NY',
-  'NC',
-  'ND',
-  'OH',
-  'OK',
-  'OR',
-  'PA',
-  'PR',
-  'RI',
-  'SC',
-  'SD',
-  'TN',
-  'TX',
-  'UT',
-  'VT',
-  'VI',
-  'VA',
-  'WA',
-  'WV',
-  'WI',
-  'WY',
-  'MP',
-  'PW',
-  'FM',
-  'MH',
-]);
-
-const marineAreaSchema = z.enum([
-  'AM',
-  'AN',
-  'GM',
-  'LC',
-  'LE',
-  'LH',
-  'LM',
-  'LO',
-  'LS',
-  'PH',
-  'PK',
-  'PM',
-  'PS',
-  'PZ',
-  'SL',
-]);
 
 // TODO: SETUP ZOD OBJECT, REFERENCE TO CITIES DATABASE
 

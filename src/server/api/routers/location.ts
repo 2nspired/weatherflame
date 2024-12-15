@@ -75,7 +75,33 @@ export interface FeatureProperties {
   radarStation: string | null; // Example: "DLH" or null
 }
 
+// ZOD SCHEMAS
 // --------------------------------------------------------------
+
+export const getGeoByZipSchema = z.object({
+  zip: z
+    .string()
+    .length(5)
+    .regex(/^\d{5}$/, 'Invalid zipcode format'),
+});
+
+export const getGeoByNameSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'City name cannot be empty')
+    .regex(/^[a-zA-Z\s]+$/, 'City name must contain only letters and spaces'),
+  state: z
+    .string()
+    .min(2, 'State code cannot be empty')
+    .regex(/^[A-Z]{2}$/, 'State code must be a valid ISO 3166-1 alpha-2 code')
+    .optional(),
+  countryCode: z
+    .string()
+    .min(2, 'Country code cannot be empty')
+    .regex(/^[A-Z]{2}$/, 'Country code must be a valid ISO 3166-1 alpha-2 code')
+    .optional(),
+  limit: z.number().optional(),
+});
 
 // ROUTER
 
@@ -84,77 +110,58 @@ export const locationRouter = createTRPCRouter({
   // GET LOCATION BY ZIPCODE
   // https://openweathermap.org/api/geocoding-api
   // ----------------------------------------------------------
-  getGeoByZip: publicProcedure
-    .input(
-      z.object({
-        zip: z
-          .string()
-          .length(5, { message: 'Zip code must be exactly 5 characters long' }),
-        countryCode: z.string({ message: 'Country code is required' }),
-        limit: z.number().optional(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const url = `http://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},${input.countryCode}&appid=${process.env.OPENWEATHER_API}`;
+  getGeoByZip: publicProcedure.input(getGeoByZipSchema).mutation(async ({ input }) => {
+    const url = `http://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},US&appid=${process.env.OPENWEATHER_API}`;
 
-      try {
-        const res = await fetch(url);
-        const resJson: GeoByZip = (await res.json()) as GeoByZip;
+    try {
+      const res = await fetch(url);
+      const resJson: GeoByZip = (await res.json()) as GeoByZip;
 
-        if (res.ok && resJson) {
-          console.log('LOCATION BY ZIP RESPONSE', resJson);
-          return resJson;
-        } else {
-          console.error('LOCATION BY ZIP RESPONSE ERROR', resJson);
-          throw new Error('Failed to fetch geo coordinates');
-        }
-      } catch (error) {
-        console.error('LOCATION BY ZIP ERROR', error);
+      if (res.ok && resJson) {
+        console.log('LOCATION BY ZIP RESPONSE', resJson);
+        return resJson;
+      } else {
+        console.error('LOCATION BY ZIP RESPONSE ERROR', resJson);
         throw new Error('Failed to fetch geo coordinates');
       }
-    }),
+    } catch (error) {
+      console.error('LOCATION BY ZIP ERROR', error);
+      throw new Error('Failed to fetch geo coordinates');
+    }
+  }),
 
   // ----------------------------------------------------------
   // GET LOCATION BY LOCATION NAME
   // ----------------------------------------------------------
 
-  getGeoByName: publicProcedure
-    .input(
-      z.object({
-        name: z.string({ message: 'Location name is required' }),
-        stateCode: z.string().optional(),
-        countryCode: z.string().optional(),
-        limit: z.number().optional(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      let url = `http://api.openweathermap.org/geo/1.0/direct?q=${input.name.replace(' ', '+')}`;
-      if (input.stateCode) {
-        url += `,${input.stateCode}`;
-      }
-      if (input.countryCode) {
-        url += `,${input.countryCode}`;
-      }
-      url += `&appid=${process.env.OPENWEATHER_API}`;
+  getGeoByName: publicProcedure.input(getGeoByNameSchema).mutation(async ({ input }) => {
+    let url = `http://api.openweathermap.org/geo/1.0/direct?q=${input.name.replace(' ', '+')}`;
+    if (input.state) {
+      url += `,${input.state}`;
+    }
+    if (input.countryCode) {
+      url += `,${input.countryCode}`;
+    }
+    url += `&appid=${process.env.OPENWEATHER_API}`;
 
-      console.log('LOCATION BY NAME URL', url);
+    console.log('LOCATION BY NAME URL', url);
 
-      try {
-        const res = await fetch(url);
-        const resJson: GeoByName = (await res.json()) as GeoByName;
-        console.log('LOCATION BY NAME RESPONSE', resJson);
+    try {
+      const res = await fetch(url);
+      const resJson: GeoByName = (await res.json()) as GeoByName;
+      console.log('LOCATION BY NAME RESPONSE', resJson);
 
-        if (resJson) {
-          return resJson;
-        } else {
-          console.error('LOCATION BY NAME RESPONSE ERROR', resJson);
-          throw new Error('Failed to fetch geo coordinates');
-        }
-      } catch (error) {
-        console.error('LOCATION BY NAME ERROR', error);
+      if (resJson) {
+        return resJson;
+      } else {
+        console.error('LOCATION BY NAME RESPONSE ERROR', resJson);
         throw new Error('Failed to fetch geo coordinates');
       }
-    }),
+    } catch (error) {
+      console.error('LOCATION BY NAME ERROR', error);
+      throw new Error('Failed to fetch geo coordinates');
+    }
+  }),
 
   // ----------------------------------------------------------
   // GET LOCATION BY GEO COORDINATES - REVERSE LOOKUP

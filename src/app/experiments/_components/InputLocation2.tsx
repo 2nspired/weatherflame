@@ -6,8 +6,8 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button } from '~/app/main/_components/shadcn/button';
-import { Input } from '~/app/main/_components/shadcn/input';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
 import { api } from '~/trpc/client';
 import { abbreviateState } from '~/utilities/abbreviateState';
 
@@ -24,7 +24,6 @@ export default function InputLocation2() {
     try {
       const geoData = await fetchGeoByZip.mutateAsync({
         zip: zipcode,
-        countryCode: 'US',
       });
 
       const nameData = await fetchGeoByName.mutateAsync({

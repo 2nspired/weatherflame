@@ -1,73 +1,101 @@
 'use client';
 
-// TODO: Add zod error handling and return messages
 // TODO: Setup to handle geoByName
-// TODO: Add error handling for invalid zipcodes'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
 
-import { Button } from '~/app/main/_components/shadcn/button';
-import { Input } from '~/app/main/_components/shadcn/input';
+import { Button } from '~/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 import { api } from '~/trpc/client';
 import { abbreviateState } from '~/utilities/abbreviateState';
 
-export default function InputLocation() {
-  const [zipcode, setZipcode] = useState<string>('96815');
-  const router = useRouter();
+const locationSchema = z.object({
+  location: z
+    .string()
+    .nonempty('Please enter a location')
+    .refine(
+      (value) => /^[0-9]{5}$/.test(value) || /^[a-zA-Z\s]+$/.test(value),
+      'Enter a valid ZIP code or city name',
+    ),
+});
 
+export default function InputLocation() {
   const fetchGeoByZip = api.location.getGeoByZip.useMutation();
   const fetchGeoByName = api.location.getGeoByName.useMutation();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent the default form submission behavior
+  const form = useForm<z.infer<typeof locationSchema>>({
+    resolver: zodResolver(locationSchema),
+    defaultValues: {
+      location: '',
+    },
+  });
+  const router = useRouter();
 
+  const onSubmit: SubmitHandler<z.infer<typeof locationSchema>> = async (data) => {
+    const location = data.location.trim();
     try {
-      // Fetch geo data by zip
-      const zipData = await fetchGeoByZip.mutateAsync({
-        zip: zipcode,
-        countryCode: 'US',
-      });
+      let zipData = null;
+      let nameData = null;
 
-      if (!zipData) {
-        throw new Error('No data returned for the provided zipcode');
+      if (/^\d{5}$/.test(location)) {
+        // Check if zip
+        zipData = await fetchGeoByZip.mutateAsync({ zip: location });
+        nameData = await fetchGeoByName.mutateAsync({
+          name: zipData.name,
+          countryCode: zipData.country ?? 'US',
+        });
+      } else {
+        // Check if name
+        nameData = await fetchGeoByName.mutateAsync({
+          name: location,
+          countryCode: 'US',
+        });
       }
 
-      // Fetch geo data by name
-      const nameData = await fetchGeoByName.mutateAsync({
-        name: zipData.name,
-        countryCode: zipData.country,
-      });
-
-      const state = nameData?.[0]?.state ? abbreviateState(nameData[0].state) : '';
-
-      // Log and navigate
-      console.log(
-        'url:',
-        `/main/weather/alerts/${zipData.country}/${state}/${zipData.name}/${zipcode}`,
-      );
-
-      if (zipData && state) {
+      if (zipData && nameData[0]) {
         router.push(
-          `/main/weather/alerts/${zipData.country}/${state}/${zipData.name}/${zipcode}`,
+          `/main/weather/alerts/${zipData.country}/${abbreviateState(nameData[0].state)}/${zipData.name}/${location}`,
+        );
+      } else if (nameData[0] && !zipData) {
+        router.push(
+          `/main/weather/alerts/${nameData[0].country}/${abbreviateState(nameData[0].state)}/${nameData[0].name}`,
         );
       }
     } catch (error) {
-      console.error('Error fetching geo coordinates:', error);
+      console.error('Error fetching geo data:', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center space-y-3">
-      <Input
-        placeholder="Zipcode"
-        type="number"
-        className="w-32 text-sm text-black"
-        value={zipcode}
-        onChange={(e) => setZipcode(e.target.value)}
-      />
-      <Button className="w-20" type="submit">
-        Submit
-      </Button>
-    </form>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Zipcode</FormLabel>
+              <FormControl>
+                <Input className="text-black" {...field} />
+              </FormControl>
+              <FormDescription className="text-white">Enter a zipcode</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
   );
 }

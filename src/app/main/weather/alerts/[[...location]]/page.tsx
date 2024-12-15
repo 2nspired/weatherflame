@@ -1,13 +1,14 @@
 import { api } from 'src/trpc/server';
 
-import WeatherDisplay from '~/app/main/weather/alerts/_components/WeatherDisplay';
+import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
+import WeatherDisplay from '~/app/main/_components/WeatherDisplay';
 
-import AlertsDisplay from '../_components/AlertsDisplay';
+import AlertsDisplay from '../../../_components/AlertsDisplay';
 
 export default async function AlertsPage({
   params,
 }: {
-  params: Promise<{ location: string }>;
+  params: Promise<{ location: string[] }>;
 }) {
   const routeParams = await params;
 
@@ -22,27 +23,27 @@ export default async function AlertsPage({
 
   if (!locationParam || locationParam.length === 0) {
     console.error('Location parameter is missing or invalid');
+    return <div>Invalid request. Please check the URL.</div>;
   }
 
   const getGeoData = async () => {
-    if (!locationParam && locationParam?.length === 0) {
+    if (!locationParam || locationParam.length === 0) {
       return null;
     }
     if (
       typeof locationParam === 'string' &&
-      locationParam?.length === 5 &&
+      locationParam.length === 5 &&
       !isNaN(Number(locationParam))
     ) {
       return await api.location.getGeoByZip({
         zip: locationParam,
-        countryCode: 'US',
       });
     }
 
     // FIXME: NEED VALIDATION FOR LOCATION NAME PARAM - OR TO IGNORE IF ROUTEPARAMS.LENGTH < 4
     if (
       typeof locationParam === 'string' &&
-      locationParam?.length !== 0 &&
+      locationParam.length !== 0 &&
       isNaN(Number(locationParam))
     ) {
       const nameData = await api.location.getGeoByName({
@@ -71,6 +72,7 @@ export default async function AlertsPage({
 
   return (
     <div className="p-6">
+      <BreadcrumbRoute />
       <div>
         <div>
           {geoData && (
