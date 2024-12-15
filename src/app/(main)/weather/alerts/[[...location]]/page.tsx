@@ -1,7 +1,7 @@
 import { api } from 'src/trpc/server';
 
+import WeatherDisplay from '~/app/(main)/_components/WeatherDisplay';
 import BreadcrumbRoute from '~/app/experiments/_components/BreadcrumbRoute';
-import WeatherDisplay from '~/app/main/_components/WeatherDisplay';
 
 import AlertsDisplay from '../../../_components/AlertsDisplay';
 

@@ -1,11 +1,11 @@
 // import Footer from "./_components/Footer";
 // import Header from "./_components/Header";
 
-import InputLocation from '~/app/main/_components/InputLocation';
+import InputLocation from '~/app/(main)/_components/InputLocation';
 
 export default async function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 font-mono text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-yellow-200 font-mono text-gray-600">
       {/* <Header /> */}
       {/* Content */}
       <div className="flex h-screen w-full flex-col items-center">
