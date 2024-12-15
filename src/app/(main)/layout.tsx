@@ -22,7 +22,7 @@ export default async function MainLayout({ children }: LayoutProps) {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col font-mono">
+      <div className="flex min-h-full flex-col font-mono">
         <main className="flex grow flex-col">{children}</main>
       </div>
     </>
