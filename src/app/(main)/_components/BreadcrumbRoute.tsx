@@ -23,7 +23,10 @@ export default function BreadcrumbRoute() {
       <BreadcrumbList className="text-black">
         {pathArrayFiltered.map((path, index) => (
           <BreadcrumbItem key={index}>
-            <BreadcrumbLink href={createPath(index)}>{path}</BreadcrumbLink>/
+            <BreadcrumbLink href={createPath(index)}>
+              {decodeURIComponent(path)}
+            </BreadcrumbLink>
+            /
           </BreadcrumbItem>
         ))}
       </BreadcrumbList>
