@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
+// --------------------------------------------------------------
 // TYPES
 // --------------------------------------------------------------
 
@@ -75,6 +76,7 @@ export interface FeatureProperties {
   radarStation: string | null; // Example: "DLH" or null
 }
 
+// --------------------------------------------------------------
 // ZOD SCHEMAS
 // --------------------------------------------------------------
 
@@ -83,6 +85,7 @@ export const getGeoByZipSchema = z.object({
     .string()
     .length(5)
     .regex(/^\d{5}$/, 'Invalid zipcode format'),
+  maxRetries: z.number().optional().default(1),
 });
 
 export const getGeoByNameSchema = z.object({
@@ -101,6 +104,7 @@ export const getGeoByNameSchema = z.object({
     .regex(/^[A-Z]{2}$/, 'Country code must be a valid ISO 3166-1 alpha-2 code')
     .optional(),
   limit: z.number().optional(),
+  maxRetries: z.number().optional().default(1),
 });
 
 // ROUTER
@@ -110,32 +114,41 @@ export const locationRouter = createTRPCRouter({
   // GET LOCATION BY ZIPCODE
   // https://openweathermap.org/api/geocoding-api
   // ----------------------------------------------------------
+
   getGeoByZip: publicProcedure.input(getGeoByZipSchema).mutation(async ({ input }) => {
-    const url = `http://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},US&appid=${process.env.OPENWEATHER_API}`;
+    const url = `https://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},US&appid=${process.env.OPENWEATHER_API}`;
 
-    try {
-      const res = await fetch(url);
-      const resJson: GeoByZip = (await res.json()) as GeoByZip;
+    let attempts = 0;
 
-      if (res.ok && resJson) {
-        console.log('LOCATION BY ZIP RESPONSE', resJson);
-        return resJson;
-      } else {
-        console.error('LOCATION BY ZIP RESPONSE ERROR', resJson);
-        throw new Error('Failed to fetch geo coordinates');
+    while (attempts < input.maxRetries) {
+      try {
+        const res = await fetch(url);
+        const resJson: GeoByZip = (await res.json()) as GeoByZip;
+
+        if (res.ok && resJson) {
+          console.log('LOCATION BY ZIP RESPONSE', resJson);
+          return resJson;
+        }
+        console.error(`Failed to fetch geo coordinates by zipcode ${res.status}, ${url}`);
+      } catch (error) {
+        console.error('Error fetching geo by zip:', error);
       }
-    } catch (error) {
-      console.error('LOCATION BY ZIP ERROR', error);
-      throw new Error('Failed to fetch geo coordinates');
+      attempts++;
+      if (attempts >= input.maxRetries) {
+        console.error('MAX RETRIES REACHED: getGeoByZip');
+        return null;
+      }
+      console.warn(`Retrying (${attempts}/${input.maxRetries})`);
     }
   }),
 
   // ----------------------------------------------------------
   // GET LOCATION BY LOCATION NAME
+  // https://openweathermap.org/api/geocoding-api
   // ----------------------------------------------------------
 
   getGeoByName: publicProcedure.input(getGeoByNameSchema).mutation(async ({ input }) => {
-    let url = `http://api.openweathermap.org/geo/1.0/direct?q=${input.name.replace(' ', '+')}`;
+    let url = `https://api.openweathermap.org/geo/1.0/direct?q=${input.name.replace(' ', '+')}`;
     if (input.state) {
       url += `,${input.state}`;
     }
@@ -144,27 +157,33 @@ export const locationRouter = createTRPCRouter({
     }
     url += `&appid=${process.env.OPENWEATHER_API}`;
 
-    console.log('LOCATION BY NAME URL', url);
+    let attempts = 0;
 
-    try {
-      const res = await fetch(url);
-      const resJson: GeoByName = (await res.json()) as GeoByName;
-      console.log('LOCATION BY NAME RESPONSE', resJson);
+    while (attempts < input.maxRetries) {
+      try {
+        const res = await fetch(url);
+        const resJson: GeoByName = (await res.json()) as GeoByName;
 
-      if (resJson) {
-        return resJson;
-      } else {
-        console.error('LOCATION BY NAME RESPONSE ERROR', resJson);
-        throw new Error('Failed to fetch geo coordinates');
+        if (res.ok && resJson) {
+          console.log('LOCATION BY NAME RESPONSE', resJson);
+          return resJson;
+        }
+        console.error(`Failed to fetch geo coordinates by name ${res.status}, ${url}`);
+      } catch (error) {
+        console.error('Error fetching geo by name:', error);
       }
-    } catch (error) {
-      console.error('LOCATION BY NAME ERROR', error);
-      throw new Error('Failed to fetch geo coordinates');
+      attempts++;
+      if (attempts >= input.maxRetries) {
+        console.error('MAX RETRIES REACHED: getGeoByName');
+        return null;
+      }
+      console.warn(`Retrying (${attempts}/${input.maxRetries})`);
     }
   }),
 
   // ----------------------------------------------------------
   // GET LOCATION BY GEO COORDINATES - REVERSE LOOKUP
+  // https://openweathermap.org/api/geocoding-api
   // ----------------------------------------------------------
 
   getReverseGeo: publicProcedure
@@ -173,23 +192,34 @@ export const locationRouter = createTRPCRouter({
         lat: z.number({ message: 'Latitude is required' }),
         lon: z.number({ message: 'Longitude is required' }),
         limit: z.number().optional(),
+        maxRetries: z.number().optional().default(1),
       }),
     )
     .mutation(async ({ input }) => {
-      const url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${input.lat}&lon=${input.lon}&limit=${input.limit}&appid=${process.env.OPENWEATHER_API}`;
+      const url = `https://api.openweathermap.org/geo/1.0/reverse?lat=${input.lat}&lon=${input.lon}&limit=${input.limit}&appid=${process.env.OPENWEATHER_API}`;
 
-      try {
-        const res = await fetch(url);
-        const resJson: GeoByZip = (await res.json()) as GeoByZip;
-        if (res.ok && resJson) {
-          return resJson;
-        } else {
-          console.error('REVERSE GEO RESPONSE ERROR', resJson);
-          throw new Error('Failed to fetch geo coordinates');
+      let attempts = 0;
+      while (attempts < input.maxRetries) {
+        try {
+          const res = await fetch(url);
+          const resJson: GeoByZip = (await res.json()) as GeoByZip;
+
+          if (res.ok && resJson) {
+            console.log('LOCATION BY REVERSE GEO RESPONSE', resJson);
+            return resJson;
+          }
+          console.error(
+            `Failed to fetch location by geo coordinates ${res.status}, ${url}`,
+          );
+        } catch (error) {
+          console.error('Error fetching reverse geo:', error);
         }
-      } catch (error) {
-        console.error('REVERSE GEO ERROR', error);
-        throw new Error('Failed to fetch geo coordinates');
+        attempts++;
+        if (attempts >= input.maxRetries) {
+          console.error('MAX RETRIES REACHED: getReverseGeo');
+          return null;
+        }
+        console.warn(`Retrying (${attempts}/${input.maxRetries})`);
       }
     }),
 
@@ -205,27 +235,33 @@ export const locationRouter = createTRPCRouter({
       z.object({
         lat: z.string({ message: 'Latitude is required' }),
         lon: z.string({ message: 'Longitude is required' }),
+        maxRetries: z.number().optional().default(1),
       }),
     )
     .mutation(async ({ input }) => {
-      console.log('ZONE BY GEO INPUTS', input);
-
-      const url = `http://api.weather.gov/zones?point=${input.lat},${input.lon}`;
+      const url = `https://api.weather.gov/zones?point=${input.lat},${input.lon}`;
       console.log('URL', url);
-      try {
-        const res = await fetch(url);
-        const resJson: ZoneByGeoResponse = (await res.json()) as ZoneByGeoResponse; // Explicitly type the response
-        console.log('ZONE BY GEO RESPONSE', resJson);
 
-        if (res.ok && resJson) {
-          return resJson;
-        } else {
+      let attempts = 0;
+      while (attempts < input.maxRetries) {
+        try {
+          const res = await fetch(url);
+          const resJson: ZoneByGeoResponse = (await res.json()) as ZoneByGeoResponse;
+
+          if (res.ok && resJson) {
+            console.log('ZONE BY GEO RESPONSE', resJson);
+            return resJson;
+          }
           console.error('ZONE BY GEO RESPONSE ERROR', resJson);
-          throw new Error('Failed to fetch zone IDs');
+        } catch (error) {
+          console.error('Error fetching zone by geo:', error);
         }
-      } catch (error) {
-        console.error('ZONE BY GEO ERROR', error);
-        throw new Error('Failed to fetch zone IDs');
+        attempts++;
+        if (attempts >= input.maxRetries) {
+          console.error('MAX RETRIES REACHED: getZoneByGeo');
+          return null;
+        }
+        console.warn(`Retrying (${attempts}/${input.maxRetries})`);
       }
     }),
 });

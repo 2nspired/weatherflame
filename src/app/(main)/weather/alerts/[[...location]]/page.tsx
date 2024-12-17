@@ -16,8 +16,7 @@ export default async function AlertsPage({
     console.error('Location parameter is missing or invalid');
     return <div>Invalid request. Please check the URL.</div>;
   }
-  // FIXME: Fix this, if the last level of an array is not available.
-  const locationParam = routeParams.location.slice(-1)[0];
+  const locationParam = decodeURIComponent(routeParams.location.slice(-1)[0] ?? '');
   console.log('PARAMS', routeParams);
   console.log('LOCATION PARAM', locationParam);
 
@@ -41,6 +40,7 @@ export default async function AlertsPage({
     }
 
     // FIXME: NEED VALIDATION FOR LOCATION NAME PARAM - OR TO IGNORE IF ROUTEPARAMS.LENGTH < 4
+    // TODO: Test, test, test. I can't remember what I was doing here.
     if (
       typeof locationParam === 'string' &&
       locationParam.length !== 0 &&

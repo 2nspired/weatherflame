@@ -35,7 +35,6 @@ export const alertRouter = createTRPCRouter({
   // GET ACTIVE WEATHER ALERTS - MAIN
   // ----------------------------------------------------------
 
-  // TODO:
   getAlerts: publicProcedure
     .input(
       z.object({
@@ -82,28 +81,36 @@ export const alertRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input }) => {
-      // console.log('ALERT PARAMS INPUTS', input);
-
-      try {
-        const { response, data, error } = await fetchClient.GET('/alerts/active', {
-          params: {
-            query: {
-              ...input,
+      const maxRetries = 3;
+      let attempts = 0;
+      while (attempts < maxRetries) {
+        try {
+          const { response, data, error } = await fetchClient.GET('/alerts/active', {
+            params: {
+              query: {
+                ...input,
+              },
             },
-          },
-        });
+          });
 
-        if (response.status === 200 && data && data.features.length > 0) {
-          return data.features;
-        } else if (response.status !== 200 || !data || data.features.length === 0) {
-          console.log('No alerts found', error);
-          return [];
+          if (response.status === 200 && data && data.features.length > 0) {
+            console.log('ALERTS RESPONSE', data.features);
+            return data.features;
+          }
+
+          if (error) {
+            console.error('Error fetching alerts:', error);
+          }
+          console.error(`Failed to fetch alerts, ${response.status}`);
+        } catch (error) {
+          console.error('Error fetching alerts:', error);
         }
-
-        return [];
-      } catch (error) {
-        console.error(error);
-        return [];
+        attempts++;
+        if (attempts >= maxRetries) {
+          console.error('MAX RETRIES REACHED: getAlerts');
+          return null;
+        }
+        console.warn(`Retrying (${attempts}/${maxRetries})`);
       }
     }),
 
@@ -116,37 +123,46 @@ export const alertRouter = createTRPCRouter({
       z.object({
         zone: z.string(),
         limit: z.number().optional(),
+        maxRetries: z.number().optional().default(1),
       }),
     )
     .query(async ({ input }) => {
-      // console.log('ALERT PARAMS INPUTS', input);
+      let attempts = 0;
 
-      try {
-        const { response, data, error } = await fetchClient.GET(
-          '/alerts/active/zone/{zoneId}',
-          {
-            params: {
-              query: undefined,
-              header: undefined,
-              path: {
-                zoneId: input.zone,
+      while (attempts < input.maxRetries) {
+        try {
+          const { response, data, error } = await fetchClient.GET(
+            '/alerts/active/zone/{zoneId}',
+            {
+              params: {
+                query: undefined,
+                header: undefined,
+                path: {
+                  zoneId: input.zone,
+                },
+                cookie: undefined,
               },
-              cookie: undefined,
             },
-          },
-        );
+          );
 
-        if (response.status === 200 && data && data.features.length > 0) {
-          return data.features;
-        } else if (response.status !== 200 || !data || data.features.length === 0) {
-          console.log('No alerts found', error);
+          if (response.status === 200 && data && data.features.length > 0) {
+            console.log('ALERTS BY ZONE RESPONSE', data.features);
+            return data.features;
+          }
+
+          if (error) {
+            console.error('Error fetching alerts:', error);
+          }
+          console.error(`Failed to fetch alerts by zone, ${response.status}`);
+        } catch (error) {
+          console.error('Error fetching alerts by zone:', error);
+        }
+        attempts++;
+        if (attempts >= input.maxRetries) {
+          console.error('MAX RETRIES REACHED: getAlertsByZone');
           return null;
         }
-
-        return null;
-      } catch (error) {
-        console.error(error);
-        return null;
+        console.warn(`Retrying (${attempts}/${input.maxRetries})`);
       }
     }),
 });

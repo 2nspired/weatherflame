@@ -1,6 +1,5 @@
 'use client';
 
-// TODO: HANDLE URL ENCODE AND DECODE BASED ON NAMES WITH SPACES IN THEM
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -16,7 +15,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { api } from '~/trpc/client';
-import { abbreviateState } from '~/utilities/abbreviateState';
+import { abbreviateState } from '~/utilities/formatters/abbreviateState';
 
 const locationSchema = z.object({
   location: z
@@ -50,10 +49,13 @@ export default function InputLocation({ className }: { className?: string }) {
       if (/^\d{5}$/.test(location)) {
         // Check if zip
         zipData = await fetchGeoByZip.mutateAsync({ zip: location });
-        nameData = await fetchGeoByName.mutateAsync({
-          name: zipData.name,
-          countryCode: zipData.country ?? 'US',
-        });
+
+        if (zipData?.name) {
+          nameData = await fetchGeoByName.mutateAsync({
+            name: zipData.name,
+            countryCode: zipData.country ?? 'US',
+          });
+        }
       } else {
         // Check if name
         nameData = await fetchGeoByName.mutateAsync({
@@ -62,11 +64,11 @@ export default function InputLocation({ className }: { className?: string }) {
         });
       }
 
-      if (zipData && nameData[0]) {
+      if (zipData && nameData?.[0]) {
         router.push(
           `/weather/alerts/${encodeURIComponent(zipData.country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(zipData.name)}/${encodeURIComponent(location)}`,
         );
-      } else if (nameData[0] && !zipData) {
+      } else if (nameData?.[0] && !zipData) {
         router.push(
           `/weather/alerts/${encodeURIComponent(nameData[0].country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(nameData[0].name)}`,
         );
