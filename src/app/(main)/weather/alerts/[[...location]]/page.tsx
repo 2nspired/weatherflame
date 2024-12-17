@@ -16,7 +16,7 @@ export default async function AlertsPage({
     console.error('Location parameter is missing or invalid');
     return <div>Invalid request. Please check the URL.</div>;
   }
-  const locationParam = decodeURIComponent(routeParams.location.slice(-1)[0] || '');
+  const locationParam = decodeURIComponent(routeParams.location.slice(-1)[0] ?? '');
   console.log('PARAMS', routeParams);
   console.log('LOCATION PARAM', locationParam);
 
