@@ -46,13 +46,12 @@ export default function InputLocation({ className }: { className?: string }) {
 
   const onSubmit: SubmitHandler<z.infer<typeof locationSchema>> = async (data) => {
     const location = data.name.trim();
-    setNoNameData(false); // Reset state on new submit
+    setNoNameData(false);
     try {
       let zipData = null;
       let nameData = null;
 
       if (/^\d{5}$/.test(location)) {
-        // Check if zip
         zipData = await fetchGeoByZip.mutateAsync({ zip: location });
 
         if (zipData?.name) {
@@ -62,7 +61,6 @@ export default function InputLocation({ className }: { className?: string }) {
           });
         }
       } else {
-        // Check if name
         nameData = await fetchGeoByName.mutateAsync({
           name: location,
           countryCode: 'US',
@@ -84,7 +82,7 @@ export default function InputLocation({ className }: { className?: string }) {
       }
 
       if (!nameData?.[0]) {
-        setNoNameData(true); // Set state if no name data found
+        setNoNameData(true);
       }
     } catch (error) {
       console.error('Error fetching geo data:', error);

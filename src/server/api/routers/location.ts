@@ -65,13 +65,13 @@ export interface ZoneByGeoResponse {
 export interface Feature {
   id: string; // Example: "https://api.weather.gov/zones/county/MNC137"
   type: 'Feature'; // Always "Feature"
-  geometry: null; // Assuming geometry is null in this response
+  geometry: null;
   properties: FeatureProperties;
 }
 
 export interface FeatureProperties {
   '@id': string; // Example: "https://api.weather.gov/zones/county/MNC137"
-  '@type': 'wx:Zone'; // Always "wx:Zone"
+  '@type': 'wx:Zone';
   id: string; // Example: "MNC137"
   type: 'county' | 'fire' | 'public'; // Enum for different zone types
   name: string; // Example: "St. Louis" or "Carlton/South St. Louis"
@@ -95,7 +95,7 @@ export interface FeatureProperties {
 export const getGeoByZipSchema = z.object({
   zip: z
     .string()
-    .length(5)
+    .length(5, 'server: zipcode must be 5 digits')
     .regex(/^\d{5}$/, 'Invalid zipcode format'),
   maxRetries: z.number().optional().default(1),
 });
@@ -103,7 +103,7 @@ export const getGeoByZipSchema = z.object({
 export const getGeoByNameSchema = z.object({
   name: z
     .string()
-    .min(1, 'City name cannot be empty')
+    .min(2, 'City name cannot be empty')
     .regex(/^[a-zA-Z\s]+$/, 'City name must contain only letters and spaces'),
   state: z
     .string()
@@ -175,7 +175,6 @@ export const locationRouter = createTRPCRouter({
       try {
         const res = await fetch(url);
         const resJson: GeoByName = (await res.json()) as GeoByName;
-
         if (res.ok && resJson && resJson.length > 0) {
           console.log('LOCATION BY NAME RESPONSE', resJson);
           return resJson;

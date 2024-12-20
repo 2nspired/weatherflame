@@ -4,6 +4,7 @@ import { locationRouter } from '~/server/api/routers/location';
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
 
 import { alertRouter } from './routers/alert';
+import { experimentsRouter } from './routers/experiment';
 import { weatherRouter } from './routers/weather';
 
 /**
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   location: locationRouter,
   alerts: alertRouter,
   weather: weatherRouter,
+  experiments: experimentsRouter,
 });
 
 // export type definition of API
