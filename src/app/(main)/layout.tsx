@@ -20,11 +20,5 @@ export default async function MainLayout({ children }: LayoutProps) {
   //     return <MaintenanceMode />;
   //   }
 
-  return (
-    <>
-      <div className="flex min-h-full min-w-full flex-col font-mono">
-        <main className="flex size-full grow flex-col">{children}</main>
-      </div>
-    </>
-  );
+  return <main className="flex size-full grow flex-col items-center">{children}</main>;
 }
