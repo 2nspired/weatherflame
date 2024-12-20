@@ -47,7 +47,7 @@ export default async function Home() {
               </Alert>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center bg-gray-500/50">
+          <div className="flex w-full flex-col items-center justify-center bg-gray-500/50">
             <div className="flex flex-col items-center justify-center">
               BOTTOM FULL WIDTH
               <div className="max-w-4xl">
@@ -71,7 +71,7 @@ export default async function Home() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center bg-green-500/50">
+          <div className="flex w-full flex-col items-center justify-center bg-green-500/50">
             <div className="flex flex-col items-center justify-center">
               BOTTOM FULL WIDTH
               <div className="max-w-4xl">
