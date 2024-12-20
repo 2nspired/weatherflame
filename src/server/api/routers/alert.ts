@@ -135,27 +135,24 @@ export const alertRouter = createTRPCRouter({
             '/alerts/active/zone/{zoneId}',
             {
               params: {
-                query: undefined,
-                header: undefined,
                 path: {
                   zoneId: input.zone,
                 },
-                cookie: undefined,
               },
             },
           );
 
-          if (response.status === 200 && data && data.features.length > 0) {
+          if (response.ok && data && data.features.length > 0) {
             console.log('ALERTS BY ZONE RESPONSE', data.features);
             return data.features;
           }
 
           if (error) {
-            console.error('Error fetching alerts:', error);
+            console.error('ERROR FETCHING ALERTS:', error);
           }
-          console.error(`Failed to fetch alerts by zone, ${response.status}`);
+          console.error(`FAILED TO FETCH ALERTS BY SINGLE ZONE, ${response.status}`);
         } catch (error) {
-          console.error('Error fetching alerts by zone:', error);
+          console.error('ERROR FETCHING ALERTS BY SINGLE ZONE:', error);
         }
         attempts++;
         if (attempts >= input.maxRetries) {

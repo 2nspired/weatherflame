@@ -2,9 +2,20 @@ import createClient from 'openapi-fetch';
 import { z } from 'zod';
 
 import { weatherForecastOffices } from '~/app/types/weather-gov/weatherForecastOffices';
-import type { paths } from '~/app/types/weather-gov/weatherGov';
+import type { components, paths } from '~/app/types/weather-gov/weatherGov';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
+// --------------------------------------------------------------
+// TYPES
+
+type ForecastPeriods = components['schemas']['GridpointForecast']['periods'];
+
+type AllWeather = {
+  weeklyForecast: ForecastPeriods | null;
+  hourlyForecast: ForecastPeriods | null;
+};
+
+// --------------------------------------------------------------
 const fetchClient = createClient<paths, 'application/geo+json'>({
   baseUrl: 'https://api.weather.gov',
   headers: {
@@ -39,16 +50,16 @@ export const weatherRouter = createTRPCRouter({
           });
 
           if (response.ok && data && data.properties) {
-            console.log('POINT DATA', data);
+            console.log('POINT WEATHER DATA RESPONSE', data);
             return data.properties;
           }
 
           if (error) {
-            console.error('Error fetching forecast:', error);
+            console.error('ERROR FETCHING FORECAST BY POINT:', error);
           }
-          console.error(`Failed to fetch point weather, ${response.status}`);
+          console.error(`FAILED TO FETCH FORECASE BY POINT, ${response.status}`);
         } catch (error) {
-          console.error('Error fetching point weather:', error);
+          console.error('ERROR FETCHING FORECAST BY POINT:', error);
         }
         attempts++;
 
@@ -59,6 +70,10 @@ export const weatherRouter = createTRPCRouter({
         console.warn(`Retrying (${attempts}/${input.maxRetries})`);
       }
     }),
+
+  // ----------------------------------------------------------
+  // GET WEEKLY WEATHER FORECAST
+  // ----------------------------------------------------------
 
   getWeeklyForecast: publicProcedure
     .input(
@@ -91,15 +106,15 @@ export const weatherRouter = createTRPCRouter({
           );
 
           if (response.ok && data?.properties?.periods) {
-            console.log('FORECAST RESPONSE', data.properties.periods);
+            console.log('WEEKLY FORECAST RESPONSE', data.properties.periods);
             return data.properties.periods;
           }
           if (error) {
-            console.error('Error fetching forecast:', error);
+            console.error('ERROR FETCHING WEEKLY FORECAST:', error);
           }
-          console.error(`Failed to fetch forecast, ${response.status}`);
+          console.error(`FAILED TO FETCH WEEKLY FORECASE, ${response.status}`);
         } catch (error) {
-          console.error('Error fetching forecast:', error);
+          console.error('ERROR FETCHING FORECAST:', error);
         }
         attempts++;
         if (attempts >= input.maxRetries) {
@@ -109,6 +124,9 @@ export const weatherRouter = createTRPCRouter({
         console.warn(`Retrying (${attempts}/${input.maxRetries})`);
       }
     }),
+  // ----------------------------------------------------------
+  // GET HOURLY WEATHER FORECAST
+  // ----------------------------------------------------------
 
   getHourlyForecast: publicProcedure
     .input(
@@ -137,16 +155,20 @@ export const weatherRouter = createTRPCRouter({
             },
           );
 
-          if (response.status === 200 && data?.properties?.periods) {
+          if (
+            response.ok &&
+            data?.properties?.periods &&
+            data.properties.periods.length > 0
+          ) {
             console.log('HOURLY FORECAST RESPONSE', data.properties.periods);
             return data.properties.periods;
           }
           if (error) {
             console.error('ERROR FETCHING HOURLY FORECAST:', error);
           }
-          console.error(`Failed to fetch hourly forecast, ${response.status}`);
+          console.error(`FAILED TO FETCH HOURLY FORECAST, ${response.status}`);
         } catch (error) {
-          console.error('Error fetching hourly forecast:', error);
+          console.error('ERROR FETCHING HOURLY FORECAST:', error);
         }
         attempts++;
         if (attempts >= input.maxRetries) {
@@ -158,57 +180,124 @@ export const weatherRouter = createTRPCRouter({
     }),
 
   // ----------------------------------------------------------
-  // TODO: CONSOLIDATE BASED ON THE INDIVIDUAL CALLS, RETURN A SINGLE OBJECT WITH EVERYTHING NEEDED.
-  //
-  // GET WEATHER FORECAST BY POINT
+  // GET COMPLETE WEATHER FORECAST BY POINT
   // ----------------------------------------------------------
 
-  getWeatherByPoint: publicProcedure
+  getAllWeather: publicProcedure
     .input(
       z.object({
-        point: z.string(),
+        lat: z.string({ message: 'Latitude is required' }).regex(/^(-?\d+(\.\d+)?)/),
+        lon: z.string({ message: 'Longitude is required' }).regex(/^(-?\d+(\.\d+)?)/),
+        maxRetries: z.number().optional().default(1),
       }),
     )
     .query(async ({ input }) => {
-      try {
-        const pointData = await fetchClient.GET('/points/{point}', {
-          params: {
-            path: {
-              point: input.point,
-            },
-          },
-        });
+      let weeklyForecast = null;
+      let hourlyForecast = null;
 
-        if (
-          pointData.response.status === 200 &&
-          pointData.data?.properties?.forecast &&
-          pointData?.data?.properties?.gridId &&
-          pointData?.data?.properties?.gridX &&
-          pointData?.data?.properties?.gridY
-        ) {
-          const forecastData = await fetchClient.GET(
-            '/gridpoints/{wfo}/{x},{y}/forecast',
-            {
-              params: {
-                path: {
-                  wfo: pointData.data.properties.gridId,
-                  x: pointData.data.properties.gridX,
-                  y: pointData.data.properties.gridY,
-                },
+      let attempts = 0;
+      while (attempts < input.maxRetries) {
+        try {
+          const pointData = await fetchClient.GET('/points/{point}', {
+            params: {
+              path: {
+                point: `${input.lat},${input.lon}`,
               },
             },
-          );
+          });
 
-          if (forecastData.response.status === 200 && forecastData.data?.properties) {
-            return forecastData.data.properties.periods;
-          } else {
-            console.log('No alerts found', forecastData.error);
-            return [];
+          if (pointData.response.ok && pointData.data && pointData.data.properties) {
+            console.log('POINT DATA RESPONSE', pointData.data);
+
+            const { cwa, gridX, gridY } = pointData.data.properties;
+
+            if (cwa && gridX && gridY) {
+              if (weatherForecastOffices.safeParse(cwa).success) {
+                [weeklyForecast, hourlyForecast] = await Promise.all([
+                  fetchClient.GET('/gridpoints/{wfo}/{x},{y}/forecast', {
+                    params: {
+                      path: {
+                        wfo: cwa,
+                        x: gridX,
+                        y: gridY,
+                      },
+                    },
+                  }),
+                  fetchClient.GET('/gridpoints/{wfo}/{x},{y}/forecast/hourly', {
+                    params: {
+                      path: {
+                        wfo: cwa,
+                        x: gridX,
+                        y: gridY,
+                      },
+                    },
+                  }),
+                ]);
+              } else {
+                const parsedCwa = weatherForecastOffices.safeParse(cwa);
+                if (parsedCwa.success) {
+                  [weeklyForecast, hourlyForecast] = await Promise.all([
+                    fetchClient.GET('/gridpoints/{wfo}/{x},{y}/forecast', {
+                      params: {
+                        path: {
+                          wfo: cwa,
+                          x: gridX,
+                          y: gridY,
+                        },
+                      },
+                    }),
+                    fetchClient.GET('/gridpoints/{wfo}/{x},{y}/forecast/hourly', {
+                      params: {
+                        path: {
+                          wfo: cwa,
+                          x: gridX,
+                          y: gridY,
+                        },
+                      },
+                    }),
+                  ]);
+                } else {
+                  console.error('Invalid CWA:', cwa);
+                }
+              }
+            }
           }
+
+          const forecast: AllWeather = { weeklyForecast: null, hourlyForecast: null };
+
+          if (
+            weeklyForecast?.response.ok &&
+            weeklyForecast?.data?.properties?.periods &&
+            weeklyForecast?.data?.properties?.periods.length > 0
+          ) {
+            forecast.weeklyForecast = weeklyForecast.data.properties.periods;
+          } else {
+            console.error('FAILED TO FETCH WEEKLY FORECAST:', weeklyForecast?.error);
+          }
+
+          if (
+            hourlyForecast?.response.ok &&
+            hourlyForecast?.data?.properties?.periods &&
+            hourlyForecast?.data?.properties?.periods.length > 0
+          ) {
+            forecast.hourlyForecast = hourlyForecast.data.properties.periods;
+          } else {
+            console.error('FAILED TO FETCH HOURLY FORECAST:', hourlyForecast?.error);
+          }
+
+          if (forecast.weeklyForecast || forecast.hourlyForecast) {
+            console.log('ALL WEATHER DATA RESPONSE', forecast);
+            return forecast;
+          }
+        } catch (error) {
+          console.error('ERROR FETCHING WEATHER:', error);
         }
-      } catch (error) {
-        console.error(error);
-        return [];
+        attempts++;
+        if (attempts >= input.maxRetries) {
+          console.error('MAX RETRIES REACHED: getAllWeather');
+          return null;
+        }
+        console.warn(`Retrying (${attempts}/${input.maxRetries})`);
       }
     }),
 });

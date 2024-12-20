@@ -1,9 +1,8 @@
 import { api } from 'src/trpc/server';
 
+import AlertsDisplay from '~/app/(main)/_components/AlertsDisplay';
 import BreadcrumbRoute from '~/app/(main)/_components/BreadcrumbRoute';
 import WeatherDisplay from '~/app/(main)/_components/WeatherDisplay';
-
-import AlertsDisplay from '../../../_components/AlertsDisplay';
 
 export default async function AlertsPage({
   params,
@@ -38,9 +37,6 @@ export default async function AlertsPage({
         zip: locationParam,
       });
     }
-
-    // FIXME: NEED VALIDATION FOR LOCATION NAME PARAM - OR TO IGNORE IF ROUTEPARAMS.LENGTH < 4
-    // TODO: Test, test, test. I can't remember what I was doing here.
     if (
       typeof locationParam === 'string' &&
       locationParam.length !== 0 &&

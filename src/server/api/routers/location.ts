@@ -1,5 +1,3 @@
-// TODO: Zod validation and error messages
-
 import { z } from 'zod';
 
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
@@ -41,6 +39,20 @@ type GeoByName = Array<{
   state: string;
 }>;
 
+export type ReverseGeoParams = {
+  lat: number;
+  lon: number;
+  limit?: number;
+};
+
+export type ReverseGeo = Array<{
+  name: string;
+  lat: number;
+  lon: number;
+  country: string;
+  state: string;
+}>;
+
 // ZONE BY GEO
 export interface ZoneByGeoResponse {
   '@context': {
@@ -53,13 +65,13 @@ export interface ZoneByGeoResponse {
 export interface Feature {
   id: string; // Example: "https://api.weather.gov/zones/county/MNC137"
   type: 'Feature'; // Always "Feature"
-  geometry: null; // Assuming geometry is null in this response
+  geometry: null;
   properties: FeatureProperties;
 }
 
 export interface FeatureProperties {
   '@id': string; // Example: "https://api.weather.gov/zones/county/MNC137"
-  '@type': 'wx:Zone'; // Always "wx:Zone"
+  '@type': 'wx:Zone';
   id: string; // Example: "MNC137"
   type: 'county' | 'fire' | 'public'; // Enum for different zone types
   name: string; // Example: "St. Louis" or "Carlton/South St. Louis"
@@ -83,7 +95,7 @@ export interface FeatureProperties {
 export const getGeoByZipSchema = z.object({
   zip: z
     .string()
-    .length(5)
+    .length(5, 'server: zipcode must be 5 digits')
     .regex(/^\d{5}$/, 'Invalid zipcode format'),
   maxRetries: z.number().optional().default(1),
 });
@@ -91,7 +103,7 @@ export const getGeoByZipSchema = z.object({
 export const getGeoByNameSchema = z.object({
   name: z
     .string()
-    .min(1, 'City name cannot be empty')
+    .min(2, 'City name cannot be empty')
     .regex(/^[a-zA-Z\s]+$/, 'City name must contain only letters and spaces'),
   state: z
     .string()
@@ -129,9 +141,9 @@ export const locationRouter = createTRPCRouter({
           console.log('LOCATION BY ZIP RESPONSE', resJson);
           return resJson;
         }
-        console.error(`Failed to fetch geo coordinates by zipcode ${res.status}, ${url}`);
+        console.error(`FAILED TO FETCH GEO COORDINATES BY ZIPCODE ${res.status}, ${url}`);
       } catch (error) {
-        console.error('Error fetching geo by zip:', error);
+        console.error('ERROR FETCHING GEO BY ZIP:', error);
       }
       attempts++;
       if (attempts >= input.maxRetries) {
@@ -163,14 +175,13 @@ export const locationRouter = createTRPCRouter({
       try {
         const res = await fetch(url);
         const resJson: GeoByName = (await res.json()) as GeoByName;
-
-        if (res.ok && resJson) {
+        if (res.ok && resJson && resJson.length > 0) {
           console.log('LOCATION BY NAME RESPONSE', resJson);
           return resJson;
         }
-        console.error(`Failed to fetch geo coordinates by name ${res.status}, ${url}`);
+        console.error(`FAILED TO FETCH GEO COORDINATES BY NAME ${res.status}, ${url}`);
       } catch (error) {
-        console.error('Error fetching geo by name:', error);
+        console.error('ERROR FETCHING GEO BY NAME:', error);
       }
       attempts++;
       if (attempts >= input.maxRetries) {
@@ -202,17 +213,17 @@ export const locationRouter = createTRPCRouter({
       while (attempts < input.maxRetries) {
         try {
           const res = await fetch(url);
-          const resJson: GeoByZip = (await res.json()) as GeoByZip;
+          const resJson: ReverseGeo = (await res.json()) as ReverseGeo;
 
           if (res.ok && resJson) {
             console.log('LOCATION BY REVERSE GEO RESPONSE', resJson);
             return resJson;
           }
           console.error(
-            `Failed to fetch location by geo coordinates ${res.status}, ${url}`,
+            `FAILED TO FETCH LOCATION BY GEO COORDINATES ${res.status}, ${url}`,
           );
         } catch (error) {
-          console.error('Error fetching reverse geo:', error);
+          console.error('ERROR FETCHING REVERSE GEO:', error);
         }
         attempts++;
         if (attempts >= input.maxRetries) {
@@ -252,9 +263,11 @@ export const locationRouter = createTRPCRouter({
             console.log('ZONE BY GEO RESPONSE', resJson);
             return resJson;
           }
-          console.error('ZONE BY GEO RESPONSE ERROR', resJson);
+          console.error(
+            `FAILED TO FETCH LOCATION BY GEO COORDINATES ${res.status}, ${url}`,
+          );
         } catch (error) {
-          console.error('Error fetching zone by geo:', error);
+          console.error('ERROR FETCHING ZONE BY GEO:', error);
         }
         attempts++;
         if (attempts >= input.maxRetries) {
