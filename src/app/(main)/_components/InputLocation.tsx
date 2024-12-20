@@ -23,10 +23,10 @@ import { abbreviateState } from '~/utilities/formatters/abbreviateState';
 const locationSchema = z.object({
   name: z
     .string()
-    .nonempty('client: Please enter a location')
+    .nonempty('Please enter a location')
     .refine(
       (value) => /^[0-9]{5}$/.test(value) || /^[a-zA-Z\s]+$/.test(value),
-      'client: Enter a valid zipcode or city',
+      'Enter a valid zipcode or city',
     ),
 });
 
@@ -101,7 +101,7 @@ export default function InputLocation({ className }: { className?: string }) {
                 <Input
                   disabled={fetchGeoByZip.isPending || fetchGeoByName.isPending}
                   placeholder="zipcode or city"
-                  className="w-40 text-sm text-black"
+                  className="w-40 text-sm text-gray-700"
                   {...field}
                 />
               </FormControl>
@@ -109,7 +109,7 @@ export default function InputLocation({ className }: { className?: string }) {
                 <FormMessage className="text-xs text-red-500">
                   {fetchGeoByZip.error?.data?.zodError?.fieldErrors.zip}
                   {fetchGeoByName.error?.data?.zodError?.fieldErrors.name}
-                  {noNameData && 'City not found'}, {noNameData && 'USA Only'}
+                  {noNameData && 'City not found'}
                 </FormMessage>
               </div>
             </FormItem>
@@ -117,7 +117,9 @@ export default function InputLocation({ className }: { className?: string }) {
         />
         <div className="flex justify-center">
           <Button
-            disabled={!form.formState.isValid || form.formState.isSubmitting}
+            className="bg-[#FF6100] text-gray-100 hover:bg-[#FF8E0A]"
+            disabled={form.formState.isSubmitting}
+            // disabled={!form.formState.isValid || form.formState.isSubmitting}
             type="submit"
           >
             Submit
