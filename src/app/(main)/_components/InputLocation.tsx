@@ -96,16 +96,16 @@ export default function InputLocation({ className }: { className?: string }) {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="w-40">
+            <FormItem className="w-64">
               <FormControl>
                 <Input
                   disabled={fetchGeoByZip.isPending || fetchGeoByName.isPending}
                   placeholder="zipcode or city"
-                  className="w-40 text-sm text-gray-700"
+                  className="h-10 rounded-none text-gray-700 outline-none"
                   {...field}
                 />
               </FormControl>
-              <div className="min-h-[2.50rem]">
+              <div className="min-h-6">
                 <FormMessage className="text-xs text-red-500">
                   {fetchGeoByZip.error?.data?.zodError?.fieldErrors.zip}
                   {fetchGeoByName.error?.data?.zodError?.fieldErrors.name}
@@ -115,9 +115,9 @@ export default function InputLocation({ className }: { className?: string }) {
             </FormItem>
           )}
         />
-        <div className="flex justify-center">
+        <div className="w-2/6">
           <Button
-            className="bg-[#FF6100] text-gray-100 hover:bg-[#FF8E0A]"
+            className="rounded-2xl bg-[#FF6100] text-gray-100 hover:rounded-none hover:bg-[#FF6100]"
             disabled={form.formState.isSubmitting}
             // disabled={!form.formState.isValid || form.formState.isSubmitting}
             type="submit"
