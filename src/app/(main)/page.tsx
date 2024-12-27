@@ -36,7 +36,7 @@ export default async function Home() {
               <div className="hidden w-2/6 border-r border-black md:block"></div>
             </div>
           </div>
-          <div className="flex size-full flex-col border-t border-black">
+          <div className="flex size-full flex-col border-t border-black px-3">
             <div className="flex size-full flex-col items-center justify-center">
               <div className="size-full max-w-6xl border-x border-black"></div>
             </div>
