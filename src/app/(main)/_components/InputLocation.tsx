@@ -96,7 +96,7 @@ export default function InputLocation({ className }: { className?: string }) {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="w-64">
+            <FormItem className="w-48 md:w-64">
               <FormControl>
                 <Input
                   disabled={fetchGeoByZip.isPending || fetchGeoByName.isPending}
@@ -115,7 +115,7 @@ export default function InputLocation({ className }: { className?: string }) {
             </FormItem>
           )}
         />
-        <div className="w-2/6">
+        <div className="md:w-2/6">
           <Button
             className="rounded-2xl bg-[#FF6100] text-gray-100 hover:rounded-none hover:bg-[#FF6100]"
             disabled={form.formState.isSubmitting}
