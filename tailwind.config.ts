@@ -73,6 +73,10 @@ const config: Config = {
           '5': 'hsl(var(--chart-5))',
         },
       },
+      screens: {
+        '3xl': '1920px',
+        '4xl': '2400px',
+      },
     },
   },
   plugins: [
