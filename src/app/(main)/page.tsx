@@ -8,6 +8,7 @@ export default async function Home() {
   return (
     <div className="flex size-full flex-col items-center bg-zinc-200">
       {/* MAIN CONTAINER */}
+      <SectionContainer className="min-h-10 border-black bg-zinc-700 text-center"></SectionContainer>
       <div className="z-10 flex size-full flex-col items-center justify-center">
         {/* TITLE AND SUBTITLE */}
 
@@ -45,17 +46,24 @@ export default async function Home() {
         </div>
 
         {/* SPACE CONTAINER */}
-        <SectionContainer className="h-20 border-b border-black text-center"></SectionContainer>
+        <SectionContainer className="h-12 border-b border-black text-center md:h-20"></SectionContainer>
         {/* SECTION 1 CONTAINER */}
         <div className="flex w-full flex-col items-center justify-center px-3">
-          <div className="max-w-6xl border-x border-black ">
+          <div className="w-full max-w-6xl border-x border-black">
             <Alert className="rounded-none border-hidden bg-black/10 p-6 text-gray-800">
               <AlertTitle className="pb-3">DISCLAIMER</AlertTitle>
               <AlertDescription>
                 <div>
                   This is a project built by someone learning how to code. It&apos;s a
-                  work in progress, and far from done or perfect, but it&apos;s a start on
-                  what I hope is a career one day. Check the readMe for more info.
+                  work in progress. See{' '}
+                  <a
+                    className="underline"
+                    href="https://github.com/2nspired/weatherflame"
+                    target="_blank"
+                  >
+                    github
+                  </a>{' '}
+                  for more info.
                 </div>
                 <br />
                 <div>
