@@ -1,0 +1,6 @@
+/* ...existing code... */
+.svg-color {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(107%)
+    contrast(101%);
+}
+/* ...existing code... */

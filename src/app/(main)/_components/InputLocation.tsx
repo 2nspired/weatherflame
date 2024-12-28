@@ -3,6 +3,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -117,12 +118,15 @@ export default function InputLocation({ className }: { className?: string }) {
         />
         <div className="md:w-2/6">
           <Button
-            className="rounded-2xl bg-[#FF6100] text-gray-100 hover:rounded-none hover:bg-[#FF6100]"
-            disabled={form.formState.isSubmitting}
-            // disabled={!form.formState.isValid || form.formState.isSubmitting}
+            className="w-20 rounded-none bg-[#FF6100] text-gray-100 hover:bg-[#FF6100]"
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
             type="submit"
           >
-            Submit
+            {fetchGeoByZip.isPending || fetchGeoByName.isPending ? (
+              <Loader2 className="h-6 w-6 animate-spin" />
+            ) : (
+              'Submit'
+            )}
           </Button>
         </div>
       </form>

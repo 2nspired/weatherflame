@@ -1,7 +1,20 @@
+import GitHubIcon from '~/app/(main)/_components/GitHubIcon';
+
 export default function Footer() {
   return (
-    <div className="flex w-full flex-row justify-center bg-zinc-800 px-6 pb-4 pt-6 text-sm text-gray-100">
-      <div className="w-full max-w-6xl">© weatherflame 2025</div>
+    <div className="flex w-full justify-center bg-zinc-700 p-6 pb-3 text-sm text-zinc-100">
+      <div className="flex w-full max-w-6xl justify-between">
+        <div>© weatherflame 2025</div>
+        <div>
+          <a
+            href="https://github.com/2nspired/weatherflame"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <GitHubIcon fill="#f4f4f5" />
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

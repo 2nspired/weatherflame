@@ -1,4 +1,4 @@
-export default async function MaintenanceMode() {
+export default function MaintenanceMode() {
   return (
     <>
       <div className="flex size-full justify-center p-6">
