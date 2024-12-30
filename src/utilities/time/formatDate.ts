@@ -1,7 +1,5 @@
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 
-dayjs.extend(relativeTime);
 // const testDate = '2024-12-29T12:00:00-10:00';
 
 export const formatDate = (date: string) => {
