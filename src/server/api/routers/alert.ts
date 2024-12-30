@@ -94,7 +94,7 @@ export const alertRouter = createTRPCRouter({
           });
 
           if (response.status === 200 && data && data.features.length > 0) {
-            console.log('ALERTS RESPONSE', data.features);
+            // console.log('ALERTS RESPONSE', data.features);
             return data.features;
           }
 
@@ -143,7 +143,7 @@ export const alertRouter = createTRPCRouter({
           );
 
           if (response.ok && data && data.features.length > 0) {
-            console.log('ALERTS BY ZONE RESPONSE', data.features);
+            // console.log('ALERTS BY ZONE RESPONSE', data.features);
             return data.features;
           }
 

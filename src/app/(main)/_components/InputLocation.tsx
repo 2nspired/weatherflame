@@ -123,7 +123,7 @@ export default function InputLocation({ className }: { className?: string }) {
             type="submit"
           >
             {fetchGeoByZip.isPending || fetchGeoByName.isPending ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
+              <Loader2 className="size-6 animate-spin" />
             ) : (
               'Submit'
             )}

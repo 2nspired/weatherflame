@@ -50,7 +50,7 @@ export const weatherRouter = createTRPCRouter({
           });
 
           if (response.ok && data && data.properties) {
-            console.log('POINT WEATHER DATA RESPONSE', data);
+            // console.log('POINT WEATHER DATA RESPONSE', data);
             return data.properties;
           }
 
@@ -106,7 +106,7 @@ export const weatherRouter = createTRPCRouter({
           );
 
           if (response.ok && data?.properties?.periods) {
-            console.log('WEEKLY FORECAST RESPONSE', data.properties.periods);
+            // console.log('WEEKLY FORECAST RESPONSE', data.properties.periods);
             return data.properties.periods;
           }
           if (error) {
@@ -160,7 +160,7 @@ export const weatherRouter = createTRPCRouter({
             data?.properties?.periods &&
             data.properties.periods.length > 0
           ) {
-            console.log('HOURLY FORECAST RESPONSE', data.properties.periods);
+            // console.log('HOURLY FORECAST RESPONSE', data.properties.periods);
             return data.properties.periods;
           }
           if (error) {
@@ -286,7 +286,7 @@ export const weatherRouter = createTRPCRouter({
           }
 
           if (forecast.weeklyForecast || forecast.hourlyForecast) {
-            console.log('ALL WEATHER DATA RESPONSE', forecast);
+            // console.log('ALL WEATHER DATA RESPONSE', forecast);
             return forecast;
           }
         } catch (error) {

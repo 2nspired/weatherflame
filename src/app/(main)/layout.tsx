@@ -3,7 +3,8 @@ import MaintenanceMode from '~/app/(main)/_components/MaintenanceMode';
 import { isDev, isProd } from '~/utilities/platform';
 
 import Footer from './_components/Footer';
-import Header from './_components/Header';
+
+// import Header from './_components/Header';
 
 type LayoutProps = Readonly<{
   children: React.ReactNode;
