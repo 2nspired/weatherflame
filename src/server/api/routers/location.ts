@@ -138,7 +138,7 @@ export const locationRouter = createTRPCRouter({
         const resJson: GeoByZip = (await res.json()) as GeoByZip;
 
         if (res.ok && resJson) {
-          console.log('LOCATION BY ZIP RESPONSE', resJson);
+          // console.log('LOCATION BY ZIP RESPONSE', resJson);
           return resJson;
         }
         console.error(`FAILED TO FETCH GEO COORDINATES BY ZIPCODE ${res.status}, ${url}`);
@@ -176,7 +176,7 @@ export const locationRouter = createTRPCRouter({
         const res = await fetch(url);
         const resJson: GeoByName = (await res.json()) as GeoByName;
         if (res.ok && resJson && resJson.length > 0) {
-          console.log('LOCATION BY NAME RESPONSE', resJson);
+          // console.log('LOCATION BY NAME RESPONSE', resJson);
           return resJson;
         }
         console.error(`FAILED TO FETCH GEO COORDINATES BY NAME ${res.status}, ${url}`);
@@ -216,7 +216,7 @@ export const locationRouter = createTRPCRouter({
           const resJson: ReverseGeo = (await res.json()) as ReverseGeo;
 
           if (res.ok && resJson) {
-            console.log('LOCATION BY REVERSE GEO RESPONSE', resJson);
+            // console.log('LOCATION BY REVERSE GEO RESPONSE', resJson);
             return resJson;
           }
           console.error(
@@ -260,7 +260,7 @@ export const locationRouter = createTRPCRouter({
           const resJson: ZoneByGeoResponse = (await res.json()) as ZoneByGeoResponse;
 
           if (res.ok && resJson) {
-            console.log('ZONE BY GEO RESPONSE', resJson);
+            // console.log('ZONE BY GEO RESPONSE', resJson);
             return resJson;
           }
           console.error(

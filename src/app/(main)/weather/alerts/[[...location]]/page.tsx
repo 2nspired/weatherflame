@@ -1,7 +1,9 @@
+import { Section } from 'lucide-react';
 import { api } from 'src/trpc/server';
 
 import AlertsDisplay from '~/app/(main)/_components/AlertsDisplay';
 import BreadcrumbRoute from '~/app/(main)/_components/BreadcrumbRoute';
+import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import WeatherDisplay from '~/app/(main)/_components/WeatherDisplay';
 
 export default async function AlertsPage({
@@ -67,18 +69,36 @@ export default async function AlertsPage({
   const alertZones = alertZonesData?.features?.map((zone) => zone.properties.id) ?? [];
 
   return (
-    <div className="p-6">
-      <BreadcrumbRoute />
-      <div>
-        <div>
+    <div className="flex size-full flex-col bg-zinc-200">
+      {/* MAIN CONTAINER */}
+      <div className="z-10 flex size-full flex-col">
+        {/* CONTENT */}
+        <div className="flex size-full grow flex-col border-b border-black bg-zinc-700 text-slate-100">
           {geoData && (
-            <div>
-              <WeatherDisplay lat={geoData.lat} lon={geoData.lon} />
-              <AlertsDisplay zones={alertZones} />
-            </div>
+            <WeatherDisplay
+              lat={geoData.lat}
+              lon={geoData.lon}
+              locationName={geoData.name}
+            />
           )}
         </div>
       </div>
     </div>
   );
 }
+
+// return (
+//   <div className="p-6">
+//     <BreadcrumbRoute />
+//     <div>
+//       <div>
+//         {geoData && (
+//           <div>
+//             <WeatherDisplay lat={geoData.lat} lon={geoData.lon} />
+//             <AlertsDisplay zones={alertZones} />
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   </div>
+// );
