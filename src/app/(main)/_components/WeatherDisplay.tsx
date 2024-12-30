@@ -62,9 +62,7 @@ export default function WeatherDisplay({
     rainChance: hourlyForecast[0]?.probabilityOfPrecipitation?.value ?? null,
   };
 
-  hourlyForecast[0];
   console.log('CURRENT WEATHER', currentWeather);
-
   console.log('WEATHER DATA', weatherData.data);
 
   return (
@@ -89,7 +87,7 @@ export default function WeatherDisplay({
       </SectionContainer>
       <SectionContainer className="flex grow flex-col items-center justify-center">
         {currentWeather.temperature && (
-          <div className="flex h-full w-full flex-row items-center justify-center border-t border-black px-3 py-8">
+          <div className="flex size-full flex-row items-center justify-center border-t border-black px-3 py-8">
             <div className="font-mono text-[9rem] leading-none">
               {currentWeather.temperature}
             </div>
