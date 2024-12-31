@@ -1,5 +1,3 @@
-// TODO: HANDLE NO VALUES RETURNED (i.e. no valid results returned, but not an error)
-
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -68,17 +66,15 @@ export default function InputLocation({ className }: { className?: string }) {
         });
       }
 
-      console.log('nameData', nameData);
-
       if (zipData && nameData?.[0]) {
         router.push(
-          `/weather/alerts/${encodeURIComponent(zipData.country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(zipData.name)}/${encodeURIComponent(location)}`,
+          `/weather/${encodeURIComponent(zipData.country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(zipData.name)}`,
         );
       }
 
       if (nameData?.[0] && !zipData) {
         router.push(
-          `/weather/alerts/${encodeURIComponent(nameData[0].country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(nameData[0].name)}`,
+          `/weather/${encodeURIComponent(nameData[0].country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(nameData[0].name)}`,
         );
       }
 
