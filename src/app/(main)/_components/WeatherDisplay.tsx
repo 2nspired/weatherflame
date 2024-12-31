@@ -8,7 +8,7 @@
 
 import { CloudRain, Droplet, Wind } from 'lucide-react';
 
-import WeatherIcon from '~/app/(main)/_components/weatherIcon';
+import WeatherIcon from '~/app/(main)/_components/WeatherIcons';
 import { api } from '~/trpc/client';
 import {
   dateAddDays,
