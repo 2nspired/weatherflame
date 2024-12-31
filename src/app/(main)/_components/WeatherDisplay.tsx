@@ -8,8 +8,9 @@
 
 'use client';
 
-import { CloudRain, Droplet, MoveRight, Wind } from 'lucide-react';
+import { CloudRain, Droplet, Wind } from 'lucide-react';
 
+import WeatherIcon from '~/app/(main)/_components/weatherIcon';
 import { api } from '~/trpc/client';
 import {
   dateAddDays,
@@ -93,7 +94,7 @@ export default function WeatherDisplay({
           </div>
 
           {currentWeather.shortForecast && (
-            <div className="w-full border-t border-black p-3 text-center">
+            <div className="w-full border-t border-black bg-slate-200 p-3 text-center uppercase text-black">
               {currentWeather.shortForecast}
             </div>
           )}
@@ -152,16 +153,24 @@ export default function WeatherDisplay({
             )}
         </div>
       </SectionContainer>
-      <SectionContainer className="border-t border-black">
+      {/* <SectionContainer className="border-t border-black bg-slate-200 text-black">
         <div className="flex flex-row items-center justify-start">
-          <div className="px-3 py-6 font-semibold">Weekly Forecast</div>
+          <div className="px-3 py-6 font-semibold">Hourly Forecast</div>
           <div className="py-6">
             <MoveRight size={36} />
           </div>
         </div>
+      </SectionContainer> */}
+      <SectionContainer className="border-t border-black bg-slate-200 text-black">
+        <div className="flex flex-row items-center justify-start">
+          <div className="px-3 py-6 font-semibold">Weekly Forecast</div>
+          {/* <div className="py-6">
+            <MoveRight size={36} />
+          </div> */}
+        </div>
       </SectionContainer>
 
-      <SectionContainer className="border-t border-black">
+      <SectionContainer className="border-t border-black bg-pink-500">
         <div className="flex flex-row justify-evenly">
           {dailyForecasts.map((forecast, index) => (
             <div
@@ -170,7 +179,7 @@ export default function WeatherDisplay({
                 index !== dailyForecasts.length - 1 ? 'border-r border-black' : ''
               }`}
             >
-              <div className="flex text-lg">
+              <div className="flex pb-2 text-lg">
                 <div className="font-mono">
                   {typeof forecast.temperature === 'number'
                     ? forecast.temperature
@@ -178,7 +187,12 @@ export default function WeatherDisplay({
                 </div>
                 <div>°</div>
               </div>
-              <div className="text-xs">{forecast.shortForecast}</div>
+              {forecast.shortForecast && (
+                <div className="flex flex-col items-center justify-center text-xs">
+                  <WeatherIcon shortForecast={forecast.shortForecast} />
+                  {/* <div className="pt-2 text-center">{forecast.shortForecast}</div> */}
+                </div>
+              )}
               <div className="pt-2 text-sm">
                 {forecast.startTime
                   ? formatShortDate(forecast.startTime)
@@ -191,6 +205,7 @@ export default function WeatherDisplay({
           ))}
         </div>
       </SectionContainer>
+      {/* <SectionContainer className="h-10 border-b border-black bg-slate-200"></SectionContainer> */}
     </div>
   );
 }
