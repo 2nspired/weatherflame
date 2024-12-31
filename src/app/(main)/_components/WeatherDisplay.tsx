@@ -1,5 +1,3 @@
-// TODO: ADD WEEKLY FORECAST 1 - 5 days
-// TODO: WEEKLY FORECAST - BASED ON DAY
 // TODO: ANIMATE ICONS - BASED ON CONDITION and COMPONENT INITIALIZATION - https://motion.dev/docs/react-quick-start
 // TODO: ADD ARROWS TO INDICATE WIND DIRECTION
 // TODO: CREATE TRPC ROUTE TO RETURN 'CURRENT WEATHER' OBJECT
@@ -76,9 +74,9 @@ export default function WeatherDisplay({
     rainChance: hourlyForecast[0]?.probabilityOfPrecipitation?.value ?? null,
   };
 
-  console.log('CURRENT WEATHER', currentWeather);
-  console.log('WEATHER DATA', weatherData.data);
-  console.log('CHANCE OF RAIN', currentWeather.rainChance);
+  // console.log('CURRENT WEATHER', currentWeather);
+  // console.log('WEATHER DATA', weatherData.data);
+  // console.log('CHANCE OF RAIN', currentWeather.rainChance);
 
   return (
     <div className="flex h-full max-w-full flex-col items-center">
