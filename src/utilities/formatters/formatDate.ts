@@ -12,6 +12,10 @@ export const formatShortDate = (date: string) => {
   return dayjs(date).format('D MMM');
 };
 
+export const formatDateHour = (date: string) => {
+  return dayjs(date).format('h a');
+};
+
 export const dateAddDays = ({ date, days }: { date: string; days: number }) => {
   const newDate = dayjs(date).add(days, 'day').toString();
   return formatShortDate(newDate);

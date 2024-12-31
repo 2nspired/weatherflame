@@ -9,13 +9,20 @@
 import { CloudRain, Droplet, Wind } from 'lucide-react';
 
 import WeatherIcon from '~/app/(main)/_components/WeatherIcons';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '~/components/ui/accordion';
 import { api } from '~/trpc/client';
 import {
   dateAddDays,
   formatAsLocalDate,
   formatDate,
+  formatDateHour,
   formatShortDate,
-} from '~/utilities/time/formatDate';
+} from '~/utilities/formatters/formatDate';
 
 import SectionContainer from './SectionContainer';
 
@@ -33,8 +40,6 @@ export default function WeatherDisplay({
     lon: lon.toString(),
   });
 
-  console.log('WEATHER DATA', weatherData.data);
-
   const weeklyForecast =
     weatherData.data?.weeklyForecast &&
     weatherData.data.weeklyForecast.length !== 0 &&
@@ -49,11 +54,11 @@ export default function WeatherDisplay({
     return <div>...error loading data</div>;
   }
 
-  const dailyForecasts = weeklyForecast
+  const weeklyDayForecasts = weeklyForecast
     .filter((forecast) => forecast.isDaytime)
     .slice(0, 4);
 
-  console.log('DAILY FORECASTS', dailyForecasts);
+  const dailyHourlyForecasts = hourlyForecast.slice(1, 5);
 
   const currentWeather = {
     date:
@@ -92,13 +97,13 @@ export default function WeatherDisplay({
           </div>
 
           {currentWeather.shortForecast && (
-            <div className="w-full border-t border-black bg-slate-200 p-3 text-center uppercase text-black">
+            <div className="w-full border-t border-black bg-green-500 p-3 text-center uppercase text-black">
               {currentWeather.shortForecast}
             </div>
           )}
         </div>
       </SectionContainer>
-      <SectionContainer className="flex grow flex-col items-center justify-center">
+      <SectionContainer className="grow">
         {currentWeather.temperature !== null &&
           currentWeather.temperature !== undefined && (
             <div className="flex size-full flex-row items-center justify-center border-t border-black px-3 py-8">
@@ -111,55 +116,126 @@ export default function WeatherDisplay({
             </div>
           )}
       </SectionContainer>
-      <SectionContainer className="border-y border-black">
+      <SectionContainer className="border-y border-black bg-zinc-200 text-black">
         <div className="flex flex-col space-y-3">
           <div className="px-3 pt-6 font-semibold">Daily Summary</div>
           <div className="px-3 pb-6">{currentWeather.longForecast}</div>
         </div>
       </SectionContainer>
-      <SectionContainer className="">
-        <div className="flex flex-row justify-evenly">
-          {currentWeather.windSpeed !== null &&
-            currentWeather.windSpeed !== undefined && (
-              <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-6">
-                <div className="pb-3">
-                  <Wind size={36} />
+      <SectionContainer className="bg-zinc-200 text-black">
+        <div>
+          <div className="flex flex-row justify-evenly bg-zinc-100">
+            {currentWeather.rainChance !== null &&
+              currentWeather.rainChance !== undefined && (
+                <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
+                  <div className="pb-3">
+                    <CloudRain size={36} />
+                  </div>
+                  <div className="font-mono">{currentWeather.rainChance}%</div>
+                  <div className="text-xs">Rain</div>
                 </div>
-                <div>
-                  {currentWeather.windSpeed} {currentWeather.windDirection}
+              )}
+            {currentWeather.humidity !== null &&
+              currentWeather.humidity !== undefined && (
+                <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
+                  <div className="pb-3">
+                    <Droplet size={36} />
+                  </div>
+                  <div className="font-mono">{currentWeather.humidity}%</div>
+                  <div className="text-xs">Humidity</div>
                 </div>
-                <div className="text-xs">Wind</div>
-              </div>
-            )}
-          {currentWeather.humidity !== null && currentWeather.humidity !== undefined && (
-            <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
-              <div className="pb-3">
-                <Droplet size={36} />
-              </div>
-              {currentWeather.humidity}%<div className="text-xs">Humidity</div>
-            </div>
-          )}
-          {currentWeather.rainChance !== null &&
-            currentWeather.rainChance !== undefined && (
-              <div className="flex w-1/3 flex-col items-center justify-center py-3">
-                <div className="pb-3">
-                  <CloudRain size={36} />
+              )}
+            {currentWeather.windSpeed !== null &&
+              currentWeather.windSpeed !== undefined && (
+                <div className="flex w-1/3 flex-col items-center justify-center py-6">
+                  <div className="pb-3">
+                    <Wind size={36} />
+                  </div>
+                  <div className="font-mono">
+                    {currentWeather.windSpeed} {currentWeather.windDirection}
+                  </div>
+                  <div className="text-xs">Wind</div>
                 </div>
-                <div>{currentWeather.rainChance}%</div>
-                <div className="text-xs">Rain</div>
-              </div>
-            )}
+              )}
+          </div>
+          <div className="flex h-10 flex-row justify-evenly border-t border-black bg-zinc-200"></div>
         </div>
       </SectionContainer>
-      {/* <SectionContainer className="border-t border-black bg-slate-200 text-black">
+
+      <SectionContainer className="border-t border-black bg-pink-500 text-black">
         <div className="flex flex-row items-center justify-start">
           <div className="px-3 py-6 font-semibold">Hourly Forecast</div>
-          <div className="py-6">
-            <MoveRight size={36} />
-          </div>
+          <div className="py-6">{/* <MoveRight size={36} /> */}</div>
         </div>
-      </SectionContainer> */}
-      <SectionContainer className="border-t border-black bg-slate-200 text-black">
+      </SectionContainer>
+      <SectionContainer className="border-t border-black bg-pink-500">
+        <div className="text-black">
+          <Accordion type="single" collapsible>
+            {dailyHourlyForecasts.map((forecast, index) => (
+              <AccordionItem
+                key={index}
+                className="border-black px-3 hover:no-underline"
+                value={`index-${index + 1}`}
+              >
+                <AccordionTrigger className="flex flex-row hover:no-underline">
+                  <div className="w-16">
+                    {forecast.startTime && formatDateHour(forecast.startTime)}
+                  </div>
+                  {forecast.shortForecast && (
+                    <div className="w-16">
+                      <WeatherIcon shortForecast={forecast.shortForecast} />
+                    </div>
+                  )}
+
+                  <div className="flex w-16 font-mono">
+                    {typeof forecast.temperature === 'number'
+                      ? forecast.temperature
+                      : forecast.temperature?.value}
+                    <div>°</div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-row justify-between px-3">
+                  <div>
+                    <div className="flex flex-col space-y-2">
+                      <div>Rain</div>
+                      <div className="flex w-20 flex-row space-x-3">
+                        <CloudRain size={24} />
+                        <div>{forecast.probabilityOfPrecipitation?.value}%</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex flex-col space-y-2">
+                      <div>Humidity</div>
+                      <div className="flex w-20 flex-row space-x-3">
+                        <Droplet size={24} />
+                        <div>{forecast.relativeHumidity?.value}%</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex flex-col space-y-2">
+                      <div>Wind</div>
+                      <div className="flex w-32 flex-row">
+                        <Wind size={24} />
+                        <div className="pl-3">
+                          {typeof forecast.windSpeed === 'string'
+                            ? forecast.windSpeed
+                            : forecast.windSpeed?.value}{' '}
+                          {forecast.windDirection}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+        <div className="h-10"></div>
+      </SectionContainer>
+
+      <SectionContainer className="border-t border-black bg-orange-500 text-black">
         <div className="flex flex-row items-center justify-start">
           <div className="px-3 py-6 font-semibold">Weekly Forecast</div>
           {/* <div className="py-6">
@@ -168,13 +244,13 @@ export default function WeatherDisplay({
         </div>
       </SectionContainer>
 
-      <SectionContainer className="border-t border-black bg-pink-500">
+      <SectionContainer className="border-t border-black bg-orange-500 text-black">
         <div className="flex flex-row justify-evenly">
-          {dailyForecasts.map((forecast, index) => (
+          {weeklyDayForecasts.map((forecast, index) => (
             <div
               key={index}
               className={`flex w-full flex-col items-center py-8 ${
-                index !== dailyForecasts.length - 1 ? 'border-r border-black' : ''
+                index !== weeklyDayForecasts.length - 1 ? 'border-r border-black' : ''
               }`}
             >
               <div className="flex pb-2 text-lg">
@@ -202,6 +278,7 @@ export default function WeatherDisplay({
             </div>
           ))}
         </div>
+        <div className="h-10 border-t border-black"></div>
       </SectionContainer>
       {/* <SectionContainer className="h-10 border-b border-black bg-slate-200"></SectionContainer> */}
     </div>
