@@ -104,24 +104,26 @@ export default function WeatherDisplay({
         <SectionContainer className="bg-zinc-200 text-black">
           <div>
             <div className="flex flex-row justify-evenly bg-zinc-100">
-              {currentWeather?.rainChance && (
-                <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
-                  <div className="pb-3">
-                    <CloudRain size={36} />
+              {currentWeather?.rainChance !== null &&
+                currentWeather?.rainChance !== undefined && (
+                  <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
+                    <div className="pb-3">
+                      <CloudRain size={36} />
+                    </div>
+                    <div className="font-mono">{currentWeather.rainChance}%</div>
+                    <div className="text-xs">Rain</div>
                   </div>
-                  <div className="font-mono">{currentWeather.rainChance}%</div>
-                  <div className="text-xs">Rain</div>
-                </div>
-              )}
-              {currentWeather?.humidity !== null && (
-                <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
-                  <div className="pb-3">
-                    <Droplet size={36} />
+                )}
+              {currentWeather?.humidity !== null &&
+                currentWeather?.humidity !== undefined && (
+                  <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
+                    <div className="pb-3">
+                      <Droplet size={36} />
+                    </div>
+                    <div className="font-mono">{currentWeather.humidity}%</div>
+                    <div className="text-xs">Humidity</div>
                   </div>
-                  <div className="font-mono">{currentWeather.humidity}%</div>
-                  <div className="text-xs">Humidity</div>
-                </div>
-              )}
+                )}
               {currentWeather?.windSpeed !== null &&
                 currentWeather?.windSpeed !== undefined && (
                   <div className="flex w-1/3 flex-col items-center justify-center py-6">
