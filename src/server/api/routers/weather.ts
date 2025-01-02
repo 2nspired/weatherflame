@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { weatherForecastOffices } from '~/app/types/weather-gov/weatherForecastOffices';
 import type { components, paths } from '~/app/types/weather-gov/weatherGov';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import { formatAsLocalDate, formatDate } from '~/utilities/formatters/formatDate';
 
 // --------------------------------------------------------------
 // TYPES
@@ -286,8 +287,56 @@ export const weatherRouter = createTRPCRouter({
           }
 
           if (forecast.weeklyForecast || forecast.hourlyForecast) {
-            // console.log('ALL WEATHER DATA RESPONSE', forecast);
-            return forecast;
+            const weeklyForecast =
+              forecast.weeklyForecast && forecast.weeklyForecast.length !== 0
+                ? forecast.weeklyForecast
+                    .filter((period) => period.isDaytime)
+                    .slice(1, 13)
+                : null;
+
+            const hourlyForecast =
+              forecast.hourlyForecast && forecast.hourlyForecast.length !== 0
+                ? forecast.hourlyForecast.slice(0, 10)
+                : null;
+
+            const currentWeather = {
+              date:
+                (hourlyForecast &&
+                  hourlyForecast[0]?.startTime &&
+                  formatDate(hourlyForecast[0]?.startTime)) ??
+                formatAsLocalDate(new Date()),
+              shortForecast: hourlyForecast
+                ? (hourlyForecast[0]?.shortForecast ?? 'No forecast available')
+                : 'No forecast available',
+              longForecast: weeklyForecast
+                ? (weeklyForecast[0]?.detailedForecast ?? 'No forecast available')
+                : 'No forecast available',
+              temperature:
+                hourlyForecast && hourlyForecast[0]?.temperature !== undefined
+                  ? typeof hourlyForecast[0]?.temperature === 'number'
+                    ? hourlyForecast[0]?.temperature
+                    : hourlyForecast[0]?.temperature?.value
+                  : null,
+              windSpeed:
+                hourlyForecast && typeof hourlyForecast[0]?.windSpeed === 'string'
+                  ? hourlyForecast[0]?.windSpeed
+                  : null,
+              windDirection: hourlyForecast
+                ? (hourlyForecast[0]?.windDirection ?? null)
+                : null,
+              humidity: hourlyForecast
+                ? (hourlyForecast[0]?.relativeHumidity?.value ?? null)
+                : null,
+              rainChance: hourlyForecast
+                ? (hourlyForecast[0]?.probabilityOfPrecipitation?.value ?? null)
+                : null,
+            };
+
+            return {
+              currentWeather: currentWeather,
+              weeklyForecast: weeklyForecast,
+              hourlyForecast: hourlyForecast,
+            };
           }
         } catch (error) {
           console.error('ERROR FETCHING WEATHER:', error);
