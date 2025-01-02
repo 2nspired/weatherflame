@@ -156,11 +156,7 @@ export const weatherRouter = createTRPCRouter({
             },
           );
 
-          if (
-            response.ok &&
-            data?.properties?.periods &&
-            data.properties.periods.length > 0
-          ) {
+          if (response.ok && data?.properties?.periods) {
             // console.log('HOURLY FORECAST RESPONSE', data.properties.periods);
             return data.properties.periods;
           }
@@ -266,21 +262,13 @@ export const weatherRouter = createTRPCRouter({
 
           const forecast: AllWeather = { weeklyForecast: null, hourlyForecast: null };
 
-          if (
-            weeklyForecast?.response.ok &&
-            weeklyForecast?.data?.properties?.periods &&
-            weeklyForecast?.data?.properties?.periods.length > 0
-          ) {
+          if (weeklyForecast?.response.ok && weeklyForecast?.data?.properties?.periods) {
             forecast.weeklyForecast = weeklyForecast.data.properties.periods;
           } else {
             console.error('FAILED TO FETCH WEEKLY FORECAST:', weeklyForecast?.error);
           }
 
-          if (
-            hourlyForecast?.response.ok &&
-            hourlyForecast?.data?.properties?.periods &&
-            hourlyForecast?.data?.properties?.periods.length > 0
-          ) {
+          if (hourlyForecast?.response.ok && hourlyForecast?.data?.properties?.periods) {
             forecast.hourlyForecast = hourlyForecast.data.properties.periods;
           } else {
             console.error('FAILED TO FETCH HOURLY FORECAST:', hourlyForecast?.error);
@@ -301,8 +289,7 @@ export const weatherRouter = createTRPCRouter({
 
             const currentWeather = {
               date:
-                (hourlyForecast &&
-                  hourlyForecast[0]?.startTime &&
+                (hourlyForecast?.[0]?.startTime &&
                   formatDate(hourlyForecast[0]?.startTime)) ??
                 formatAsLocalDate(new Date()),
               shortForecast: hourlyForecast
@@ -312,7 +299,7 @@ export const weatherRouter = createTRPCRouter({
                 ? (weeklyForecast[0]?.detailedForecast ?? 'No forecast available')
                 : 'No forecast available',
               temperature:
-                hourlyForecast && hourlyForecast[0]?.temperature !== undefined
+                hourlyForecast?.[0]?.temperature !== undefined
                   ? typeof hourlyForecast[0]?.temperature === 'number'
                     ? hourlyForecast[0]?.temperature
                     : hourlyForecast[0]?.temperature?.value
