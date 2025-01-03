@@ -284,7 +284,7 @@ export const weatherRouter = createTRPCRouter({
 
             const hourlyForecast =
               forecast.hourlyForecast && forecast.hourlyForecast.length !== 0
-                ? forecast.hourlyForecast.slice(0, 10)
+                ? forecast.hourlyForecast.slice(0, 12)
                 : null;
 
             const currentWeather = {
