@@ -10,9 +10,12 @@ import { formatAsLocalDate, formatDate } from '~/utilities/formatters/formatDate
 // TYPES
 
 type ForecastPeriods = components['schemas']['GridpointForecast']['periods'];
+type ForecastPeriod = components['schemas']['GridpointForecastPeriod'];
+
+type WeeklyForecast = { day: ForecastPeriod; night: ForecastPeriod | null }[];
 
 type AllWeather = {
-  weeklyForecast: ForecastPeriods | null;
+  weeklyForecast: WeeklyForecast | null;
   hourlyForecast: ForecastPeriods | null;
 };
 
@@ -263,7 +266,24 @@ export const weatherRouter = createTRPCRouter({
           const forecast: AllWeather = { weeklyForecast: null, hourlyForecast: null };
 
           if (weeklyForecast?.response.ok && weeklyForecast?.data?.properties?.periods) {
-            forecast.weeklyForecast = weeklyForecast.data.properties.periods;
+            const daytimeForecasts = weeklyForecast.data.properties.periods.filter(
+              (forecast) => forecast.isDaytime,
+            );
+            const nighttimeForecasts = weeklyForecast.data.properties.periods.filter(
+              (forecast) => !forecast.isDaytime,
+            );
+
+            const pairedForecasts = daytimeForecasts.map((day) => {
+              const matchingNight = nighttimeForecasts.find(
+                (night) => night.startTime === day.endTime,
+              );
+
+              return { day: day, night: matchingNight ?? null };
+            });
+
+            console.log('PAIRED FORECASTS:', pairedForecasts);
+
+            forecast.weeklyForecast = pairedForecasts as WeeklyForecast;
           } else {
             console.error('FAILED TO FETCH WEEKLY FORECAST:', weeklyForecast?.error);
           }
@@ -278,8 +298,6 @@ export const weatherRouter = createTRPCRouter({
             const weeklyForecast =
               forecast.weeklyForecast && forecast.weeklyForecast.length !== 0
                 ? forecast.weeklyForecast
-                    .filter((period) => period.isDaytime)
-                    .slice(1, 13)
                 : null;
 
             const hourlyForecast =
@@ -296,13 +314,25 @@ export const weatherRouter = createTRPCRouter({
                 ? (hourlyForecast[0]?.shortForecast ?? 'No forecast available')
                 : 'No forecast available',
               longForecast: weeklyForecast
-                ? (weeklyForecast[0]?.detailedForecast ?? 'No forecast available')
+                ? (weeklyForecast[0]?.day.detailedForecast ?? 'No forecast available')
                 : 'No forecast available',
               temperature:
                 hourlyForecast?.[0]?.temperature !== undefined
                   ? typeof hourlyForecast[0]?.temperature === 'number'
                     ? hourlyForecast[0]?.temperature
                     : hourlyForecast[0]?.temperature?.value
+                  : null,
+              highTemperature:
+                weeklyForecast?.[0]?.day?.temperature !== undefined
+                  ? typeof weeklyForecast?.[0]?.day?.temperature === 'number'
+                    ? weeklyForecast?.[0]?.day?.temperature
+                    : weeklyForecast?.[0]?.day?.temperature.value
+                  : null,
+              lowTemperature:
+                weeklyForecast?.[0]?.night?.temperature !== undefined
+                  ? typeof weeklyForecast?.[0]?.night?.temperature === 'number'
+                    ? weeklyForecast?.[0]?.night?.temperature
+                    : weeklyForecast?.[0]?.night?.temperature.value
                   : null,
               windSpeed:
                 hourlyForecast && typeof hourlyForecast[0]?.windSpeed === 'string'
