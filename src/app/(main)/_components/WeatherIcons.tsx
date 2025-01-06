@@ -13,7 +13,7 @@ import {
 
 type IconMapping = Record<string, JSX.Element>;
 
-const iconMapping: IconMapping = {
+const smallIconMapping: IconMapping = {
   'scattered rain showers': <CloudSunRain size={24} />,
   'isolated rain showers': <CloudSunRain size={24} />,
   'rain showers': <CloudRain size={24} />,
@@ -30,9 +30,34 @@ const iconMapping: IconMapping = {
   haze: <Haze size={24} />,
 };
 
-export default function WeatherIcon({ shortForecast }: { shortForecast: string }) {
-  const forecastLower = shortForecast.toLowerCase();
-  const icon = Object.keys(iconMapping).find((key) => forecastLower.includes(key));
+const largeIconMapping: IconMapping = {
+  'scattered rain showers': <CloudSunRain size={36} />,
+  'isolated rain showers': <CloudSunRain size={36} />,
+  'rain showers': <CloudRain size={36} />,
+  sunny: <Sun size={36} />,
+  'mostly sunny': <CloudSun size={36} />,
+  'partly sunny': <CloudSun size={36} />,
+  'partly cloudy': <CloudSun size={36} />,
+  cloudy: <Cloudy size={36} />,
+  'mostly cloudy': <Cloudy size={36} />,
+  drizzle: <CloudDrizzle size={36} />,
+  snow: <CloudSnow size={36} />,
+  hail: <CloudHail size={36} />,
+  thunderstorm: <CloudLightning size={36} />,
+  haze: <Haze size={36} />,
+};
 
-  return icon ? iconMapping[icon] : <Cloudy size={24} />;
+export default function WeatherIcon({
+  shortForecast,
+  size = 24,
+}: {
+  shortForecast: string;
+  size?: 24 | 36;
+}) {
+  const forecastLower = shortForecast.toLowerCase();
+  const iconMapping = size === 24 ? smallIconMapping : largeIconMapping;
+
+  const iconKey = Object.keys(iconMapping).find((key) => forecastLower.includes(key));
+
+  return iconKey ? iconMapping[iconKey] : <Cloudy size={size} />;
 }
