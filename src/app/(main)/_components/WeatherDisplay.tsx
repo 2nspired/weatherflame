@@ -527,10 +527,12 @@ export default function WeatherDisplay({
               </div>
             </div>
           )}
+
+          {/* DESKTOP: WEEKLY FORECASTS */}
           {weeklyForecasts && (
             <div className="h-full w-2/3 bg-orange-500 text-black">
               <div className="p-6 text-xl font-semibold">7-Day Forecast</div>
-              <div className="grid grid-rows-7 gap-3 pt-3 text-black">
+              <div className="flex h-full flex-col justify-between pt-3 text-black">
                 {weeklyForecasts?.map((forecast, index) => (
                   <div
                     key={forecast.day.number}
