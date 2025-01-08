@@ -1,5 +1,10 @@
 ## Weather Application
 
+OHHHH I SHOULD CLEAN THIS UP! COMING SOON! 
+
+
+
+
 tool for alert searches: https://alerts.weather.gov/?reset=true
 
 NOAA glossary https://forecast.weather.gov/glossary.php?letter=a
@@ -23,19 +28,4 @@ event codes for national weather service:
 https://www.weather.gov/dsb/eventcodes#:~:text=Naming%20Convention%20for%20EAS%20Event,S%20for%20STATEMENTS
 
 Alerts return
-Enumerations:
-• query.status: ["actual", "exercise", "system", "test", "draft"]
-• query.message_type: ["alert", "update", "cancel"]
-• query.region: ["AL", "AT", "GL", "GM", "PA", "PI"]
-• query.urgency: ["Immediate", "Expected", "Future", "Past", "Unknown"]
-• query.severity: ["Extreme", "Severe", "Moderate", "Minor", "Unknown"]
-• query.certainty: ["Observed", "Likely", "Possible", "Unlikely", "Unknown"] 2. Regex Patterns:
-• query.event: ^[A-Za-z0-9 ]+$
-	•	query.code: ^\w{3}$
-• query.point: ^(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)$
-	•	query.zone: ^(A[KLMNRSZ]|C[AOT]|D[CE]|F[LM]|G[AMU]|I[ADLN]|K[SY]|L[ACEHMOS]|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[AHKMRSWZ]|S[CDL]|T[NX]|UT|V[AIT]|W[AIVY]|[HR]I)[CZ]\d{3}$ 3. Conflicting Parameters:
-• region_type, point, region, area, zone: Cannot be used together.
 
-API FAQ
-
-ESLINT AND PRETTIER SETUP: https://www.youtube.com/watch?v=oVzvXW8LWqg&ab_channel=DRVGOtheDEV
