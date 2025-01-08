@@ -46,7 +46,7 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
               <AccordionItem
                 key={alert.id}
                 value={`index-${index + 1}`}
-                className="border-none px-6"
+                className="border-b border-black px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex flex-col space-y-2">
@@ -91,7 +91,7 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
               </AccordionItem>
             ))}
           </Accordion>
-          <div className="h-5 border-t border-black"></div>
+          <div className="h-5"></div>
         </SectionContainer>
       )}
     </>
