@@ -1,24 +1,29 @@
 'use client';
 
 // TODO: CLEAN UP IN GENERAL
+import { CloudAlert } from 'lucide-react';
 import { useState } from 'react';
 
+import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import type { components } from '~/app/types/weather-gov/weatherGov';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '~/components/ui/accordion';
 import { type TRPCInputs } from '~/server/api/root';
 import { api } from '~/trpc/client';
+import { formatDayHour } from '~/utilities/formatters/formatDate';
 
 type AlertParams = TRPCInputs['alerts']['getAlerts'];
-// type Alert = components['schemas']['Alert'];
-// type AlertFeatureResponse =
-//   | components['responses']['AlertCollection']['content']['application/geo+json']['features']
-//   | [];
 type AlertFeature =
   components['responses']['AlertCollection']['content']['application/geo+json']['features'][0];
 
 // --------------------------------------------------------
 
 export default function AlertsDisplay({ zones }: { zones: string[] }) {
-  const [alertParams, setAlertParams] = useState<AlertParams>({
+  const [alertParams] = useState<AlertParams>({
     zone: zones,
   });
 
@@ -28,24 +33,67 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
     ...alertParams,
   });
 
+  const alertFeatures = alertsData?.data?.map((alert: AlertFeature) => alert);
+  console.log('ALERTFEATURES', alertFeatures);
+
   return (
-    <div className="flex flex-col space-y-3">
-      <h1 className="text-xl">ALERTS COMPONENT</h1>
-      <h1 className="text-xl"></h1>
-      <div className="max-w-full border border-black p-3">
-        {alertsData && alertsData.data && alertsData.data.length > 0 ? (
-          alertsData.data.map((alert: AlertFeature) => (
-            <div className="flex max-w-full flex-col space-y-2" key={alert.id}>
-              <p>{alert.properties.id}</p>
-              <p>{alert.properties.headline}</p>
-              <p>{alert.properties.description}</p>
-              <p className="break-words">{alert.properties.affectedZones}</p>
-            </div>
-          ))
-        ) : (
-          <div>No alerts</div>
-        )}
-      </div>
-    </div>
+    <>
+      {alertsData.data && alertFeatures && (
+        <SectionContainer className="bg-zinc-200 text-red-500">
+          <div className="h-5 border-b border-black bg-zinc-200"></div>
+          <Accordion type="single" collapsible className="bg-zinc-100">
+            {alertFeatures?.map((alert, index) => (
+              <AccordionItem
+                key={alert.id}
+                value={`index-${index + 1}`}
+                className="border-none px-6"
+              >
+                <AccordionTrigger className="hover:no-underline">
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex flex-row space-x-2 text-left">
+                      <div>
+                        <CloudAlert size={24} />
+                      </div>
+                      <div className="font-bold">
+                        {alert.properties.event ?? 'Weather Advisory'}
+                      </div>
+                    </div>
+                    <div className="text-left font-mono text-sm">
+                      {alert.properties.effective &&
+                        `From ${formatDayHour(alert.properties.effective)}`}
+                      {alert.properties.ends &&
+                        ` until ${formatDayHour(alert.properties.ends)}`}
+                    </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="">
+                  <div className="flex flex-col space-y-3">
+                    {alert.properties.instruction && (
+                      <div className="flex flex-col space-y-2">
+                        <div className="font-bold">Instruction</div>
+                        <div className="font-mono">{alert.properties.instruction}</div>
+                      </div>
+                    )}
+                    {alert.properties.senderName && (
+                      <div className="flex flex-col space-y-2">
+                        <div className="font-bold">Issued By</div>
+                        <div className="font-mono">{alert.properties.senderName}</div>
+                      </div>
+                    )}
+                    {alert.properties.description && (
+                      <div className="flex flex-col space-y-2">
+                        <div className="font-bosld">Description</div>
+                        <div className="font-mono">{alert.properties.description}</div>
+                      </div>
+                    )}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+          <div className="h-5 border-t border-black"></div>
+        </SectionContainer>
+      )}
+    </>
   );
 }

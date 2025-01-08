@@ -7,6 +7,7 @@
 
 import { CloudRain, Droplet, Wind } from 'lucide-react';
 
+import AlertsDisplay from '~/app/(main)/_components/AlertsDisplay';
 import WeatherIcon from '~/app/(main)/_components/WeatherIcons';
 import {
   Accordion,
@@ -60,7 +61,12 @@ export default function WeatherDisplay({
 
   return (
     <div className="flex h-full max-w-full flex-col items-center">
-      <SectionContainer className="mt-3 border-t border-black">
+      {weatherData?.data?.alertZones && (
+        <AlertsDisplay zones={weatherData.data.alertZones} />
+      )}
+      <SectionContainer
+        className={`${weatherData.data?.alertZones ? 'mt-0' : 'mt-3'} border-t border-black`}
+      >
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-row">
             <div className="w-2/3 border-r border-black p-6 text-xl font-bold lg:px-6 lg:text-3xl">
@@ -89,7 +95,7 @@ export default function WeatherDisplay({
             {currentWeather.temperature !== null &&
               currentWeather.temperature !== undefined && (
                 <div className="flex size-full flex-col items-center justify-center">
-                  <div className="flex h-full flex-col justify-center p-6">
+                  <div className="flex h-full flex-col justify-center p-6 py-10">
                     <div className="text-[10rem] leading-none">{`${currentWeather.temperature}°`}</div>
                     <div className="flex flex-row justify-between px-2">
                       {currentWeather.highTemperature && (
@@ -183,7 +189,7 @@ export default function WeatherDisplay({
                 {shortHourlyForecasts.map((forecast, index) => (
                   <AccordionItem
                     key={forecast.number}
-                    className={'border-black px-3 hover:no-underline'}
+                    className={'border-black px-3'}
                     value={`index-${index + 1}`}
                   >
                     <AccordionTrigger className="px-3 hover:no-underline">
@@ -429,6 +435,7 @@ export default function WeatherDisplay({
         <div className="flex size-full flex-row">
           {/* <div className="flex size-full flex-row"> */}
           {/* <div className="w-8 border-r border-black"></div> */}
+
           {/* DESKTOP: HOURLY FORECAST */}
 
           {hourlyForecasts && (
@@ -436,27 +443,35 @@ export default function WeatherDisplay({
               <div className="border-r border-black p-6 text-xl font-semibold">
                 Hourly Forecast
               </div>
-              <div className="h-full grid-rows-12 gap-3">
+              <div className="flex flex-col justify-center">
                 {/* TODO: HOW DO I MAKE THE ROWS FILL THE CONTAINER */}
-                <Accordion type="single" collapsible>
+                <Accordion
+                  type="single"
+                  collapsible
+                  className="h-full"
+                  defaultValue="index-1"
+                >
                   {hourlyForecasts.map((forecast, index) => (
                     <AccordionItem
                       key={forecast.number}
-                      className={`row-start-${index + 1} border-r border-black px-3 hover:no-underline`}
+                      className={`border-r border-black px-3 hover:no-underline`}
                       value={`index-${index + 1}`}
                     >
                       <AccordionTrigger className="px-3 hover:no-underline">
                         <div className="grid w-full grid-cols-3 gap-3">
-                          <div className="col-start-1 col-end-1 text-left">
+                          <div className="col-start-1 col-end-1 text-left text-xl">
                             {forecast.startTime && formatDateHour(forecast.startTime)}
                           </div>
                           {forecast.shortForecast && (
                             <div className="col-start-2 col-end-2">
-                              <WeatherIcon shortForecast={forecast.shortForecast} />
+                              <WeatherIcon
+                                shortForecast={forecast.shortForecast}
+                                size={36}
+                              />
                             </div>
                           )}
 
-                          <div className="col-start-3 col-end-3 flex font-mono">
+                          <div className="col-start-3 col-end-3 flex font-mono text-xl">
                             {typeof forecast.temperature === 'number'
                               ? forecast.temperature
                               : forecast.temperature?.value}
@@ -513,15 +528,13 @@ export default function WeatherDisplay({
             </div>
           )}
           {weeklyForecasts && (
-            <div className="w-2/3 text-black">
-              <div className="bg-orange-500 p-6 text-xl font-semibold">
-                7-Day Forecast
-              </div>
-              <div className="grid grid-rows-7 bg-orange-500 text-black">
+            <div className="h-full w-2/3 bg-orange-500 text-black">
+              <div className="p-6 text-xl font-semibold">7-Day Forecast</div>
+              <div className="grid grid-rows-7 gap-3 pt-3 text-black">
                 {weeklyForecasts?.map((forecast, index) => (
                   <div
                     key={forecast.day.number}
-                    className={`grid grid-cols-9 gap-6 px-6 py-3 ${
+                    className={`grid grid-cols-9 px-6 ${
                       index !== weeklyForecasts.length - 1 ? '' : ''
                     }`}
                   >
