@@ -24,15 +24,15 @@ export default async function AlertsPage({
     if (!locationParam || locationParam.length === 0) {
       return null;
     }
-    if (
-      typeof locationParam === 'string' &&
-      locationParam.length === 5 &&
-      !isNaN(Number(locationParam))
-    ) {
-      return await api.location.getGeoByZip({
-        zip: locationParam,
-      });
-    }
+    // if (
+    //   typeof locationParam === 'string' &&
+    //   locationParam.length === 5 &&
+    //   !isNaN(Number(locationParam))
+    // ) {
+    //   return await api.location.getGeoByZip({
+    //     zip: locationParam,
+    //   });
+    // }
     if (
       typeof locationParam === 'string' &&
       locationParam.length !== 0 &&
@@ -59,6 +59,7 @@ export default async function AlertsPage({
               lat={geoData.lat}
               lon={geoData.lon}
               locationName={geoData.name}
+              locationState={geoData.state}
             />
           )}
         </div>

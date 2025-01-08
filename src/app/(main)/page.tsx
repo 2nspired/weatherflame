@@ -1,6 +1,6 @@
 import React from 'react';
 
-import InputLocation from '~/app/(main)/_components/InputLocation';
+import InputLocation from '~/app/(main)/_components/InputLocationHome';
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 
