@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { weatherForecastOffices } from '~/app/types/weather-gov/weatherForecastOffices';
 import type { components, paths } from '~/app/types/weather-gov/weatherGov';
+import { type ZoneByGeoResponse } from '~/server/api/routers/location';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 import { formatAsLocalDate, formatDate } from '~/utilities/formatters/formatDate';
 
@@ -194,6 +195,7 @@ export const weatherRouter = createTRPCRouter({
     .query(async ({ input }) => {
       let weeklyForecast = null;
       let hourlyForecast = null;
+      let forecastZones = null;
 
       let attempts = 0;
       while (attempts < input.maxRetries) {
@@ -207,7 +209,15 @@ export const weatherRouter = createTRPCRouter({
           });
 
           if (pointData.response.ok && pointData.data && pointData.data.properties) {
-            console.log('POINT DATA RESPONSE', pointData.data);
+            // console.log('POINT DATA RESPONSE', pointData.data);
+
+            const zonesURL = `https://api.weather.gov/zones?point=${input.lat},${input.lon}`;
+            const res = await fetch(zonesURL);
+            const resJson: ZoneByGeoResponse = (await res.json()) as ZoneByGeoResponse;
+
+            if (res.ok && resJson) {
+              forecastZones = resJson.features.map((zone) => zone.properties.id);
+            }
 
             const { cwa, gridX, gridY } = pointData.data.properties;
 
@@ -281,7 +291,7 @@ export const weatherRouter = createTRPCRouter({
               return { day: day, night: matchingNight ?? null };
             });
 
-            console.log('PAIRED FORECASTS:', pairedForecasts);
+            // console.log('PAIRED FORECASTS:', pairedForecasts);
 
             forecast.weeklyForecast = pairedForecasts as WeeklyForecast;
           } else {
@@ -353,6 +363,7 @@ export const weatherRouter = createTRPCRouter({
               currentWeather: currentWeather,
               weeklyForecast: weeklyForecast,
               hourlyForecast: hourlyForecast,
+              alertZones: forecastZones,
             };
           }
         } catch (error) {

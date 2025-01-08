@@ -249,9 +249,9 @@ export const locationRouter = createTRPCRouter({
         maxRetries: z.number().optional().default(1),
       }),
     )
-    .mutation(async ({ input }) => {
+    .query(async ({ input }) => {
       const url = `https://api.weather.gov/zones?point=${input.lat},${input.lon}`;
-      console.log('URL', url);
+      // console.log('URL', url);
 
       let attempts = 0;
       while (attempts < input.maxRetries) {
