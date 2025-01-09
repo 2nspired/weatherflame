@@ -82,7 +82,7 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
                     )}
                     {alert.properties.description && (
                       <div className="flex flex-col space-y-2">
-                        <div className="font-bosld">Description</div>
+                        <div className="font-bold">Description</div>
                         <div className="font-mono">{alert.properties.description}</div>
                       </div>
                     )}
