@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -91,7 +92,9 @@ export default function WeatherHeader() {
     <SectionContainer className="border-y border-black">
       <div className="flex w-full flex-row">
         <div className="hidden shrink-0 border-r border-black px-6 font-mono sm:flex sm:flex-col sm:justify-center sm:text-3xl">
-          <div>WEATHERFLAME</div>
+          <Link href="/">
+            <div>WEATHERFLAME</div>
+          </Link>
           <div className="text-xs">pretty accurate weather</div>
         </div>
         <div className="flex flex-col items-center justify-center border-r border-black font-mono text-2xl sm:hidden">
@@ -114,6 +117,7 @@ export default function WeatherHeader() {
                         placeholder="zipcode or city"
                         className="h-10 rounded-none text-gray-700 outline-none"
                         {...field}
+                        type="text"
                       />
                     </FormControl>
                     <div className="min-h-6">

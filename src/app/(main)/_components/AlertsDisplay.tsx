@@ -38,7 +38,7 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
 
   return (
     <>
-      {alertsData.data && alertFeatures && (
+      {alertsData.data && alertFeatures && alertFeatures.length > 0 && (
         <SectionContainer className="border-t border-black bg-zinc-200 text-red-500">
           <Accordion type="single" collapsible className="bg-zinc-100">
             {alertFeatures?.map((alert, index) => (
@@ -46,6 +46,7 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
                 key={alert.id}
                 value={`index-${index + 1}`}
                 className={`border-b-0 px-3 hover:no-underline ${index === alertFeatures.length - 1 ? '' : 'border-b border-black '}`}
+                // className={`border-b-0 px-3 hover:no-underline ${index === alertFeatures.length - 1 ? '' : 'border-b border-black '}`}
               >
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex flex-col space-y-2">
