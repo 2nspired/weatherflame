@@ -93,9 +93,14 @@ export const alertRouter = createTRPCRouter({
             },
           });
 
-          if (response.status === 200 && data && data.features.length > 0) {
-            // console.log('ALERTS RESPONSE', data.features);
-            return data.features;
+          if (response.status === 200) {
+            if (data && data.features.length > 0) {
+              // console.log('ALERTS RESPONSE', data.features);
+              return data.features;
+            } else {
+              console.log('No alerts found');
+              return [];
+            }
           }
 
           if (error) {
