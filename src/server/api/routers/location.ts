@@ -108,7 +108,10 @@ export const getGeoByNameSchema = z.object({
   state: z
     .string()
     .min(2, 'State code cannot be empty')
-    .regex(/^[A-Z]{2}$/, 'State code must be a valid ISO 3166-1 alpha-2 code')
+    .regex(
+      /^(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)$/,
+      'State code must be a valid ISO 3166-2:US state code',
+    )
     .optional(),
   countryCode: z
     .string()
@@ -161,6 +164,7 @@ export const locationRouter = createTRPCRouter({
 
   getGeoByName: publicProcedure.input(getGeoByNameSchema).mutation(async ({ input }) => {
     let url = `https://api.openweathermap.org/geo/1.0/direct?q=${input.name.replace(' ', '+')}`;
+    console.log('GEOBYNAMEURL', url);
     if (input.state) {
       url += `,${input.state}`;
     }

@@ -18,7 +18,6 @@ import { api } from '~/trpc/client';
 import { abbreviateState } from '~/utilities/formatters/abbreviateState';
 import {
   dateAddDays,
-  formatAsLocalDate,
   formatDateHour,
   formatShortDate,
 } from '~/utilities/formatters/formatDate';
@@ -60,6 +59,8 @@ export default function WeatherDisplay({
   const hourlyForecasts = weatherData.data?.hourlyForecast;
   const weeklyForecasts = weatherData.data?.weeklyForecast;
 
+  const randomIndex = Math.floor(Math.random() * 10);
+
   return (
     <div className="flex h-full max-w-full flex-col items-center">
       <WeatherHeader />
@@ -77,9 +78,11 @@ export default function WeatherDisplay({
                 </div>
 
                 <div className="flex w-1/3 flex-row items-center justify-center">
-                  <div className="text-xl lg:text-2xl">
-                    {currentWeather?.date ?? formatAsLocalDate(new Date())}
-                  </div>
+                  {currentWeather?.date && (
+                    <div className="text-xl lg:text-2xl" suppressHydrationWarning>
+                      {currentWeather.date}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -271,7 +274,7 @@ export default function WeatherDisplay({
           {/* MOBILE: SASSY SEPARATOR */}
           <SectionContainer className="border-t border-black bg-zinc-200 text-black lg:hidden">
             <div className="bg-zinc-100 px-10 py-6 text-center font-mono text-sm">
-              <SassySeparator />
+              <SassySeparator randomIndex={randomIndex} />
             </div>
           </SectionContainer>
 
@@ -325,8 +328,9 @@ export default function WeatherDisplay({
                       <div className="pt-2 text-sm">
                         {forecast.day.startTime
                           ? formatShortDate(forecast.day.startTime)
-                          : dateAddDays({
-                              date: currentWeather?.date ?? new Date().toDateString(),
+                          : currentWeather?.date &&
+                            dateAddDays({
+                              date: currentWeather.date,
                               days: index === 0 ? 1 : index,
                             })}
                       </div>
@@ -547,8 +551,9 @@ export default function WeatherDisplay({
                           <div>
                             {forecast.day.startTime
                               ? formatShortDate(forecast.day.startTime)
-                              : dateAddDays({
-                                  date: currentWeather?.date ?? new Date().toDateString(),
+                              : currentWeather?.date &&
+                                dateAddDays({
+                                  date: currentWeather.date,
                                   days: index === 0 ? 1 : index,
                                 })}
                           </div>
@@ -594,8 +599,7 @@ export default function WeatherDisplay({
     </div>
   );
 }
-
-const SassySeparator = () => {
+const SassySeparator = ({ randomIndex }: { randomIndex: number }) => {
   const sayings = [
     'Short-term drama up top, long-term speculation below.',
     'Hourly: for the impatient. Weekly: for the planners.',
@@ -608,6 +612,6 @@ const SassySeparator = () => {
     'One’s for now, one’s for later. Either way, bring a jacket just in case.',
     'Hourly: the tea. Weekly: the prophecy.',
   ];
-  const randomIndex = Math.floor(Math.random() * sayings.length);
+  console.log('random index sassy', randomIndex);
   return sayings[randomIndex];
 };
