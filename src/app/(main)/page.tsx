@@ -1,6 +1,8 @@
+// TODO: CHECK FOR HYDRATION ERRORS
+
 import React from 'react';
 
-import InputLocation from '~/app/(main)/_components/InputLocationHome';
+import InputLocation from '~/app/(main)/_components/InputLocation';
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 
@@ -32,7 +34,9 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="flex flex-col justify-center">
-                  <InputLocation className="flex space-x-3 px-6 pt-8 sm:flex-row" />
+                  <div className="h-24">
+                    <InputLocation className="flex space-x-3 p-6 pb-7 sm:flex-row" />
+                  </div>
                 </div>
               </div>
               <div className="hidden w-2/6 border-r border-black sm:block"></div>
