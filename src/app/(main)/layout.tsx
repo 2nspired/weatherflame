@@ -16,6 +16,7 @@ export default async function MainLayout({ children }: LayoutProps) {
   if (MAINTENANCE_MODE && isProd) {
     return <MaintenanceMode />;
   }
+  console.log('ISDEV', isDev);
 
   return (
     <>

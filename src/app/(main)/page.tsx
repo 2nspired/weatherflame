@@ -58,8 +58,17 @@ export default async function Home() {
               <AlertTitle className="pb-3">DISCLAIMER</AlertTitle>
               <AlertDescription>
                 <div>
-                  This is a project built by someone learning how to code. It&apos;s a
-                  work in progress. See{' '}
+                  While Weatherflame strives to deliver fun and functionality, please
+                  don&apos;t use it to plan your wedding, your apocalypse survival
+                  strategy, or a picnic under the stars.
+                </div>
+                <br />
+                <div>
+                  This is a personal development project designed as part of an ongoing
+                  journey to deepen coding knowledge. It's a work in progress.
+                  <br />
+                  <br />
+                  See{' '}
                   <a
                     className="underline"
                     href="https://github.com/2nspired/weatherflame"
@@ -68,12 +77,6 @@ export default async function Home() {
                     github
                   </a>{' '}
                   for more info.
-                </div>
-                <br />
-                <div>
-                  While Weatherflame strives to deliver fun and functionality, please
-                  don&apos;t use it to plan your wedding, your apocalypse survival
-                  strategy, or a picnic under the stars.
                 </div>
               </AlertDescription>
             </Alert>
