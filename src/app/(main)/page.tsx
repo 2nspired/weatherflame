@@ -65,7 +65,7 @@ export default async function Home() {
                 <br />
                 <div>
                   This is a personal development project designed as part of an ongoing
-                  journey to deepen coding knowledge. It's a work in progress.
+                  journey to deepen coding knowledge. It&apos;s a work in progress.
                   <br />
                   <br />
                   See{' '}
