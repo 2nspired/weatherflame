@@ -21,7 +21,7 @@ export default async function MainLayout({ children }: LayoutProps) {
   return (
     <>
       <div className="flex h-full min-h-full flex-col">
-        {isDev && <DevWindowBreakpoint />}
+        {isDev && !isProd && <DevWindowBreakpoint />}
         {/* <Header /> */}
         {/* <Header /> */}
         <main className="flex grow flex-col items-center ">{children}</main>
