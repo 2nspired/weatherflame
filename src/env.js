@@ -7,7 +7,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    NODE_ENV: z
+    VERCEL_ENV: z
       .enum(['development', 'test', 'preview', 'production'])
       .default('development'),
     // openweather map
@@ -25,7 +25,7 @@ export const env = createEnv({
    */
   client: {
     // node
-    NEXT_PUBLIC_NODE_ENV: z
+    NEXT_PUBLIC_VERCEL_ENV: z
       .enum(['development', 'test', 'preview', 'production'])
       .default('development'),
     // vercel
@@ -40,13 +40,13 @@ export const env = createEnv({
    */
   runtimeEnv: {
     // server
-    NODE_ENV: process.env.NODE_ENV,
+    VERCEL_ENV: process.env.NODE_ENV,
     OPENWEATHER_API: process.env.OPENWEATHER_API,
     WEATHERSTACK_API: process.env.WEATHERSTACK_API,
     GOOGLE_MAPS_API: process.env.GOOGLE_MAPS_API,
 
     // client
-    NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
+    NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     NEXT_PUBLIC_GOOGLE_MAPS_API: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API,
   },

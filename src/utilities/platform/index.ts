@@ -3,13 +3,13 @@ import { env } from '~/env';
 export const isServer = typeof window === 'undefined';
 export const isBrowser = typeof window !== 'undefined';
 
-export const isDev = env.NEXT_PUBLIC_NODE_ENV === 'development';
-export const isProd = env.NEXT_PUBLIC_NODE_ENV === 'production';
+export const isDev = env.NEXT_PUBLIC_VERCEL_ENV === 'development';
+export const isProd = env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
 const getHostname = () => {
   return isDev
     ? 'localhost:3000'
-    : env.NEXT_PUBLIC_NODE_ENV === 'preview'
+    : env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
       ? env.NEXT_PUBLIC_VERCEL_URL
       : 'www.weatherflame.com';
 };
