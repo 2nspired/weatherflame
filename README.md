@@ -10,6 +10,7 @@ If you find use in this project, or want to contribute, just send me a note or f
 - [Interface](#interface)
 - [Data and APIs](#data-and-apis)
 - [Helpful Links](#helpful-links)
+- [License](#license)
 
 ## Interface
 I wanted to create a simplified layout that is somewhat throwback. I want it to make you think wow, that gives me 1980 - 1990s vibes. I am not sure of the name for this type of design, but if I had to give it one, let's call it _Retro-modern_? The main inspiration comes from [mux.com](https://www.mux.com/). Their design came from the agency [For The People](https://www.forthepeople.agency/mux) -their work is amazing. I suggest checking it out. 
