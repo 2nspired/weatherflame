@@ -36,6 +36,27 @@ export default function WeatherDisplay({
   locationName: string;
   locationState: string;
 }) {
+  // ------------------------------------------------------------
+
+  if (process.env.NODE_ENV === 'production') {
+    console.log('ISDEV - expect false', isDev);
+    console.log('ISPROD - expext true', isProd);
+    console.log('NODE_ENV - expect prod', process.env.NODE_ENV);
+    console.log('NEXT_PUBLIC_NODE_ENV - expect prod', process.env.NEXT_PUBLIC_NODE_ENV);
+    console.log(
+      'Is Development - expect false',
+      process.env.NEXT_PUBLIC_NODE_ENV === 'development',
+    );
+    console.log(
+      'Is Production - expect true',
+      process.env.NEXT_PUBLIC_NODE_ENV === 'production',
+    );
+  }
+
+  console.log('All Environment Variables:', process.env);
+
+  // ------------------------------------------------------------
+
   const weatherData = api.weather.getAllWeather.useQuery(
     {
       lat: lat.toString(),

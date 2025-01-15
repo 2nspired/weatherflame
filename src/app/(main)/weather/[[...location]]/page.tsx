@@ -3,7 +3,6 @@
 import { api } from 'src/trpc/server';
 
 import WeatherDisplay from '~/app/(main)/_components/WeatherDisplay';
-import { isDev, isProd } from '~/utilities/platform';
 
 import WeatherHeader from '../../_components/WeatherHeader';
 
@@ -13,27 +12,6 @@ export default async function AlertsPage({
   params: Promise<{ location: string[] }>;
 }) {
   const routeParams = await params;
-
-  // ------------------------------------------------------------
-
-  if (process.env.NODE_ENV === 'production') {
-    console.log('ISDEV - expect false', isDev);
-    console.log('ISPROD - expext true', isProd);
-    console.log('NODE_ENV - expect prod', process.env.NODE_ENV);
-    console.log('NEXT_PUBLIC_NODE_ENV - expect prod', process.env.NEXT_PUBLIC_NODE_ENV);
-    console.log(
-      'Is Development - expect false',
-      process.env.NEXT_PUBLIC_NODE_ENV === 'development',
-    );
-    console.log(
-      'Is Production - expect true',
-      process.env.NEXT_PUBLIC_NODE_ENV === 'production',
-    );
-  }
-
-  console.log('All Environment Variables:', process.env);
-
-  // ------------------------------------------------------------
 
   if (!routeParams.location || routeParams.location.length === 0) {
     console.error('Location parameter is missing or invalid');
