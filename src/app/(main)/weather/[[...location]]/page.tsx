@@ -14,12 +14,14 @@ export default async function AlertsPage({
 }) {
   const routeParams = await params;
 
-  console.log('ISDEV', isDev);
-  console.log('ISPROD', isProd);
-  console.log('NODE_ENV:', process.env.NODE_ENV);
-  console.log('NEXT_PUBLIC_NODE_ENV:', process.env.NEXT_PUBLIC_NODE_ENV);
-  console.log('Is Development:', process.env.NEXT_PUBLIC_NODE_ENV === 'development');
-  console.log('Is Production:', process.env.NEXT_PUBLIC_NODE_ENV === 'production');
+  if (process.env.NODE_ENV === 'production') {
+    console.log('ISDEV', isDev);
+    console.log('ISPROD', isProd);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('NEXT_PUBLIC_NODE_ENV:', process.env.NEXT_PUBLIC_NODE_ENV);
+    console.log('Is Development:', process.env.NEXT_PUBLIC_NODE_ENV === 'development');
+    console.log('Is Production:', process.env.NEXT_PUBLIC_NODE_ENV === 'production');
+  }
 
   if (!routeParams.location || routeParams.location.length === 0) {
     console.error('Location parameter is missing or invalid');
