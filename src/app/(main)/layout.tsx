@@ -17,6 +17,11 @@ export default async function MainLayout({ children }: LayoutProps) {
     return <MaintenanceMode />;
   }
   console.log('ISDEV', isDev);
+  console.log('ISPROD', isProd);
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log('NEXT_PUBLIC_NODE_ENV:', process.env.NEXT_PUBLIC_NODE_ENV);
+  console.log('Is Development:', process.env.NEXT_PUBLIC_NODE_ENV === 'development');
+  console.log('Is Production:', process.env.NEXT_PUBLIC_NODE_ENV === 'production');
 
   return (
     <>
