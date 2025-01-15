@@ -27,14 +27,11 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
     zone: zones,
   });
 
-  console.log('alertParams', alertParams);
-
   const alertsData = api.alerts.getAlerts.useQuery({
     ...alertParams,
   });
 
   const alertFeatures = alertsData?.data?.map((alert: AlertFeature) => alert);
-  console.log('ALERTFEATURES', alertFeatures);
 
   return (
     <>

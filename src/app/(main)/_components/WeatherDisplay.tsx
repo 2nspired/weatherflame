@@ -36,17 +36,6 @@ export default function WeatherDisplay({
   locationName: string;
   locationState: string;
 }) {
-  if (process.env.NODE_ENV === 'production') {
-    console.log('ISDEV', isDev);
-    console.log('ISPROD', isProd);
-    console.log('NODE_ENV:', process.env.NODE_ENV);
-    console.log('NEXT_PUBLIC_NODE_ENV:', process.env.NEXT_PUBLIC_NODE_ENV);
-    console.log('Is Development:', process.env.NEXT_PUBLIC_NODE_ENV === 'development');
-    console.log('Is Production:', process.env.NEXT_PUBLIC_NODE_ENV === 'production');
-  }
-
-  console.log('All Environment Variables:', process.env);
-
   const weatherData = api.weather.getAllWeather.useQuery(
     {
       lat: lat.toString(),
@@ -624,6 +613,5 @@ const SassySeparator = ({ randomIndex }: { randomIndex: number }) => {
     'One’s for now, one’s for later. Either way, bring a jacket just in case.',
     'Hourly: the tea. Weekly: the prophecy.',
   ];
-  console.log('random index sassy', randomIndex);
   return sayings[randomIndex];
 };
