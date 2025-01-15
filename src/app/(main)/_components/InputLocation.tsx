@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
+import { env } from '~/env';
 import { api } from '~/trpc/client';
 import { abbreviateState } from '~/utilities/formatters/abbreviateState';
 
@@ -47,7 +48,7 @@ export default function InputLocation({
   const router = useRouter();
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API!,
+    googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API,
     libraries: glibraries,
   });
 
