@@ -21,6 +21,7 @@ import {
   formatDateHour,
   formatShortDate,
 } from '~/utilities/formatters/formatDate';
+import { isDev, isProd } from '~/utilities/platform';
 
 import SectionContainer from './SectionContainer';
 
@@ -35,6 +36,17 @@ export default function WeatherDisplay({
   locationName: string;
   locationState: string;
 }) {
+  if (process.env.NODE_ENV === 'production') {
+    console.log('ISDEV', isDev);
+    console.log('ISPROD', isProd);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('NEXT_PUBLIC_NODE_ENV:', process.env.NEXT_PUBLIC_NODE_ENV);
+    console.log('Is Development:', process.env.NEXT_PUBLIC_NODE_ENV === 'development');
+    console.log('Is Production:', process.env.NEXT_PUBLIC_NODE_ENV === 'production');
+  }
+
+  console.log('All Environment Variables:', process.env);
+
   const weatherData = api.weather.getAllWeather.useQuery(
     {
       lat: lat.toString(),
