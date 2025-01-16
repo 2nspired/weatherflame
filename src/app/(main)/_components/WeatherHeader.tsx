@@ -10,8 +10,8 @@ export default function WeatherHeader() {
         <div className="hidden shrink-0 border-r border-black px-6 font-mono sm:flex sm:flex-col sm:justify-center sm:text-3xl">
           <Link href="/">
             <div>WEATHERFLAME</div>
+            <div className="text-xs">pretty accurate weather</div>
           </Link>
-          <div className="text-xs">pretty accurate weather</div>
         </div>
         <div className="flex flex-col items-center justify-center border-r border-black font-mono text-3xl sm:hidden">
           <Link href="/">
