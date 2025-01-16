@@ -172,7 +172,7 @@ export default function InputLocation({
         <div className={`${buttonClassName}md:w-2/6`}>
           <Button
             type="submit"
-            className="w-20 rounded-none bg-[#FF6100] text-gray-100 hover:bg-[#FF6100]"
+            className="w-20 rounded-none bg-[#FF6100] hover:bg-[#FF6100]"
             disabled={!form.formState.isValid || form.formState.isSubmitting}
           >
             {fetchGeoByZip.isPending || fetchGeoByName.isPending ? (
