@@ -10,12 +10,12 @@ export default async function Home() {
   return (
     <div className="flex size-full flex-col items-center bg-zinc-200">
       {/* MAIN CONTAINER */}
-      <SectionContainer className="min-h-10 border-black bg-zinc-700 text-center"></SectionContainer>
+      <SectionContainer className="border-t border-black bg-zinc-700 text-center"></SectionContainer>
       <div className="z-10 flex size-full flex-col items-center justify-center">
         {/* TITLE AND SUBTITLE */}
 
         <div className="flex w-full grow flex-col items-center justify-center border-b border-black bg-zinc-700">
-          <div className="flex size-full flex-col border-b border-black">
+          <div className="flex size-full flex-col">
             <div className="flex size-full flex-col items-center justify-center px-3">
               <div className="size-full max-w-6xl border-x border-black"></div>
             </div>
@@ -49,9 +49,8 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* SPACE CONTAINER */}
-        <SectionContainer className="h-12 border-b border-black text-center md:h-20"></SectionContainer>
-        {/* SECTION 1 CONTAINER */}
+        <SectionContainer className="h-6 border-b border-black text-center md:h-20"></SectionContainer>
+
         <div className="flex w-full flex-col items-center justify-center px-3">
           <div className="w-full max-w-6xl border-x border-black">
             <Alert className="rounded-none border-hidden bg-black/10 p-6 text-gray-800">
@@ -59,13 +58,14 @@ export default async function Home() {
               <AlertDescription>
                 <div>
                   While Weatherflame strives to deliver fun and functionality, please
-                  don&apos;t use it to plan your wedding, your apocalypse survival
-                  strategy, or a picnic under the stars.
+                  don&apos;t use it to plan your wedding, apocalypse survival strategy, or
+                  a picnic under the stars.
                 </div>
                 <br />
                 <div>
                   This is a personal development project designed as part of an ongoing
-                  journey to deepen coding knowledge. It&apos;s a work in progress.
+                  journey to deepen coding knowledge and test new libraries and
+                  integrations.
                   <br />
                   <br />
                   See{' '}
@@ -82,7 +82,7 @@ export default async function Home() {
             </Alert>
           </div>
         </div>
-        <SectionContainer className="min-h-12 border-t border-black text-center"></SectionContainer>
+        <SectionContainer className="h-12 border-t border-black text-center"></SectionContainer>
       </div>
     </div>
   );
