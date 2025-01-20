@@ -2,9 +2,9 @@
 
 import { api } from 'src/trpc/server';
 
-import WeatherDisplay from '~/app/(main)/_components/WeatherDisplay';
+import WeatherDisplay from '~/app/(main)/weather/_components/WeatherDisplay';
 
-import WeatherHeader from '../../_components/WeatherHeader';
+import WeatherHeader from '../_components/WeatherHeader';
 
 export default async function AlertsPage({
   params,

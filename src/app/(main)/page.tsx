@@ -4,6 +4,7 @@ import React from 'react';
 
 import InputLocation from '~/app/(main)/_components/InputLocation';
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
+import TypewriterText from '~/app/(main)/_components/TextAnimations';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 
 export default async function Home() {
@@ -11,27 +12,35 @@ export default async function Home() {
     <div className="flex size-full flex-col items-center border-b border-black bg-zinc-200">
       <SectionContainer className="flex grow flex-col items-center justify-center bg-zinc-700">
         {/* CONTENT CONTAINER */}
-        <div className="flex h-full w-full flex-col justify-center">
-          {/* <div className="h-3"></div> */}
+        <div className="flex size-full flex-col justify-center">
           {/* CONTENT */}
           <div className="flex w-full flex-col sm:flex-row">
-            <div className="hidden w-2/6 items-center justify-center border-y border-r border-black bg-[#FF6100] text-zinc-100 sm:flex">
-              <div className="px-6 pl-12 font-mono text-[4rem] leading-none md:text-[5rem] lg:mr-[-2] lg:text-[10rem]">
-                WF°
+            <div className="w-2/6">
+              <div className="animate-fade-expand hidden w-2/6 items-center justify-center border-y border-black bg-[#FF6100] text-zinc-100 sm:flex">
+                <TypewriterText
+                  text="WF°"
+                  className="-mr-2 flex items-center font-mono text-[4rem] leading-none md:text-[5rem] lg:text-[7rem]"
+                />
               </div>
             </div>
-            <div className="w-full border-y border-black text-zinc-100">
-              <div className="border-b border-black p-6">
-                <div className="flex flex-row flex-wrap items-center font-mono text-[4rem] leading-none md:text-[4rem] lg:text-[6rem]">
-                  <div className="">WEATHER</div>
-                  <div>FLAME</div>
+            <div className="animate-fade-in w-full border-y border-l-0 border-black text-zinc-100 opacity-0 delay-500 sm:border-l">
+              <div className="animate-fade-in border-b border-black p-6 opacity-0 delay-500">
+                <div className="animate-fade-in flex flex-row flex-wrap items-center font-mono text-[4rem] leading-none opacity-0 delay-500 md:text-[4rem] lg:text-[6rem]">
+                  <TypewriterText speed={0.05} text="WEATHER" />
+                  <TypewriterText speed={0.05} timeDelay={0.3} text="FLAME" />
                 </div>
               </div>
-              <div className="border-b border-black px-6 py-3 font-light">
+              {/* <div className="border-b border-black p-6">
+                <div className="flex flex-row flex-wrap items-center font-mono text-[4rem] leading-none md:text-[4rem] lg:text-[6rem]">
+                  <TypewriterText speed={0.05} text="WEATHER" />
+                  <TypewriterText speed={0.05} timeDelay={0.3} text="FLAME" />
+                </div>
+              </div> */}
+              <div className="animate-fade-in border-b border-black px-6 py-3 font-light opacity-0 delay-700">
                 Where the forecasts are hot, and mostly accurate.
               </div>
               <div>
-                <div className="h-24">
+                <div className="animate-fade-in h-24 opacity-0 delay-1000">
                   <InputLocation className="flex space-x-3 p-6 pb-7 sm:flex-row" />
                 </div>
               </div>
@@ -59,10 +68,7 @@ export default async function Home() {
               <div>
                 This is a personal development project designed as part of an ongoing
                 journey to deepen coding knowledge and test new libraries and
-                integrations.
-                <br />
-                <br />
-                See{' '}
+                integrations. See{' '}
                 <a
                   className="underline"
                   href="https://github.com/2nspired/weatherflame"
@@ -79,30 +85,4 @@ export default async function Home() {
       <SectionContainer className="h-12 border-t border-black text-center"></SectionContainer>
     </div>
   );
-}
-
-{
-  /* <div className="flex size-full grow flex-col items-center justify-center bg-zinc-700 px-3">
-<div className="flex size-full max-w-6xl flex-col justify-center border-x border-black">
-  <div className="flex w-full flex-col sm:flex-row">
-    <div className="flex grow flex-col border-y border-black">
-      <div className="flex flex-col border-b border-black px-6 font-mono text-[3rem] text-gray-200 sm:flex-row lg:text-[7rem]">
-        <div className="h-12">WEATHER</div>
-        <div>FLAME</div>
-      </div>
-      <div className="flex h-16 items-center border-b border-black font-light text-gray-200">
-        <div className="px-6">
-          Where the forecasts are hot, and mostly accurate.
-        </div>
-      </div>
-      <div className="flex flex-col justify-center">
-        <div className="h-24">
-          <InputLocation className="flex space-x-3 p-6 pb-7 sm:flex-row" />
-        </div>
-      </div>
-    </div>
-    <div className="hidden w-2/6 border-y border-l border-black sm:block"></div>
-  </div>
-</div>
-</div> */
 }
