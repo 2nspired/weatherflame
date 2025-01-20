@@ -8,7 +8,9 @@ const SectionContainer = ({
   className?: string;
 }) => {
   return (
-    <div className={`flex w-full flex-col items-center justify-center px-3 ${className}`}>
+    <div
+      className={`flex w-full flex-col items-center justify-center px-3 landscape:px-12 ${className}`}
+    >
       <div className="size-full max-w-6xl border-x border-black">{children}</div>
     </div>
   );

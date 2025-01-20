@@ -1,6 +1,7 @@
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import type { Metadata } from 'next';
+import type { Viewport } from 'next/types';
 
 import { TRPCReactProvider } from '~/trpc/client';
 
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: '/icons/icon-apple-180.png', sizes: '180x180', type: 'image/png' }],
   },
+};
+export const viewport: Viewport = {
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

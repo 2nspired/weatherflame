@@ -11,7 +11,7 @@ export default function Disclaimer() {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   return (
-    <div className="flex w-full flex-col items-center">
+    <div className="flex w-full flex-col items-center bg-zinc-200">
       <div className="relative flex w-full justify-center">
         <button
           onClick={() => setShowDisclaimer(!showDisclaimer)}
@@ -30,9 +30,9 @@ export default function Disclaimer() {
         }`}
       >
         <SectionContainer className="h-6 w-full border-b border-black text-center"></SectionContainer>
-        <div className="flex w-full flex-col items-center justify-center px-3">
+        <div className="flex w-full flex-col items-center justify-center px-3 landscape:px-12">
           <div className="w-full max-w-6xl border-x border-black">
-            <Alert className="rounded-none border-hidden bg-black/10 p-6 text-gray-800">
+            <Alert className="rounded-none border-hidden bg-zinc-300 p-6 text-gray-800 landscape:px-12">
               <AlertDescription>
                 <div>
                   While Weatherflame strives to deliver fun and functionality, please
@@ -42,8 +42,8 @@ export default function Disclaimer() {
                 <br />
                 <div>
                   This is a personal development project designed as part of an ongoing
-                  journey to deepen coding knowledge and test new libraries and
-                  integrations. See{' '}
+                  journey to deepen coding knowledge and to test new patterns, libraries
+                  and integrations. See{' '}
                   <a
                     className="underline"
                     href="https://github.com/2nspired/weatherflame"
@@ -57,7 +57,7 @@ export default function Disclaimer() {
             </Alert>
           </div>
         </div>
-        <SectionContainer className="h-12 border-t border-black text-center"></SectionContainer>
+        <SectionContainer className="h-12 border-t border-black text-center landscape:px-12"></SectionContainer>
       </div>
     </div>
   );
