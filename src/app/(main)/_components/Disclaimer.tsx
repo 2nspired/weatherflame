@@ -25,7 +25,7 @@ export default function Disclaimer() {
       </div>
       {/* Expandable Container */}
       <div
-        className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`w-full overflow-hidden transition-all duration-500 ease-in-out ${
           showDisclaimer ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
