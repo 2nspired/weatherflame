@@ -155,8 +155,8 @@ export default function InputLocation({
               <FormControl>
                 <Input
                   disabled={fetchGeoByZip.isPending || fetchGeoByName.isPending}
-                  placeholder="Enter city or zip code"
-                  className="h-10 rounded-none font-mono text-xs text-gray-700 outline-none sm:text-sm"
+                  placeholder="city or zip"
+                  className="h-10 rounded-none font-mono text-gray-700 outline-none"
                   {...field}
                   ref={placeAutoCompleteRef}
                   type="text"
