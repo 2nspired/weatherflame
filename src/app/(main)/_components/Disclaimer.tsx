@@ -15,11 +15,11 @@ export default function Disclaimer() {
       <div className="relative flex w-full justify-center">
         <button
           onClick={() => setShowDisclaimer(!showDisclaimer)}
-          className="absolute -top-6 flex items-center justify-center border border-black bg-zinc-500"
+          className="absolute -top-5 flex items-center justify-center border border-black bg-pink-500"
         >
-          <div className="flex size-full items-center justify-center space-x-1 pl-4 pr-3 text-zinc-100">
+          <div className="flex size-full items-center justify-center space-x-1 pl-4 pr-3 text-black">
             <div className="font-mono text-sm tracking-wide">readme</div>
-            {showDisclaimer ? <ChevronDown size={28} /> : <ChevronUp size={28} />}
+            {showDisclaimer ? <ChevronDown size={24} /> : <ChevronUp size={24} />}
           </div>
         </button>
       </div>
