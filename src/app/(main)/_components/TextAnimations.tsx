@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Children } from 'react';
 
 export default function TypewriterText({
   text,
@@ -8,12 +9,14 @@ export default function TypewriterText({
   speed = 0.1,
   cursor,
   timeDelay = 0,
+  children,
 }: {
   text: string;
   className?: string;
   speed?: number;
   cursor?: boolean;
   timeDelay?: number;
+  children?: React.ReactNode;
 }): JSX.Element {
   const characters = text.split('');
 
@@ -45,6 +48,7 @@ export default function TypewriterText({
           </motion.span>
         ))}
       </motion.div>
+      {children}
       {/* Optional blinking cursor */}
       {cursor && (
         <motion.span

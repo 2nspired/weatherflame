@@ -24,6 +24,7 @@ import {
 import { isDev, isProd } from '~/utilities/platform';
 
 import SectionContainer from '../../_components/SectionContainer';
+import TypewriterText from '../../_components/TextAnimations';
 
 export default function WeatherDisplay({
   lat,
@@ -36,27 +37,6 @@ export default function WeatherDisplay({
   locationName: string;
   locationState: string;
 }) {
-  // ------------------------------------------------------------
-
-  if (process.env.NODE_ENV === 'production') {
-    console.log('ISDEV - expect false', isDev);
-    console.log('ISPROD - expext true', isProd);
-    console.log('NODE_ENV - expect prod', process.env.NODE_ENV);
-    console.log('NEXT_PUBLIC_NODE_ENV - expect prod', process.env.NEXT_PUBLIC_NODE_ENV);
-    console.log(
-      'Is Development - expect false',
-      process.env.NEXT_PUBLIC_NODE_ENV === 'development',
-    );
-    console.log(
-      'Is Production - expect true',
-      process.env.NEXT_PUBLIC_NODE_ENV === 'production',
-    );
-  }
-
-  console.log('All Environment Variables:', process.env);
-
-  // ------------------------------------------------------------
-
   const weatherData = api.weather.getAllWeather.useQuery(
     {
       lat: lat.toString(),
@@ -87,7 +67,17 @@ export default function WeatherDisplay({
     <div className="flex h-full max-w-full flex-col items-center">
       <WeatherHeader />
       {weatherData.isLoading ? (
-        <div>Loading...</div>
+        <div className="flex h-full flex-col items-center justify-center">
+          <div className="rounded-lg border-2 border-zinc-100 text-zinc-100">
+            <div className="px-6 py-1 font-mono">
+              <TypewriterText className="flex" text="loading">
+                <span className="animate-pulse">.</span>
+                <span className="animate-pulse delay-150">.</span>
+                <span className="animate-pulse delay-300">.</span>
+              </TypewriterText>
+            </div>
+          </div>
+        </div>
       ) : (
         <>
           <SectionContainer
@@ -627,9 +617,9 @@ const SassySeparator = ({ randomIndex }: { randomIndex: number }) => {
     'Hourly: for the impatient. Weekly: for the planners.',
     'If the next hour isn’t looking good, check below for some hope.',
     'Because predicting the future is hard enough without weather.',
-    'Up there: weather gossip. Down here: weather novels.',
-    'Hourly updates: the TikTok of weather. Weekly: the Netflix binge.',
-    'For those living in the moment, stay up here. For dreamers, keep scrolling.',
+    'Up there: weather gossip. Down below: weather novels.',
+    'Hourly: the TikTok of weather. Weekly: the Netflix binge.',
+    'For those living in the moment up top. For dreamers, check below.',
     'Hourly forecast: reality. Weekly forecast: optimism.',
     'One’s for now, one’s for later. Either way, bring a jacket just in case.',
     'Hourly: the tea. Weekly: the prophecy.',

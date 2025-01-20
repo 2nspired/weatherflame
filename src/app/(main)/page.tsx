@@ -10,8 +10,9 @@ import Disclaimer from './_components/Disclaimer';
 
 export default async function Home() {
   return (
-    <div className="flex size-full flex-col items-center border-b border-black bg-zinc-200">
-      <SectionContainer className="flex grow flex-col items-center justify-center bg-zinc-700">
+    <div className="flex size-full flex-col items-center border-b border-black bg-zinc-700">
+      <SectionContainer className="mt-3 flex grow flex-col items-center justify-center border-t border-black">
+        <div className="h-6"></div>
         {/* CONTENT CONTAINER */}
         <div className="flex size-full flex-col justify-center">
           {/* CONTENT */}
