@@ -28,7 +28,7 @@ const locationSchema = z.object({
     .nonempty('Please enter a location')
     .refine(
       (value) => /^\d{5}$/.test(value) || /^[a-zA-Z\s]+,\s*[A-Z]{2}$/.test(value),
-      'Enter a valid zipcode or city, state',
+      'Enter zipcode or city',
     ),
 });
 
@@ -156,13 +156,13 @@ export default function InputLocation({
                 <Input
                   disabled={fetchGeoByZip.isPending || fetchGeoByName.isPending}
                   placeholder="Enter city or zip code"
-                  className="h-10 rounded-none text-gray-700 outline-none"
+                  className="h-10 rounded-none font-mono text-xs text-gray-700 outline-none sm:text-sm"
                   {...field}
                   ref={placeAutoCompleteRef}
                   type="text"
                 />
               </FormControl>
-              <FormMessage className="text-xs text-red-500">
+              <FormMessage className="font-mono text-xs text-red-500">
                 {fetchGeoByZip.error?.data?.zodError?.fieldErrors.zip ??
                   fetchGeoByName.error?.data?.zodError?.fieldErrors.name}
               </FormMessage>
@@ -172,7 +172,7 @@ export default function InputLocation({
         <div className={`${buttonClassName}md:w-2/6`}>
           <Button
             type="submit"
-            className="w-20 rounded-none bg-[#FF6100] hover:bg-[#FF6100]"
+            className="w-20 rounded-none bg-[#FF6100] font-mono hover:bg-[#FF6100]"
             disabled={!form.formState.isValid || form.formState.isSubmitting}
           >
             {fetchGeoByZip.isPending || fetchGeoByName.isPending ? (

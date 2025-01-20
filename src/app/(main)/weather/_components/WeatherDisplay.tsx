@@ -6,8 +6,8 @@
 import { CloudRain, Droplet, Wind } from 'lucide-react';
 
 import AlertsDisplay from '~/app/(main)/_components/AlertsDisplay';
-import WeatherHeader from '~/app/(main)/_components/WeatherHeader';
-import WeatherIcon from '~/app/(main)/_components/WeatherIcons';
+import WeatherHeader from '~/app/(main)/weather/_components/WeatherHeader';
+import WeatherIcon from '~/app/(main)/weather/_components/WeatherIcons';
 import {
   Accordion,
   AccordionContent,
@@ -23,7 +23,7 @@ import {
 } from '~/utilities/formatters/formatDate';
 import { isDev, isProd } from '~/utilities/platform';
 
-import SectionContainer from './SectionContainer';
+import SectionContainer from '../../_components/SectionContainer';
 
 export default function WeatherDisplay({
   lat,
@@ -36,6 +36,27 @@ export default function WeatherDisplay({
   locationName: string;
   locationState: string;
 }) {
+  // ------------------------------------------------------------
+
+  if (process.env.NODE_ENV === 'production') {
+    console.log('ISDEV - expect false', isDev);
+    console.log('ISPROD - expext true', isProd);
+    console.log('NODE_ENV - expect prod', process.env.NODE_ENV);
+    console.log('NEXT_PUBLIC_NODE_ENV - expect prod', process.env.NEXT_PUBLIC_NODE_ENV);
+    console.log(
+      'Is Development - expect false',
+      process.env.NEXT_PUBLIC_NODE_ENV === 'development',
+    );
+    console.log(
+      'Is Production - expect true',
+      process.env.NEXT_PUBLIC_NODE_ENV === 'production',
+    );
+  }
+
+  console.log('All Environment Variables:', process.env);
+
+  // ------------------------------------------------------------
+
   const weatherData = api.weather.getAllWeather.useQuery(
     {
       lat: lat.toString(),
@@ -66,7 +87,7 @@ export default function WeatherDisplay({
     <div className="flex h-full max-w-full flex-col items-center">
       <WeatherHeader />
       {weatherData.isLoading ? (
-        <div className="h-full w-full text-center">Loading...</div>
+        <div>Loading...</div>
       ) : (
         <>
           <SectionContainer
