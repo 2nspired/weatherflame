@@ -5,7 +5,8 @@ import React from 'react';
 import InputLocation from '~/app/(main)/_components/InputLocation';
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import TypewriterText from '~/app/(main)/_components/TextAnimations';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+
+import Disclaimer from './_components/Disclaimer';
 
 export default async function Home() {
   return (
@@ -30,12 +31,6 @@ export default async function Home() {
                   <TypewriterText speed={0.05} timeDelay={0.3} text="FLAME" />
                 </div>
               </div>
-              {/* <div className="border-b border-black p-6">
-                <div className="flex flex-row flex-wrap items-center font-mono text-[4rem] leading-none md:text-[4rem] lg:text-[6rem]">
-                  <TypewriterText speed={0.05} text="WEATHER" />
-                  <TypewriterText speed={0.05} timeDelay={0.3} text="FLAME" />
-                </div>
-              </div> */}
               <div className="animate-fade-in border-b border-black px-6 py-3 font-light opacity-0 delay-700">
                 Where the forecasts are hot, and mostly accurate.
               </div>
@@ -48,41 +43,8 @@ export default async function Home() {
           </div>
         </div>
       </SectionContainer>
-      <SectionContainer className="h-6 border-b border-black bg-zinc-700 text-center">
-        {/* <div className="w-full border-t border-black"></div> */}
-      </SectionContainer>
-
-      {/* <SectionContainer className="h-6 border-b border-black text-center md:h-20"></SectionContainer> */}
-      <SectionContainer className="h-6 border-b border-black text-center"></SectionContainer>
-      <div className="flex w-full flex-col items-center justify-center px-3">
-        <div className="w-full max-w-6xl border-x border-black">
-          <Alert className="rounded-none border-hidden bg-black/10 p-6 text-gray-800">
-            <AlertTitle className="pb-3">DISCLAIMER</AlertTitle>
-            <AlertDescription>
-              <div>
-                While Weatherflame strives to deliver fun and functionality, please
-                don&apos;t use it to plan your wedding, apocalypse survival strategy, or a
-                picnic under the stars.
-              </div>
-              <br />
-              <div>
-                This is a personal development project designed as part of an ongoing
-                journey to deepen coding knowledge and test new libraries and
-                integrations. See{' '}
-                <a
-                  className="underline"
-                  href="https://github.com/2nspired/weatherflame"
-                  target="_blank"
-                >
-                  github
-                </a>{' '}
-                for more info.
-              </div>
-            </AlertDescription>
-          </Alert>
-        </div>
-      </div>
-      <SectionContainer className="h-12 border-t border-black text-center"></SectionContainer>
+      <SectionContainer className="h-6 bg-zinc-700 text-center"></SectionContainer>
+      <Disclaimer />
     </div>
   );
 }
