@@ -128,6 +128,7 @@ export default function InputLocation({
           if (name && state) {
             formattedValue = `${name.trim()}, ${abbreviateState(state.trim())}`;
             form.setValue('name', formattedValue, { shouldValidate: true });
+            form.handleSubmit(onSubmit)();
 
             // Update input field to display "City, State"
             if (placeAutoCompleteRef.current) {
