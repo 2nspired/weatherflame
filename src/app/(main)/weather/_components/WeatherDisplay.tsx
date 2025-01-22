@@ -21,7 +21,6 @@ import {
   formatDateHour,
   formatShortDate,
 } from '~/utilities/formatters/formatDate';
-import { isDev, isProd } from '~/utilities/platform';
 
 import SectionContainer from '../../_components/SectionContainer';
 import TypewriterText from '../../_components/TextAnimations';

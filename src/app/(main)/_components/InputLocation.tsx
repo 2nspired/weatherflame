@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -62,46 +62,49 @@ export default function InputLocation({
   const fetchGeoByName = api.location.getGeoByName.useMutation();
 
   // Handles form submission
-  const onSubmit: SubmitHandler<z.infer<typeof locationSchema>> = async (data) => {
-    try {
-      const location = data.name.trim();
+  const onSubmit: SubmitHandler<z.infer<typeof locationSchema>> = useCallback(
+    async (data) => {
+      try {
+        const location = data.name.trim();
 
-      // Zip Code Handling
-      if (/^\d{5}$/.test(location)) {
-        const zipData = await fetchGeoByZip.mutateAsync({ zip: location });
-        if (zipData) {
-          const nameData = await fetchGeoByName.mutateAsync({
-            name: zipData.name,
-            countryCode: zipData.country ?? 'US',
-          });
-          if (nameData?.[0]) {
+        // Zip Code Handling
+        if (/^\d{5}$/.test(location)) {
+          const zipData = await fetchGeoByZip.mutateAsync({ zip: location });
+          if (zipData) {
+            const nameData = await fetchGeoByName.mutateAsync({
+              name: zipData.name,
+              countryCode: zipData.country ?? 'US',
+            });
+            if (nameData?.[0]) {
+              router.push(
+                `/weather/${encodeURIComponent(
+                  zipData.country ?? 'us',
+                )}/${encodeURIComponent(
+                  abbreviateState(nameData[0].state),
+                )}/${encodeURIComponent(zipData.name)}`,
+              );
+            }
+          }
+        }
+
+        // City Name Handling
+        if (autoComplete) {
+          const place = autoComplete.getPlace();
+          if (place?.formatted_address) {
+            const [name, state, country] = place.formatted_address.split(',');
             router.push(
-              `/weather/${encodeURIComponent(
-                zipData.country ?? 'us',
-              )}/${encodeURIComponent(
-                abbreviateState(nameData[0].state),
-              )}/${encodeURIComponent(zipData.name)}`,
+              `/weather/${encodeURIComponent(country?.trim() ?? 'us')}/${encodeURIComponent(
+                abbreviateState(state?.trim() ?? ''),
+              )}/${encodeURIComponent(name?.trim() ?? '')}`,
             );
           }
         }
+      } catch (error) {
+        console.error('Error fetching geo data:', error);
       }
-
-      // City Name Handling
-      if (autoComplete) {
-        const place = autoComplete.getPlace();
-        if (place?.formatted_address) {
-          const [name, state, country] = place.formatted_address.split(',');
-          router.push(
-            `/weather/${encodeURIComponent(country?.trim() ?? 'us')}/${encodeURIComponent(
-              abbreviateState(state?.trim() ?? ''),
-            )}/${encodeURIComponent(name?.trim() ?? '')}`,
-          );
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching geo data:', error);
-    }
-  };
+    },
+    [autoComplete, fetchGeoByZip, fetchGeoByName, router],
+  );
 
   // Initialize Google Autocomplete
   useEffect(() => {
@@ -128,7 +131,11 @@ export default function InputLocation({
           if (name && state) {
             formattedValue = `${name.trim()}, ${abbreviateState(state.trim())}`;
             form.setValue('name', formattedValue, { shouldValidate: true });
-            form.handleSubmit(onSubmit)();
+            form
+              .handleSubmit(onSubmit)()
+              .catch((error) => {
+                console.error('Error submitting form:', error);
+              });
 
             // Update input field to display "City, State"
             if (placeAutoCompleteRef.current) {
@@ -143,7 +150,7 @@ export default function InputLocation({
         }
       });
     }
-  }, [autoComplete, form]);
+  }, [autoComplete, form, onSubmit]);
 
   return (
     <Form {...form}>

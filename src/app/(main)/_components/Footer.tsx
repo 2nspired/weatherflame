@@ -3,7 +3,7 @@ import GitHubIcon from '~/app/(main)/_components/GitHubIcon';
 export default function Footer() {
   return (
     <div className="flex w-full justify-center bg-zinc-700 px-6 py-3 text-sm text-zinc-100">
-      <div className="flex w-full max-w-6xl justify-between font-mono">
+      <div className="flex w-full max-w-6xl justify-between px-6 font-mono">
         <div>© weatherflame 2025</div>
         <div>
           <a

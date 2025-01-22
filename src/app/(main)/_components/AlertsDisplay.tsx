@@ -42,7 +42,7 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
               <AccordionItem
                 key={alert.id}
                 value={`index-${index + 1}`}
-                className={`border-b-0 px-3 hover:no-underline ${index === alertFeatures.length - 1 ? '' : 'border-b border-black '}`}
+                className={`border-b-0 px-6 hover:no-underline ${index === alertFeatures.length - 1 ? '' : 'border-b border-black '}`}
                 // className={`border-b-0 px-3 hover:no-underline ${index === alertFeatures.length - 1 ? '' : 'border-b border-black '}`}
               >
                 <AccordionTrigger className="hover:no-underline">
