@@ -15,11 +15,10 @@ If you find use in this project, or want to contribute, just send me a note or f
 ## Interface
 I wanted to create a simplified layout that is somewhat throwback. I want it to make you think wow, that gives me 1980 - 1990s vibes. I am not sure of the name for this type of design, but if I had to give it one, let's call it _Retro-modern_? The main inspiration comes from [mux.com](https://www.mux.com/). Their design came from the agency [For The People](https://www.forthepeople.agency/mux) -their work is amazing. I suggest checking it out. 
 
-INSERT MOBILE LANDING PAGE
+|  Landing  |  Local Weather  |  Alerts  |
+|  -------  |  -------------  |  ------  |
+|  ![](https://github.com/2nspired/weatherflame/blob/main/public/gifs/wf-01.gif)  |  ![](https://github.com/2nspired/weatherflame/blob/main/public/gifs/wf-02.gif)  |  ![](https://github.com/2nspired/weatherflame/blob/main/public/gifs/wf-03.gif)  | 
 
-INSERT MOBILE WEATHER PAGE
-
-INSERT MOBILE WEATHER PAGE WITH ALERTS
 
 ## Data and APIs
 Using public APIs taught me a lot, frankly that you cannot trust public and government APIs. However, in my discovery I have some helpful tips for using these APIs. 
@@ -44,24 +43,6 @@ This API is relatively straightforward, but it has a notable limitation: if you 
 - [Alert Event Codes](https://www.weather.gov/dsb/eventcodes#:~:text=Naming%20Convention%20for%20EAS%20Event,S%20for%20STATEMENTS) - A glossary of the different alert event codes and what the represent. 
 
 ## License
-**MIT License**
+**[MIT License](https://github.com/2nspired/weatherflame/blob/main/license.txt)**
 
 Copyright (c) 2024 Thomas Trudzinski
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
