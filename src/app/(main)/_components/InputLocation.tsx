@@ -245,7 +245,7 @@ export default function InputLocation({
         <div className={`${buttonClassName} md:w-2/6`}>
           <Button
             type="submit"
-            className="w-32 rounded-none bg-[#FF6100] font-mono hover:bg-[#FF6100]"
+            className="w-32 rounded-none bg-[#FF6100] font-mono hover:bg-[#FF6100] hover:text-zinc-800"
             disabled={
               !form.formState.isValid || form.formState.isSubmitting || isFetchingLocation
             }
