@@ -36,8 +36,11 @@ export default async function Home() {
                 Where the forecasts are hot, and mostly accurate.
               </div>
               <div>
-                <div className="animate-fade-in h-24 opacity-0 delay-1000">
-                  <InputLocation className="flex space-x-3 p-6 pb-7 sm:flex-row" />
+                <div className="animate-fade-in h-28 opacity-0 delay-1000">
+                  <InputLocation
+                    enableUserLocation={true}
+                    className="flex h-full space-x-3 p-6 pb-7 sm:flex-row"
+                  />
                 </div>
               </div>
             </div>

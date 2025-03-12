@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-export default function Footer() {
+export default function Header() {
   return (
     <div className="flex w-full flex-row justify-between bg-zinc-700 p-5 text-zinc-100">
       <div className="w-full max-w-6xl">
