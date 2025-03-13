@@ -15,9 +15,43 @@ type ForecastPeriod = components['schemas']['GridpointForecastPeriod'];
 
 type WeeklyForecast = { day: ForecastPeriod; night: ForecastPeriod | null }[];
 
+type FormattedForecast = {
+  temperature: number | undefined;
+  detailedForecast: string | undefined;
+  shortForecast: string | undefined;
+  windSpeed: string | undefined;
+  windDirection:
+    | 'N'
+    | 'NNE'
+    | 'NE'
+    | 'ENE'
+    | 'E'
+    | 'ESE'
+    | 'SE'
+    | 'SSE'
+    | 'S'
+    | 'SSW'
+    | 'SW'
+    | 'WSW'
+    | 'W'
+    | 'WNW'
+    | 'NW'
+    | 'NNW'
+    | undefined;
+  humidity: number | undefined;
+  rainChance: number | undefined;
+};
+
+export type WeeklyForecastChart = {
+  date: string;
+  day: FormattedForecast;
+  night: FormattedForecast;
+}[];
+
 type AllWeather = {
-  weeklyForecast: WeeklyForecast | null;
   hourlyForecast: ForecastPeriods | null;
+  weeklyForecast: WeeklyForecast | null;
+  weeklyForecastChart: WeeklyForecastChart | null;
 };
 
 // --------------------------------------------------------------
@@ -273,7 +307,11 @@ export const weatherRouter = createTRPCRouter({
             }
           }
 
-          const forecast: AllWeather = { weeklyForecast: null, hourlyForecast: null };
+          const forecast: AllWeather = {
+            hourlyForecast: null,
+            weeklyForecast: null,
+            weeklyForecastChart: null,
+          };
 
           if (weeklyForecast?.response.ok && weeklyForecast?.data?.properties?.periods) {
             const daytimeForecasts = weeklyForecast.data.properties.periods.filter(
@@ -291,9 +329,118 @@ export const weatherRouter = createTRPCRouter({
               return { day: day, night: matchingNight ?? null };
             });
 
-            // console.log('PAIRED FORECASTS:', pairedForecasts);
+            const averageTemps = () => {
+              const highTemps = pairedForecasts.map((forecast) => {
+                return typeof forecast.day.temperature === 'number'
+                  ? forecast.day.temperature
+                  : (forecast.day.temperature?.value ?? 0);
+              });
+
+              const lowTemps = pairedForecasts.map((forecast) => {
+                return typeof forecast.night?.temperature === 'number'
+                  ? forecast.night.temperature
+                  : (forecast.night?.temperature?.value ?? 0);
+              });
+
+              function averageTemp(temps: number[]): number {
+                const validTemps = temps.filter((temp) => temp !== 0);
+                const sum = validTemps.reduce((acc, temp) => acc + temp, 0);
+                return validTemps.length ? sum / validTemps.length : 0;
+              }
+
+              return {
+                high: Math.round(averageTemp(highTemps)),
+                low: Math.round(averageTemp(lowTemps)),
+              };
+            };
+
+            const averageTempValues = averageTemps();
+
+            const weeklyForecastChart = pairedForecasts.map((forecast) => {
+              const date = forecast.day.startTime
+                ? formatDate(forecast.day.startTime)
+                : '';
+
+              // const high =
+              //   typeof forecast.day.temperature === 'number'
+              //     ? forecast.day.temperature === 0
+              //       ? averageTempValues.high
+              //       : forecast.day.temperature
+              //     : forecast.day.temperature?.value === 0
+              //       ? averageTempValues.high
+              //       : forecast.day.temperature?.value;
+              // const low =
+              //   typeof forecast.night?.temperature === 'number'
+              //     ? forecast.night.temperature === 0 ||
+              //       forecast.night.temperature === undefined
+              //       ? averageTempValues.low
+              //       : forecast.night.temperature
+              //     : forecast.night?.temperature?.value === 0 ||
+              //         forecast.night?.temperature?.value === undefined
+              //       ? averageTempValues.low
+              //       : forecast.night?.temperature?.value;
+
+              return {
+                date: date,
+                day: {
+                  temperature:
+                    typeof forecast.day.temperature === 'number'
+                      ? forecast.day.temperature === 0
+                        ? averageTempValues.high
+                        : forecast.day.temperature
+                      : forecast.day.temperature?.value === 0
+                        ? averageTempValues.high
+                        : (forecast.day.temperature?.value ?? undefined),
+                  detailedForecast: forecast.day.detailedForecast,
+                  shortForecast: forecast.day.shortForecast,
+                  // API DOCS STATE: "Wind speed for the period. This property as an string value is deprecated. Future versions will express this value as a quantitative value object. To make use of the future standard format now, set the "forecast_wind_speed_qv" feature flag on the request. HOWEVER, the API does not return the "forecast_wind_speed_qv" feature flag and only returns a string.
+                  windSpeed:
+                    typeof forecast.day.windSpeed === 'string'
+                      ? forecast.day.windSpeed
+                      : undefined,
+                  windDirection: forecast.day.windDirection,
+                  humidity: forecast.day.relativeHumidity?.value ?? undefined,
+                  rainChance: forecast.day.probabilityOfPrecipitation?.value ?? undefined,
+                },
+                night: forecast.night
+                  ? {
+                      temperature:
+                        typeof forecast.night?.temperature === 'number'
+                          ? forecast.night.temperature === 0
+                            ? averageTempValues.low
+                            : forecast.night.temperature
+                          : forecast.night?.temperature?.value === 0
+                            ? averageTempValues.low
+                            : (forecast.night?.temperature?.value ?? undefined),
+                      detailedForecast: forecast.night?.detailedForecast,
+                      shortForecast: forecast.night?.shortForecast,
+                      // SEE WINDSPEED NOTE ABOVE
+                      windSpeed:
+                        typeof forecast.night.windSpeed === 'string'
+                          ? forecast.night.windSpeed
+                          : undefined,
+                      windDirection: forecast.night?.windDirection,
+                      humidity: forecast.night?.relativeHumidity?.value ?? undefined,
+                      rainChance:
+                        forecast.night?.probabilityOfPrecipitation?.value ?? undefined,
+                    }
+                  : {
+                      temperature: averageTempValues.low,
+                      detailedForecast: undefined,
+                      shortForecast: undefined,
+                      windSpeed: undefined,
+                      windDirection: undefined,
+                      humidity: undefined,
+                      rainChance: undefined,
+                    },
+              };
+            });
+
+            console.log('WEEKLY FORECAST CHART:SERVER', weeklyForecastChart);
+            // console.log('WEEKLY FORECAST', pairedForecasts);
 
             forecast.weeklyForecast = pairedForecasts as WeeklyForecast;
+            forecast.weeklyForecastChart = weeklyForecastChart as WeeklyForecastChart;
           } else {
             console.error('FAILED TO FETCH WEEKLY FORECAST:', weeklyForecast?.error);
           }
@@ -304,15 +451,24 @@ export const weatherRouter = createTRPCRouter({
             console.error('FAILED TO FETCH HOURLY FORECAST:', hourlyForecast?.error);
           }
 
-          if (forecast.weeklyForecast || forecast.hourlyForecast) {
+          if (
+            forecast.weeklyForecast ||
+            forecast.hourlyForecast ||
+            forecast.weeklyForecastChart
+          ) {
+            const hourlyForecast =
+              forecast.hourlyForecast && forecast.hourlyForecast.length !== 0
+                ? forecast.hourlyForecast.slice(0, 12)
+                : null;
+
             const weeklyForecast =
               forecast.weeklyForecast && forecast.weeklyForecast.length !== 0
                 ? forecast.weeklyForecast
                 : null;
 
-            const hourlyForecast =
-              forecast.hourlyForecast && forecast.hourlyForecast.length !== 0
-                ? forecast.hourlyForecast.slice(0, 12)
+            const weeklyForecastChart =
+              forecast.weeklyForecastChart && forecast.weeklyForecastChart.length !== 0
+                ? forecast.weeklyForecastChart
                 : null;
 
             const currentWeather = {
@@ -361,8 +517,9 @@ export const weatherRouter = createTRPCRouter({
 
             return {
               currentWeather: currentWeather,
-              weeklyForecast: weeklyForecast,
               hourlyForecast: hourlyForecast,
+              weeklyForecast: weeklyForecast,
+              weeklyForecastChart: weeklyForecastChart,
               alertZones: forecastZones,
             };
           }
