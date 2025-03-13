@@ -96,6 +96,11 @@ export default function InputLocation({
                 shouldValidate: true,
               },
             );
+            router.push(
+              `/weather/us/${encodeURIComponent(
+                abbreviateState(reverseGeoData[0].state),
+              )}/${encodeURIComponent(reverseGeoData[0].name)}`,
+            );
           }
         } catch (error) {
           console.error('Error fetching reverse geo data:', error);
@@ -104,7 +109,7 @@ export default function InputLocation({
         }
       })();
     });
-  }, [fetchReverseGeo, isFetchingLocation, form]);
+  }, [fetchReverseGeo, isFetchingLocation, form, router]);
 
   const handleSubmit: SubmitHandler<z.infer<typeof locationSchema>> = useCallback(
     async (data) => {
