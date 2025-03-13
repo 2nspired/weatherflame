@@ -23,6 +23,7 @@ export default function WeatherHeader() {
           <InputLocation
             className="flex flex-row space-x-2"
             buttonClassName="hidden lg:block"
+            enableUserLocation={false}
           />
         </div>
       </div>

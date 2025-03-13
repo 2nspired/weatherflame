@@ -60,12 +60,30 @@ export default function InputLocation({
     mode: 'onChange',
   });
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && enableUserLocation) {
+      const location = localStorage.getItem('location');
+      console.log('location:', location);
+      if (location) {
+        form.setValue('name', location, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        });
+      }
+    }
+  }, [enableUserLocation, form]);
+
   const fetchReverseGeo = api.location.getReverseGeo.useMutation();
   const fetchGeoByZip = api.location.getGeoByZip.useMutation();
   const fetchGeoByName = api.location.getGeoByName.useMutation();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+
+  function saveLocation(location: string) {
+    localStorage.setItem('location', location);
+  }
 
   // HANDLERS
 
@@ -96,6 +114,11 @@ export default function InputLocation({
                 shouldValidate: true,
               },
             );
+
+            saveLocation(
+              `${reverseGeoData[0].name}, ${abbreviateState(reverseGeoData[0].state)}`,
+            );
+
             router.push(
               `/weather/us/${encodeURIComponent(
                 abbreviateState(reverseGeoData[0].state),
@@ -250,7 +273,7 @@ export default function InputLocation({
         <div className={`${buttonClassName} md:w-2/6`}>
           <Button
             type="submit"
-            className="w-32 rounded-none bg-[#FF6100] font-mono hover:bg-[#FF6100] hover:text-zinc-800"
+            className="w-32 rounded-3xl bg-[#FF6100] font-mono transition-transform hover:translate-y-[-2px] hover:bg-[#FF6100] hover:text-zinc-800"
             disabled={
               !form.formState.isValid || form.formState.isSubmitting || isFetchingLocation
             }
@@ -262,7 +285,7 @@ export default function InputLocation({
             )}
           </Button>
           {enableUserLocation && (
-            <div className="mt-2 flex flex-row items-center space-x-2 py-1 font-mono text-sm text-zinc-400 hover:text-[#FF6100]">
+            <div className="mt-2 flex flex-row items-center space-x-2 py-1 font-mono text-sm text-zinc-400 transition-colors duration-300 ease-in-out hover:text-[#FF6100]">
               {fetchReverseGeo.isPending ? (
                 <div>searching...</div>
               ) : (
