@@ -5,7 +5,7 @@
 
 import { CloudRain, Droplet, Wind } from 'lucide-react';
 
-import AlertsDisplay from '~/app/(main)/_components/AlertsDisplay';
+import AlertsDisplay from '~/app/(main)/weather/_components/AlertsDisplay';
 import WeatherHeader from '~/app/(main)/weather/_components/WeatherHeader';
 import WeatherIcon from '~/app/(main)/weather/_components/WeatherIcons';
 import {
