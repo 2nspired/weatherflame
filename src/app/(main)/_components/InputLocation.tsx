@@ -32,8 +32,6 @@ const locationSchema = z.object({
     ),
 });
 
-const glibraries: Library[] = ['places'];
-
 export default function InputLocation({
   className,
   buttonClassName,
@@ -43,6 +41,8 @@ export default function InputLocation({
   buttonClassName?: string;
   enableUserLocation?: boolean;
 }) {
+  const [glibraries] = useState<Library[]>(['places']);
+
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
 
@@ -259,6 +259,7 @@ export default function InputLocation({
                   {...field}
                   ref={placeAutoCompleteRef}
                   type="text"
+                  autoComplete="home city"
                 />
               </FormControl>
               {!fetchReverseGeo.isPending && (
@@ -270,20 +271,26 @@ export default function InputLocation({
             </FormItem>
           )}
         />
+        {/* hover:drop-shadow-[0_3px_0_rgba(255,97,0,0.75)] */}
         <div className={`${buttonClassName} md:w-2/6`}>
-          <Button
-            type="submit"
-            className="w-32 rounded-3xl bg-[#FF6100] font-mono transition-transform hover:translate-y-[-2px] hover:bg-[#FF6100] hover:text-zinc-800"
-            disabled={
-              !form.formState.isValid || form.formState.isSubmitting || isFetchingLocation
-            }
-          >
-            {fetchGeoByZip.isPending || fetchGeoByName.isPending ? (
-              <Loader2 className="size-6 animate-spin" />
-            ) : (
-              'Submit'
-            )}
-          </Button>
+          <div className="relative h-[40px] w-32 rounded-3xl bg-green-500">
+            <Button
+              type="submit"
+              className="absolute w-32 rounded-3xl border border-black bg-[#FF6100] font-mono text-black transition-transform ease-in-out hover:translate-y-[-3px] hover:bg-[#FF6100]"
+              disabled={
+                !form.formState.isValid ||
+                form.formState.isSubmitting ||
+                isFetchingLocation
+              }
+            >
+              {fetchGeoByZip.isPending || fetchGeoByName.isPending ? (
+                <Loader2 className="size-6 animate-spin" />
+              ) : (
+                'Submit'
+              )}
+              <div></div>
+            </Button>
+          </div>
           {enableUserLocation && (
             <div className="mt-2 flex flex-row items-center space-x-2 py-1 font-mono text-sm text-zinc-400 transition-colors duration-300 ease-in-out hover:text-[#FF6100]">
               {fetchReverseGeo.isPending ? (
