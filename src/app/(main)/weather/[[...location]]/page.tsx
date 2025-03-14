@@ -6,7 +6,25 @@ import WeatherDisplay from '~/app/(main)/weather/_components/WeatherDisplay';
 
 import WeatherHeader from '../_components/WeatherHeader';
 
-export default async function AlertsPage({
+const getGeoData = async (locationParam: string) => {
+  if (!locationParam || locationParam.length === 0) {
+    return null;
+  }
+
+  if (
+    typeof locationParam === 'string' &&
+    locationParam.length !== 0 &&
+    isNaN(Number(locationParam))
+  ) {
+    const nameData = await api.location.getGeoByName({
+      name: locationParam,
+      countryCode: 'US',
+    });
+    return nameData?.[0] ?? null;
+  }
+};
+
+export default async function WeatherPage({
   params,
 }: {
   params: Promise<{ location: string[] }>;
@@ -24,25 +42,7 @@ export default async function AlertsPage({
     return <div>Invalid request. Please check the URL.</div>;
   }
 
-  const getGeoData = async () => {
-    if (!locationParam || locationParam.length === 0) {
-      return null;
-    }
-
-    if (
-      typeof locationParam === 'string' &&
-      locationParam.length !== 0 &&
-      isNaN(Number(locationParam))
-    ) {
-      const nameData = await api.location.getGeoByName({
-        name: locationParam,
-        countryCode: 'US',
-      });
-      return nameData?.[0] ?? null;
-    }
-  };
-
-  const geoData = await getGeoData();
+  const geoData = await getGeoData(locationParam);
 
   return (
     <div className="flex size-full flex-col bg-zinc-200">
