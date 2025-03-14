@@ -273,10 +273,16 @@ export default function InputLocation({
         />
         {/* hover:drop-shadow-[0_3px_0_rgba(255,97,0,0.75)] */}
         <div className={`${buttonClassName} md:w-2/6`}>
-          <div className="relative h-[40px] w-32 rounded-3xl bg-green-500">
+          <div
+            className={`relative h-[40px] w-32 rounded-3xl ${
+              !form.formState.isValid || form.formState.isSubmitting || isFetchingLocation
+                ? 'bg-none'
+                : 'bg-green-500'
+            }`}
+          >
             <Button
               type="submit"
-              className="absolute w-32 rounded-3xl border border-black bg-[#FF6100] font-mono text-black transition-transform ease-in-out hover:translate-y-[-3px] hover:bg-[#FF6100]"
+              className="absolute z-10 w-32 rounded-3xl border border-black bg-[#FF6100] font-mono text-black transition-transform ease-in-out hover:translate-y-[-3px] hover:bg-[#FF6100]"
               disabled={
                 !form.formState.isValid ||
                 form.formState.isSubmitting ||
