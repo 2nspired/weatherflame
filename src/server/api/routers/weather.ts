@@ -436,7 +436,7 @@ export const weatherRouter = createTRPCRouter({
               };
             });
 
-            console.log('WEEKLY FORECAST CHART:SERVER', weeklyForecastChart);
+            // console.log('WEEKLY FORECAST CHART:SERVER', weeklyForecastChart);
             // console.log('WEEKLY FORECAST', pairedForecasts);
 
             forecast.weeklyForecast = pairedForecasts as WeeklyForecast;
@@ -515,6 +515,11 @@ export const weatherRouter = createTRPCRouter({
                 : null,
             };
 
+            // console.log('alertZones', forecastZones);
+
+            // console.log('CURRENT WEATHER', currentWeather);
+            // console.log('HOURLY FORECAST', hourlyForecast);
+            // console.log('WEEKLY FORECAST', weeklyForecast);
             return {
               currentWeather: currentWeather,
               hourlyForecast: hourlyForecast,
@@ -534,4 +539,17 @@ export const weatherRouter = createTRPCRouter({
         console.warn(`Retrying (${attempts}/${input.maxRetries})`);
       }
     }),
+
+  // TOP 10 WEATHER
+
+  // getCityWeather: publicProcedure
+  //     .input(
+  //       z.object({
+  //         lat: z.string({ message: 'Latitude is required' }).regex(/^(-?\d+(\.\d+)?)/),
+  //         lon: z.string({ message: 'Longitude is required' }).regex(/^(-?\d+(\.\d+)?)/),
+  //       }),
+  //     )
+  //     .query(async ({ input }) => {
+  //       const weatherData = await fetchClient.GET('/points/{point}/forecast', {
+  //         params: {
 });

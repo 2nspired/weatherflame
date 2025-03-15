@@ -7,6 +7,9 @@
  *
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will need to use are documented accordingly near the end.
  */
+
+import { env } from 'process';
+import { Prisma } from '@prisma/client';
 import { initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
@@ -23,8 +26,11 @@ import { ZodError } from 'zod';
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const auth = opts.headers.get('authorization');
+
   return {
     ...opts,
+    auth,
   };
 };
 
@@ -41,6 +47,10 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       data: {
         ...shape.data,
         zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+        prismaError:
+          error.cause instanceof Prisma.PrismaClientKnownRequestError
+            ? { code: error.cause.code, meta: error.cause.meta }
+            : null,
       },
     };
   },
@@ -88,9 +98,25 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
+const protectedMiddleware = t.middleware(async ({ ctx, next, path }) => {
+  if (ctx.auth !== env.ADMIN_SECRET) {
+    throw new Error('Unauthorized access to ' + path);
+  }
+
+  if (!env.ADMIN_SECRET) {
+    throw new Error('Unauthorized access to ' + path);
+  }
+
+  const result = await next();
+
+  return result;
+});
+
 /**
  * Public (unauthenticated) procedure
  *
  * This is the base piece you use to build new queries and mutations on your tRPC API. It does not guarantee that a user querying is authorized, but you can still access user session data if they are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
+
+export const protectedProcedure = t.procedure.use(protectedMiddleware);
