@@ -12,7 +12,8 @@
     "test:ts": "tsx --noEmit",
     "db:gen": "prisma generate",
     "db:push": "prisma db push",
-    "db:danger:danger:reset": "prisma db push --force-reset"
+    "db:danger:danger:reset": "prisma db push --force-reset",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
