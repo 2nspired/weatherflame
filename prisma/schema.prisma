@@ -1,0 +1,125 @@
+// Prisma Schema Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// -------------------------------------------------------
+// TOP CITIES
+// -------------------------------------------------------
+
+model Cities {
+  id      Int     @id @default(autoincrement())
+  name    String
+  state   String
+  country String  @default("US")
+  lat     Float   @unique
+  lng     Float   @unique
+  slug    String  @unique
+  display Boolean @default(false)
+
+  // timestamps 
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime  @default(now()) @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+
+  // relations
+  weather     CityWeather[]
+  alert_zones AlertZonesOnCities[]
+
+  //opts
+  @@map("cities")
+}
+
+// -------------------------------------------------------
+// TOP CITIES WEATHER
+// -------------------------------------------------------
+
+model CityWeather {
+  id             Int       @id @default(autoincrement())
+  city_id        Int       @unique
+  // TODO - CHECK THIS TYPE IF IT IS A DATE/TIME OR STRING
+  date           DateTime?
+  temp           Float?
+  high_temp      Int?
+  low_temp       Int?
+  rain_chance    String?
+  humidity       Int?
+  dew_point      Float?
+  wind_speed     String?
+  wind_direction String?
+  short_forecast String?
+
+  // timestamps 
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime  @default(now()) @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+
+  // relations
+  city Cities @relation(fields: [city_id], references: [id])
+
+  //opts
+  @@map("city_weather")
+}
+
+// -------------------------------------------------------
+// CITY ALERT ZONES
+// -------------------------------------------------------
+
+model AlertZones {
+  id   Int      @id @default(autoincrement())
+  zone String   @unique
+  type ZoneType
+
+  // timestamps
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime  @default(now()) @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+
+  // relations
+  cities AlertZonesOnCities[]
+
+  @@map("alert_zones")
+}
+
+enum ZoneType {
+  county
+  fire
+  public
+}
+
+// -------------------------------------------------------
+// ALERT ZONES ON CITIES
+// -------------------------------------------------------
+
+model AlertZonesOnCities {
+  city_id       Int
+  alert_zone_id Int
+
+  // Relations
+  city      Cities     @relation(fields: [city_id], references: [id])
+  alertZone AlertZones @relation(fields: [alert_zone_id], references: [id])
+
+  @@id([city_id, alert_zone_id]) // Composite primary key
+  @@map("alert_zones_on_cities")
+}
+
+model ChronLogs {
+  id        Int         @id @default(autoincrement())
+  status    messageType
+  type      String
+  createdAt DateTime    @default(now()) @db.Timestamp(6)
+
+  @@map("chron_log")
+}
+
+enum messageType {
+  success
+  error
+}
