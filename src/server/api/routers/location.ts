@@ -264,7 +264,7 @@ export const locationRouter = createTRPCRouter({
           const resJson: ZoneByGeoResponse = (await res.json()) as ZoneByGeoResponse;
 
           if (res.ok && resJson) {
-            // console.log('ZONE BY GEO RESPONSE', resJson);
+            console.log('ZONE BY GEO RESPONSE', resJson);
             return resJson;
           }
           console.error(

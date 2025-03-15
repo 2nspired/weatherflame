@@ -1,5 +1,3 @@
-// TODO: CHECK FOR HYDRATION ERRORS
-
 import React from 'react';
 
 import InputLocation from '~/app/(main)/_components/InputLocation';

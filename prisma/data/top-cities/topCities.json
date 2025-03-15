@@ -1,0 +1,82 @@
+[
+  {
+    "name": "New York",
+    "state": "New York",
+    "country": "US",
+    "lat": 40.7128,
+    "lng": -74.006,
+    "display": true
+  },
+  {
+    "name": "Los Angeles",
+    "state": "California",
+    "country": "US",
+    "lat": 34.0522,
+    "lng": -118.2437,
+    "display": true
+  },
+  {
+    "name": "Chicago",
+    "state": "Illinois",
+    "country": "US",
+    "lat": 41.8781,
+    "lng": -87.6298,
+    "display": true
+  },
+  {
+    "name": "Houston",
+    "state": "Texas",
+    "country": "US",
+    "lat": 29.7604,
+    "lng": -95.3698,
+    "display": true
+  },
+  {
+    "name": "Phoenix",
+    "state": "Arizona",
+    "country": "US",
+    "lat": 33.4484,
+    "lng": -112.074,
+    "display": true
+  },
+  {
+    "name": "Philadelphia",
+    "state": "Pennsylvania",
+    "country": "US",
+    "lat": 39.9526,
+    "lng": -75.1652,
+    "display": true
+  },
+  {
+    "name": "San Antonio",
+    "state": "Texas",
+    "country": "US",
+    "lat": 29.4246,
+    "lng": -98.4951,
+    "display": true
+  },
+  {
+    "name": "San Diego",
+    "state": "California",
+    "country": "US",
+    "lat": 32.7157,
+    "lng": -117.1611,
+    "display": true
+  },
+  {
+    "name": "Dallas",
+    "state": "Texas",
+    "country": "US",
+    "lat": 32.7767,
+    "lng": -96.797,
+    "display": true
+  },
+  {
+    "name": "San Jose",
+    "state": "California",
+    "country": "US",
+    "lat": 37.3382,
+    "lng": -121.8863,
+    "display": true
+  }
+]

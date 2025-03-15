@@ -5,6 +5,7 @@ import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
 
 import { alertRouter } from './routers/alert';
 import { experimentsRouter } from './routers/experiment';
+import { forecastRouter } from './routers/forecasts';
 import { weatherRouter } from './routers/weather';
 
 /**
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   location: locationRouter,
   alerts: alertRouter,
   weather: weatherRouter,
+  forecasts: forecastRouter,
   experiments: experimentsRouter,
 });
 

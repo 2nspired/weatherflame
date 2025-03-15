@@ -19,7 +19,7 @@ export default function WeatherHeader() {
           </Link>
         </div>
 
-        <div className="flex w-full flex-row items-center justify-end p-6">
+        <div className="flex h-32 w-full flex-row items-start justify-end p-6 pt-10">
           <InputLocation
             className="flex flex-row space-x-2"
             buttonClassName="hidden lg:block"

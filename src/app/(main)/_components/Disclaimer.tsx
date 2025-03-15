@@ -15,7 +15,7 @@ export default function Disclaimer() {
       <div className="relative flex w-full justify-center">
         <button
           onClick={() => setShowDisclaimer(!showDisclaimer)}
-          className="absolute -top-5 flex items-center justify-center border border-black bg-pink-500"
+          className="absolute -top-5 flex items-center justify-center border border-black bg-pink-500 transition-colors hover:bg-pink-400"
         >
           <div className="flex size-full items-center justify-center space-x-1 pl-4 pr-3 text-black">
             <div className="font-mono text-sm tracking-wide">readme</div>
