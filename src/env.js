@@ -16,6 +16,12 @@ export const env = createEnv({
     WEATHERSTACK_API: z.string().min(1),
     // google maps
     GOOGLE_MAPS_API: z.string().min(1),
+    // cron job
+    CRON_SECRET: z.string().min(1),
+    // guard
+    GUARD_SECRET: z.string().min(1),
+    // admin secret
+    ADMIN_SECRET: z.string().min(1),
   },
 
   /**
@@ -32,6 +38,9 @@ export const env = createEnv({
     NEXT_PUBLIC_VERCEL_URL: z.string().min(1),
     // google maps
     NEXT_PUBLIC_GOOGLE_MAPS_API: z.string().min(1),
+    // supabase
+    NEXT_PUBLIC_SUPABASE_URL: z.string().min(1),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   },
 
   /**
@@ -44,11 +53,16 @@ export const env = createEnv({
     OPENWEATHER_API: process.env.OPENWEATHER_API,
     WEATHERSTACK_API: process.env.WEATHERSTACK_API,
     GOOGLE_MAPS_API: process.env.GOOGLE_MAPS_API,
+    CRON_SECRET: process.env.CRON_SECRET,
+    GUARD_SECRET: process.env.GUARD_SECRET,
+    ADMIN_SECRET: process.env.ADMIN_SECRET,
 
     // client
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     NEXT_PUBLIC_GOOGLE_MAPS_API: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
 
   /**
