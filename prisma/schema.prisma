@@ -11,7 +11,7 @@ datasource db {
 }
 
 // -------------------------------------------------------
-// TOP CITIES
+// CITIES
 // -------------------------------------------------------
 
 model Cities {
@@ -32,13 +32,44 @@ model Cities {
   // relations
   weather     CityWeather[]
   alert_zones AlertZonesOnCities[]
+  zip_codes   ZipCodesOnCities[]
 
   //opts
   @@map("cities")
 }
 
 // -------------------------------------------------------
-// TOP CITIES WEATHER
+// ZIP CODES
+// -------------------------------------------------------
+
+model ZipCodes {
+  id      Int    @id @default(autoincrement())
+  zipcode String @unique
+
+  // Relations
+  cities ZipCodesOnCities[]
+
+  @@map("zip_codes")
+}
+
+// -------------------------------------------------------
+// ZIP CODES ON CITIES
+// -------------------------------------------------------
+
+model ZipCodesOnCities {
+  city_id    Int
+  zipcode_id Int
+
+  // Relations
+  city    Cities   @relation(fields: [city_id], references: [id])
+  zipcode ZipCodes @relation(fields: [zipcode_id], references: [id])
+
+  @@id([city_id, zipcode_id]) // Composite primary key
+  @@map("zip_codes_on_cities")
+}
+
+// -------------------------------------------------------
+// CITY WEATHER - Won't really need
 // -------------------------------------------------------
 
 model CityWeather {
@@ -109,6 +140,10 @@ model AlertZonesOnCities {
   @@id([city_id, alert_zone_id]) // Composite primary key
   @@map("alert_zones_on_cities")
 }
+
+// -------------------------------------------------------
+// CHRON LOGS
+// -------------------------------------------------------
 
 model ChronLogs {
   id        Int         @id @default(autoincrement())
