@@ -342,10 +342,10 @@ export const locationRouter = createTRPCRouter({
             const reverseRes = await fetch(url);
             const reverseResJson: ReverseGeo = (await reverseRes.json()) as ReverseGeo;
 
-            if (reverseRes.ok && reverseResJson && reverseResJson[0]) {
+            if (reverseRes.ok && reverseResJson?.[0]) {
               const city = reverseResJson[0];
 
-              db.zipCodes.create({
+              await db.zipCodes.create({
                 data: {
                   zipcode: input.zip,
                   cities: {
@@ -433,7 +433,7 @@ export const locationRouter = createTRPCRouter({
           if (res.ok && resJson[0] && resJson.length > 0) {
             const city = resJson[0];
 
-            db.cities.create({
+            await db.cities.create({
               data: {
                 name: city.name,
                 state: city.state,
