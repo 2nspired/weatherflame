@@ -220,6 +220,7 @@ export default function LocationInput({
           const cityData = await geoByName.mutateAsync({
             name: name.trim(),
             state: state.trim(),
+            countryCode: 'US',
           });
 
           if (cityData) {
@@ -249,29 +250,27 @@ export default function LocationInput({
     if (autoComplete) {
       autoComplete.addListener('place_changed', () => {
         const place = autoComplete.getPlace();
+
         if (place?.formatted_address) {
           const cleanedAddress = place.formatted_address.replace(/\s*\d{5}$/, '');
           const [name, state] = cleanedAddress.split(',');
-          console.log('111111111111name:', name);
-          console.log('222222222222state:', state?.trim(), 'length', state?.length);
+
           let formattedValue: string;
           if (name && state) {
             formattedValue = `${name.trim()}, ${stateAbv(state.trim())}`;
-            // formattedValue = `${name.trim()}, ${stateAbv(state.trim())}`;
             form.setValue('name', formattedValue, {
               shouldValidate: true,
               shouldDirty: true,
               shouldTouch: true,
             });
-            // Update input field to display "City, State"
             if (placeAutoCompleteRef.current) {
               placeAutoCompleteRef.current.value = formattedValue;
             }
           }
-          void form.trigger('name');
         }
+
         if (!isSubmitting) {
-          void form
+          form
             .handleSubmit(handleSubmit)()
             .catch((error) => {
               console.error('Error submitting form:', error);
@@ -280,7 +279,7 @@ export default function LocationInput({
       });
     }
     //   }, [autoComplete, form, handleSubmit, isSubmitting]);
-  }, [autoComplete, form, isSubmitting, handleSubmit]);
+  }, [autoComplete, isSubmitting]);
 
   return (
     <Form {...form}>

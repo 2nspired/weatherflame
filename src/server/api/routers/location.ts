@@ -431,14 +431,27 @@ export const locationRouter = createTRPCRouter({
   getLocationByName: publicProcedure
     .input(getGeoByNameSchema)
     .mutation(async ({ input }) => {
+      // return {
+      //   name: 'testName',
+      //   state: 'testState',
+      //   country: 'testCountry',
+      //   lat: 12.0,
+      //   lng: -12.0,
+      //   slug: 'test-slug',
+      // };
       let attempts = 0;
 
       while (attempts < input.maxRetries) {
         try {
-          console.log('❇️ GETTING LOCATION BY NAME');
+          console.log(
+            '❇️ GETTING LOCATION BY NAME',
+            slugifyString(`${input.name} ${input?.state} ${input.countryCode}`),
+          );
           const existingLocation = await db.cities.findUnique({
             where: {
-              slug: slugifyString(`${input.name} ${input.state} ${input.countryCode}`),
+              slug: slugifyString(
+                `${input.name} ${input?.state} ${input.countryCode ?? 'US'}`,
+              ),
             },
             select: {
               name: true,
@@ -496,7 +509,9 @@ export const locationRouter = createTRPCRouter({
                 country: city.country,
                 lat: city.lat,
                 lng: city.lon,
-                slug: slugifyString(`${city.name} ${city.state} ${city.country}`),
+                slug: slugifyString(
+                  `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                ),
               },
               select: {
                 name: true,
@@ -585,7 +600,7 @@ export const locationRouter = createTRPCRouter({
             const checkedLocation = await db.cities.findUnique({
               where: {
                 slug: slugifyString(
-                  `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                  `${city.name} ${stateAbv(city.state)} ${city.country ?? 'US'}`,
                 ),
               },
               select: {
