@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import { stateAbv } from '~/utilities/formatters/stateAbv';
 import { db } from '~/utilities/prisma';
 import slugifyString from '~/utilities/slug/slugify';
 
@@ -317,18 +318,14 @@ export const locationRouter = createTRPCRouter({
 
           if (existingLocation?.cities[0]?.city) {
             const city = existingLocation.cities[0]?.city;
+            console.log('❇️ Existing location found in DB:', city.name);
 
-            return {
-              name: city.name,
-              state: city.state,
-              country: city.country,
-              lat: city.lat,
-              lon: city.lng,
-            };
+            return city;
           }
 
-          console.info(
-            `No location found for zipcode in db: ${input.zip}, trying fetch...`,
+          console.log(
+            '🛑 Existing location NOT found in DB, fetching location by zip:',
+            input.zip,
           );
           const url = `https://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},US&appid=${process.env.OPENWEATHER_API}`;
 
@@ -336,7 +333,6 @@ export const locationRouter = createTRPCRouter({
           const zipResJson: GeoByZip = (await zipRes.json()) as GeoByZip;
 
           if (!zipRes.ok && !zipResJson) {
-            // console.log('LOCATION BY ZIP RESPONSE', resJson);
             console.error('FAILED TO FETCH LOCATION BY ZIPCODE', zipRes.status, url);
           }
 
@@ -349,7 +345,27 @@ export const locationRouter = createTRPCRouter({
             if (reverseRes.ok && reverseResJson?.[0]) {
               const city = reverseResJson[0];
 
-              await db.zipCodes.create({
+              const checkedLocation = await db.cities.findUnique({
+                where: {
+                  slug: slugifyString(
+                    `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                  ),
+                },
+                select: {
+                  name: true,
+                  state: true,
+                  country: true,
+                  lat: true,
+                  lng: true,
+                  slug: true,
+                },
+              });
+              if (checkedLocation) {
+                console.log('❇️ Location already exists in DB:', checkedLocation);
+                return checkedLocation;
+              }
+
+              const newCity = await db.zipCodes.create({
                 data: {
                   zipcode: input.zip,
                   cities: {
@@ -357,7 +373,7 @@ export const locationRouter = createTRPCRouter({
                       city: {
                         create: {
                           slug: slugifyString(
-                            `${city.name} ${city.state} ${city.country}`,
+                            `${city.name} ${stateAbv(city.state)} ${city.country}`,
                           ),
                           name: city.name,
                           state: city.state,
@@ -369,15 +385,31 @@ export const locationRouter = createTRPCRouter({
                     },
                   },
                 },
+                select: {
+                  cities: {
+                    select: {
+                      city: {
+                        select: {
+                          name: true,
+                          state: true,
+                          country: true,
+                          lat: true,
+                          lng: true,
+                          slug: true,
+                        },
+                      },
+                    },
+                  },
+                },
               });
 
-              return {
-                name: city.name,
-                state: city.state,
-                country: city.country,
-                lat: city.lat,
-                lon: city.lon,
-              };
+              if (!newCity) {
+                console.error('Failed to create new city in DB, trying again...');
+              }
+              if (newCity?.cities?.[0]?.city) {
+                console.log('❇️ New city created:', newCity);
+                return newCity?.cities?.[0].city;
+              }
             }
           }
         } catch (error) {
@@ -399,20 +431,11 @@ export const locationRouter = createTRPCRouter({
   getLocationByName: publicProcedure
     .input(getGeoByNameSchema)
     .mutation(async ({ input }) => {
-      let url = `https://api.openweathermap.org/geo/1.0/direct?q=${input.name.replace(' ', '+')}`;
-      // console.log('GEOBYNAMEURL', url);
-      if (input.state) {
-        url += `,${input.state}`;
-      }
-      if (input.countryCode) {
-        url += `,${input.countryCode}`;
-      }
-      url += `&appid=${process.env.OPENWEATHER_API}`;
-
       let attempts = 0;
 
       while (attempts < input.maxRetries) {
         try {
+          console.log('❇️ GETTING LOCATION BY NAME');
           const existingLocation = await db.cities.findUnique({
             where: {
               slug: slugifyString(`${input.name} ${input.state} ${input.countryCode}`),
@@ -423,27 +446,50 @@ export const locationRouter = createTRPCRouter({
               country: true,
               lat: true,
               lng: true,
+              slug: true,
             },
           });
 
           if (existingLocation) {
-            return {
-              name: existingLocation.name,
-              state: existingLocation.state,
-              country: existingLocation.country,
-              lat: existingLocation.lat,
-              lon: existingLocation.lng,
-            };
+            console.log(
+              '❇️ Existing location found in DB:',
+              existingLocation.name,
+              existingLocation.state,
+            );
+
+            return existingLocation;
           }
 
-          console.info(`No location found by name in db: ${input.name}, trying fetch...`);
+          console.log(
+            '🛑 Existing location NOT found in DB, fetching location by name:',
+            input.name,
+            input.state,
+          );
+
+          let url = `https://api.openweathermap.org/geo/1.0/direct?q=${input.name.replace(' ', '+')}`;
+          // console.log('GEOBYNAMEURL', url);
+          if (input.state) {
+            url += `,${stateAbv(input.state, true)}`;
+          }
+          if (input.countryCode) {
+            url += `,${input.countryCode}`;
+          }
+          url += `&appid=${process.env.OPENWEATHER_API}`;
+
+          console.log('Fetching location by name with URL:', url);
 
           const res = await fetch(url);
           const resJson: GeoByName = (await res.json()) as GeoByName;
+
+          if (!res.ok && !resJson) {
+            console.error('FAILED TO FETCH LOCATION BY NAME', res.status, url);
+          }
+
           if (res.ok && resJson[0] && resJson.length > 0) {
             const city = resJson[0];
+            console.log('❇️ Fetched location:', city);
 
-            await db.cities.create({
+            const newCity = await db.cities.create({
               data: {
                 name: city.name,
                 state: city.state,
@@ -452,18 +498,24 @@ export const locationRouter = createTRPCRouter({
                 lng: city.lon,
                 slug: slugifyString(`${city.name} ${city.state} ${city.country}`),
               },
+              select: {
+                name: true,
+                state: true,
+                country: true,
+                lat: true,
+                lng: true,
+                slug: true,
+              },
             });
 
-            // console.log('LOCATION BY NAME RESPONSE', resJson);
-            return {
-              name: city.name,
-              state: city.state,
-              country: city.country,
-              lat: city.lat,
-              lon: city.lon,
-            };
+            if (!newCity) {
+              console.error('Failed to create new city in DB, trying again...');
+            }
+            if (newCity) {
+              console.log('❇️ New city created:', newCity.name, newCity.state);
+              return newCity;
+            }
           }
-          console.error(`FAILED TO FETCH GEO COORDINATES BY NAME ${res.status}, ${url}`);
         } catch (error) {
           console.error('ERROR FETCHING GEO BY NAME:', error);
         }
@@ -495,7 +547,9 @@ export const locationRouter = createTRPCRouter({
       let attempts = 0;
       while (attempts < input.maxRetries) {
         try {
-          const existingLocation = await db.cities.findUnique({
+          console.log('❇️ GETTING LOCATION BY REVERSE GEO');
+
+          const existingLocation = await db.cities.findMany({
             where: {
               lat: input.lat,
               lng: input.lon,
@@ -509,41 +563,74 @@ export const locationRouter = createTRPCRouter({
             },
           });
 
-          if (existingLocation) {
-            return {
-              name: existingLocation.name,
-              state: existingLocation.state,
-              country: existingLocation.country,
-              lat: existingLocation.lat,
-              lon: existingLocation.lng,
-            };
+          if (existingLocation?.[0]) {
+            console.log('❇️ Existing location found in DB:', existingLocation[0]);
+
+            return existingLocation[0];
           }
 
+          console.log('🛑 Existing location NOT found in DB, fetching location:');
           const res = await fetch(url);
           const resJson: ReverseGeo = (await res.json()) as ReverseGeo;
+
+          if (!res.ok && !resJson) {
+            console.error('FAILED TO FETCH LOCATION BY GEO COORDINATES', res.status, url);
+          }
 
           if (res.ok && resJson?.[0]) {
             // console.log('LOCATION BY REVERSE GEO RESPONSE', resJson);
             const city = resJson[0];
+            console.log('❇️ Fetched location:', city);
 
-            await db.cities.create({
+            const checkedLocation = await db.cities.findUnique({
+              where: {
+                slug: slugifyString(
+                  `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                ),
+              },
+              select: {
+                name: true,
+                state: true,
+                country: true,
+                lat: true,
+                lng: true,
+                slug: true,
+              },
+            });
+
+            if (checkedLocation) {
+              console.log('❇️ Location already exists in DB:', checkedLocation);
+              return checkedLocation;
+            }
+
+            const newCity = await db.cities.create({
               data: {
                 name: city.name,
                 state: city.state,
                 country: city.country,
                 lat: city.lat,
                 lng: city.lon,
-                slug: slugifyString(`${city.name} ${city.state} ${city.country}`),
+                slug: slugifyString(
+                  `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                ),
+              },
+              select: {
+                name: true,
+                state: true,
+                country: true,
+                lat: true,
+                lng: true,
               },
             });
 
-            return {
-              name: city.name,
-              state: city.state,
-              country: city.country,
-              lat: city.lat,
-              lon: city.lon,
-            };
+            if (!newCity) {
+              console.error('Failed to create new city in DB, trying again...');
+            }
+
+            if (newCity) {
+              console.log('❇️ New city created:', newCity);
+              return newCity;
+            }
           }
           console.error(
             `FAILED TO FETCH LOCATION BY GEO COORDINATES ${res.status}, ${url}`,
