@@ -19,8 +19,8 @@ model Cities {
   name    String
   state   String
   country String  @default("US")
-  lat     Float   @unique
-  lng     Float   @unique
+  lat     Float
+  lng     Float
   slug    String  @unique
   display Boolean @default(false)
 
