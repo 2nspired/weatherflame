@@ -1,6 +1,6 @@
 import React from 'react';
 
-import InputLocation from '~/app/(main)/_components/InputLocation';
+import LocationInput from '~/app/(main)/_components/LocationInput';
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import TypewriterText from '~/app/(main)/_components/TextAnimations';
 
@@ -35,7 +35,11 @@ export default async function Home() {
               </div>
               <div>
                 <div className="animate-fade-in h-28 opacity-0 delay-1000">
-                  <InputLocation
+                  {/* <InputLocation
+                    enableUserLocation={true}
+                    className="flex h-full space-x-3 p-6 pb-7 sm:flex-row"
+                  /> */}
+                  <LocationInput
                     enableUserLocation={true}
                     className="flex h-full space-x-3 p-6 pb-7 sm:flex-row"
                   />

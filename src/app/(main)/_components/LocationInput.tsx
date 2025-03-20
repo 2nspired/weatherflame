@@ -32,7 +32,7 @@ const locationSchema = z.object({
     ),
 });
 
-export default function InputLocation({
+export default function LocationInput({
   className,
   buttonClassName,
   enableUserLocation,
@@ -42,12 +42,18 @@ export default function InputLocation({
   enableUserLocation?: boolean;
 }) {
   const [glibraries] = useState<Library[]>(['places']);
-
   const [autoComplete, setAutoComplete] =
     useState<google.maps.places.Autocomplete | null>(null);
-
   const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+
   const router = useRouter();
+
+  const reverseGeo = api.location.getLocationReverse.useMutation();
+  const geoByZip = api.location.getLocationByZip.useMutation();
+  const geoByName = api.location.getLocationByName.useMutation();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API,
@@ -60,130 +66,17 @@ export default function InputLocation({
     mode: 'onChange',
   });
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && enableUserLocation) {
-      const location = localStorage.getItem('location');
-      console.log('location:', location);
-      if (location) {
-        form.setValue('name', location, {
-          shouldValidate: true,
-          shouldDirty: true,
-          shouldTouch: true,
-        });
-      }
-    }
-  }, [enableUserLocation, form]);
-
-  const fetchReverseGeo = api.location.getReverseGeo.useMutation();
-  const fetchGeoByZip = api.location.getGeoByZip.useMutation();
-  const fetchGeoByName = api.location.getGeoByName.useMutation();
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const submitStatus =
+    geoByZip.isPending ||
+    geoByName.isPending ||
+    isFetchingLocation ||
+    reverseGeo.isPending ||
+    isSubmitting ||
+    form.formState.isSubmitting;
 
   function saveLocation(location: string) {
     localStorage.setItem('location', location);
   }
-
-  // HANDLERS
-
-  const handleGetUserLocation = useCallback(async () => {
-    if (isFetchingLocation) return;
-    setIsFetchingLocation(true);
-
-    if (!navigator.geolocation) {
-      console.error('Geolocation is not supported by your browser');
-      setIsFetchingLocation(false);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition((position) => {
-      void (async () => {
-        try {
-          const reverseGeoData = await fetchReverseGeo.mutateAsync({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-            limit: 1,
-          });
-
-          if (reverseGeoData?.[0]?.name && reverseGeoData?.[0]?.state) {
-            form.setValue(
-              'name',
-              `${reverseGeoData[0].name}, ${stateAbv(reverseGeoData[0].state)}`,
-              {
-                shouldValidate: true,
-              },
-            );
-
-            saveLocation(
-              `${reverseGeoData[0].name}, ${stateAbv(reverseGeoData[0].state)}`,
-            );
-
-            router.push(
-              `/weather/us/${encodeURIComponent(
-                stateAbv(reverseGeoData[0].state),
-              )}/${encodeURIComponent(reverseGeoData[0].name)}`,
-            );
-          }
-        } catch (error) {
-          console.error('Error fetching reverse geo data:', error);
-        } finally {
-          setIsFetchingLocation(false);
-        }
-      })();
-    });
-  }, [fetchReverseGeo, isFetchingLocation, form, router]);
-
-  const handleSubmit: SubmitHandler<z.infer<typeof locationSchema>> = useCallback(
-    async (data) => {
-      if (isSubmitting) return;
-      setIsSubmitting(true);
-      try {
-        if (fetchGeoByZip.isPending || fetchGeoByName.isPending) {
-          return;
-        }
-        const location = data.name.trim();
-
-        // Zip Code Handling
-        if (/^\d{5}$/.test(location)) {
-          const zipData = await fetchGeoByZip.mutateAsync({ zip: location });
-          if (zipData) {
-            const nameData = await fetchGeoByName.mutateAsync({
-              name: zipData.name,
-              countryCode: zipData.country ?? 'US',
-            });
-            if (nameData?.[0]) {
-              router.push(
-                `/weather/${encodeURIComponent(
-                  zipData.country ?? 'us',
-                )}/${encodeURIComponent(
-                  stateAbv(nameData[0].state),
-                )}/${encodeURIComponent(zipData.name)}`,
-              );
-            }
-          }
-          return;
-        }
-
-        // City Name Handling
-        if (location) {
-          const [name, state] = location.split(',');
-          if (name && state) {
-            router.push(
-              `/weather/us/${encodeURIComponent(stateAbv(state.trim()))}/${encodeURIComponent(name.trim())}`,
-            );
-          } else {
-            console.error('Invalid location format');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching geo data:', error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [fetchGeoByZip, fetchGeoByName, router, isSubmitting],
-  );
 
   // Initialize Google Autocomplete
   useEffect(() => {
@@ -199,49 +92,164 @@ export default function InputLocation({
     }
   }, [isLoaded]);
 
-  // Handle Autocomplete Place Selection
+  // Determines if browsers local storage already contains a location and then autofills the input with that location.
   useEffect(() => {
-    if (autoComplete) {
-      autoComplete.addListener('place_changed', () => {
-        if (isSubmitting) return;
-        void form
-          .handleSubmit(handleSubmit)()
-          .catch((error) => {
-            console.error('Error submitting form:', error);
-          });
-      });
+    if (typeof window !== 'undefined' && enableUserLocation) {
+      const location = localStorage.getItem('location');
+      console.log('locally stored location:', location);
+      if (location) {
+        form.setValue('name', location, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        });
+      }
     }
-  }, [autoComplete, form, handleSubmit, isSubmitting]);
+  }, [enableUserLocation, form]);
+
+  // HANDLERS
+
+  const handleGetUserLocation = useCallback(async () => {
+    if (submitStatus) return;
+    setIsFetchingLocation(true);
+
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by your browser');
+      setIsFetchingLocation(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition((position) => {
+      void (async () => {
+        try {
+          const reverseGeoData = await reverseGeo.mutateAsync({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+            limit: 1,
+          });
+
+          if (reverseGeoData?.name && reverseGeoData?.state) {
+            form.setValue(
+              'name',
+              `${reverseGeoData.name}, ${stateAbv(reverseGeoData.state)}`,
+              {
+                shouldValidate: true,
+              },
+            );
+
+            saveLocation(`${reverseGeoData.name}, ${stateAbv(reverseGeoData.state)}`);
+
+            router.push(
+              `/weather/us/${encodeURIComponent(
+                stateAbv(reverseGeoData.state),
+              )}/${encodeURIComponent(reverseGeoData.name)}`,
+            );
+          }
+        } catch (error) {
+          console.error('Error fetching reverse geo data:', error);
+        } finally {
+          setIsFetchingLocation(false);
+        }
+      })();
+    });
+  }, [reverseGeo, form, router, submitStatus]);
+
+  // Form Submit Handler
+  const handleSubmit = useCallback<SubmitHandler<z.infer<typeof locationSchema>>>(
+    async (data) => {
+      if (submitStatus) {
+        return;
+      }
+      setIsSubmitting(true);
+
+      try {
+        const [name, state] = data.name.trim().split(',');
+
+        const location = data.name.trim();
+
+        if (/^\d{5}$/.test(location)) {
+          const zipData = await geoByZip.mutateAsync({ zip: location });
+
+          if (zipData) {
+            router.push(
+              `/weather/${encodeURIComponent(stateAbv(zipData.state))}/${encodeURIComponent(zipData.name)}`,
+            );
+          }
+          return;
+        }
+
+        if (name && state) {
+          console.log('name:', name.trim());
+          console.log('state:', state.trim());
+
+          const cityData = await geoByName.mutateAsync({
+            name: name.trim(),
+            state: state.trim(),
+            countryCode: 'US',
+          });
+
+          if (cityData) {
+            router.push(
+              `/weather/us/${encodeURIComponent(stateAbv(cityData.state.trim()))}/${encodeURIComponent(cityData.name.trim())}`,
+            );
+          }
+          return;
+        }
+
+        console.error('Invalid location');
+      } catch (error) {
+        console.error('Error fetching location:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    },
+    [geoByZip, geoByName, router, submitStatus],
+  );
+
+  // form will trigger a useEffect re-render as a direct dependency due to form state changes causing multiple re-renders and therefore submissions when an autocomplete selection is made.
+  const formRef = useRef(form);
+  const handleSubmitRef = useRef(handleSubmit);
+
+  // Update refs when form or handleSubmit changes, see note above.
+  useEffect(() => {
+    formRef.current = form;
+    handleSubmitRef.current = handleSubmit;
+  }, [form, handleSubmit]);
 
   useEffect(() => {
     if (autoComplete) {
       autoComplete.addListener('place_changed', () => {
         const place = autoComplete.getPlace();
+
         if (place?.formatted_address) {
-          const [name, state] = place.formatted_address.split(',');
-          let formattedValue = '';
+          const cleanedAddress = place.formatted_address.replace(/\s*\d{5}$/, '');
+          const [name, state] = cleanedAddress.split(',');
+
+          let formattedValue: string;
           if (name && state) {
             formattedValue = `${name.trim()}, ${stateAbv(state.trim())}`;
-            form.setValue('name', formattedValue, {
+            formRef.current.setValue('name', formattedValue, {
               shouldValidate: true,
               shouldDirty: true,
               shouldTouch: true,
             });
-            void form
-              .handleSubmit(handleSubmit)()
-              .catch((error) => {
-                console.error('Error submitting form:', error);
-              });
-            // Update input field to display "City, State"
             if (placeAutoCompleteRef.current) {
               placeAutoCompleteRef.current.value = formattedValue;
             }
           }
-          void form.trigger('name');
+        }
+
+        if (!isSubmitting) {
+          formRef.current
+            .handleSubmit(handleSubmitRef.current)()
+            .catch((error) => {
+              console.error('Error submitting form:', error);
+            });
         }
       });
     }
-  }, [autoComplete, form, handleSubmit]);
+  }, [autoComplete, isSubmitting]);
 
   return (
     <Form {...form}>
@@ -253,7 +261,7 @@ export default function InputLocation({
             <FormItem className="w-48 md:w-64">
               <FormControl>
                 <Input
-                  disabled={fetchGeoByZip.isPending || fetchGeoByName.isPending}
+                  disabled={submitStatus}
                   placeholder="city or zip"
                   className="h-10 rounded-none font-mono text-gray-700 outline-none"
                   {...field}
@@ -262,10 +270,10 @@ export default function InputLocation({
                   autoComplete="home city"
                 />
               </FormControl>
-              {!fetchReverseGeo.isPending && (
+              {!submitStatus && (
                 <FormMessage className="font-mono text-xs text-red-500">
-                  {fetchGeoByZip.error?.data?.zodError?.fieldErrors.zip ??
-                    fetchGeoByName.error?.data?.zodError?.fieldErrors.name}
+                  {geoByZip.error?.data?.zodError?.fieldErrors.zip ??
+                    geoByName.error?.data?.zodError?.fieldErrors.name}
                 </FormMessage>
               )}
             </FormItem>
@@ -275,7 +283,7 @@ export default function InputLocation({
         <div className={`${buttonClassName} md:w-2/6`}>
           <div
             className={`relative h-[40px] w-32 rounded-3xl ${
-              !form.formState.isValid || form.formState.isSubmitting || isFetchingLocation
+              !form.formState.isValid || form.formState.isSubmitting || submitStatus
                 ? 'bg-none'
                 : 'bg-green-500'
             }`}
@@ -284,32 +292,22 @@ export default function InputLocation({
               type="submit"
               className="absolute z-10 w-32 rounded-3xl border border-black bg-[#FF6100] font-mono text-black transition-transform ease-in-out hover:translate-y-[-3px] hover:bg-[#FF6100]"
               disabled={
-                !form.formState.isValid ||
-                form.formState.isSubmitting ||
-                isFetchingLocation
+                !form.formState.isValid || form.formState.isSubmitting || submitStatus
               }
             >
-              {fetchGeoByZip.isPending || fetchGeoByName.isPending ? (
-                <Loader2 className="size-6 animate-spin" />
-              ) : (
-                'Submit'
-              )}
+              {submitStatus ? <Loader2 className="size-6 animate-spin" /> : 'Submit'}
               <div></div>
             </Button>
           </div>
           {enableUserLocation && (
             <div className="mt-2 flex flex-row items-center space-x-2 py-1 font-mono text-sm text-zinc-400 transition-colors duration-300 ease-in-out hover:text-[#FF6100]">
-              {fetchReverseGeo.isPending ? (
+              {reverseGeo.isPending ? (
                 <div>searching...</div>
               ) : (
                 <>
                   <Navigation size={14} />
                   <button
-                    disabled={
-                      form.formState.isSubmitting ||
-                      fetchReverseGeo.isPending ||
-                      isFetchingLocation
-                    }
+                    disabled={form.formState.isSubmitting || submitStatus}
                     onClick={handleGetUserLocation}
                   >
                     use location

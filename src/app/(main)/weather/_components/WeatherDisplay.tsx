@@ -15,12 +15,12 @@ import {
   AccordionTrigger,
 } from '~/components/ui/accordion';
 import { api } from '~/trpc/client';
-import { abbreviateState } from '~/utilities/formatters/abbreviateState';
 import {
   dateAddDays,
   formatDateHour,
   formatShortDate,
 } from '~/utilities/formatters/formatDate';
+import { stateAbv } from '~/utilities/formatters/stateAbv';
 
 import SectionContainer from '../../_components/SectionContainer';
 import TypewriterText from '../../_components/TextAnimations';
@@ -85,7 +85,7 @@ export default function WeatherDisplay({
             <div className="flex w-full flex-col items-center">
               <div className="flex w-full flex-row">
                 <div className="w-2/3 border-r border-black p-6 text-xl font-bold lg:px-6 lg:text-3xl">
-                  <div>{`${locationName}, ${abbreviateState(locationState)}`}</div>
+                  <div>{`${locationName}, ${stateAbv(locationState)}`}</div>
                 </div>
 
                 <div className="flex w-1/3 flex-row items-center justify-center">

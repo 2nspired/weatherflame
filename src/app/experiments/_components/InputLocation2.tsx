@@ -20,7 +20,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { api } from '~/trpc/client';
-import { abbreviateState } from '~/utilities/formatters/abbreviateState';
+import { stateAbv } from '~/utilities/formatters/stateAbv';
 
 const locationSchema = z.object({
   location: z
@@ -71,11 +71,11 @@ export default function InputLocation2({ className }: { className?: string }) {
 
       if (zipData && nameData?.[0]) {
         router.push(
-          `/weather/alerts/${encodeURIComponent(zipData.country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(zipData.name)}/${encodeURIComponent(location)}`,
+          `/weather/alerts/${encodeURIComponent(zipData.country)}/${encodeURIComponent(stateAbv(nameData[0].state))}/${encodeURIComponent(zipData.name)}/${encodeURIComponent(location)}`,
         );
       } else if (nameData?.[0] && !zipData) {
         router.push(
-          `/weather/alerts/${encodeURIComponent(nameData[0].country)}/${encodeURIComponent(abbreviateState(nameData[0].state))}/${encodeURIComponent(nameData[0].name)}`,
+          `/weather/alerts/${encodeURIComponent(nameData[0].country)}/${encodeURIComponent(stateAbv(nameData[0].state))}/${encodeURIComponent(nameData[0].name)}`,
         );
       }
     } catch (error) {

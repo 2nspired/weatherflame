@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import { stateAbv } from '~/utilities/formatters/stateAbv';
+import { db } from '~/utilities/prisma';
+import slugifyString from '~/utilities/slug/slugify';
 
 // --------------------------------------------------------------
 // TYPES
@@ -276,6 +279,383 @@ export const locationRouter = createTRPCRouter({
         attempts++;
         if (attempts >= input.maxRetries) {
           console.error('MAX RETRIES REACHED: getZoneByGeo');
+          return null;
+        }
+        console.warn(`Retrying (${attempts}/${input.maxRetries})`);
+      }
+    }),
+
+  // ----------------------------------------------------------
+  // GET LOCATION BY ZIPCODE - REFACTORED
+  // ----------------------------------------------------------
+
+  getLocationByZip: publicProcedure
+    .input(getGeoByZipSchema)
+    .mutation(async ({ input }) => {
+      let attempts = 0;
+      while (attempts < input.maxRetries) {
+        try {
+          const existingLocation = await db.zipCodes.findUnique({
+            where: {
+              zipcode: input.zip,
+            },
+            select: {
+              cities: {
+                select: {
+                  city: {
+                    select: {
+                      name: true,
+                      state: true,
+                      country: true,
+                      lat: true,
+                      lng: true,
+                    },
+                  },
+                },
+              },
+            },
+          });
+
+          if (existingLocation?.cities[0]?.city) {
+            const city = existingLocation.cities[0]?.city;
+            console.log('❇️ Existing location found in DB:', city.name);
+
+            return city;
+          }
+
+          console.log(
+            '🛑 Existing location NOT found in DB, fetching location by zip:',
+            input.zip,
+          );
+          const url = `https://api.openweathermap.org/geo/1.0/zip?zip=${input.zip},US&appid=${process.env.OPENWEATHER_API}`;
+
+          const zipRes = await fetch(url);
+          const zipResJson: GeoByZip = (await zipRes.json()) as GeoByZip;
+
+          if (!zipRes.ok && !zipResJson) {
+            console.error('FAILED TO FETCH LOCATION BY ZIPCODE', zipRes.status, url);
+          }
+
+          if (zipRes.ok && zipResJson) {
+            const url = `https://api.openweathermap.org/geo/1.0/reverse?lat=${zipResJson.lat}&lon=${zipResJson.lon}&limit=${1}&appid=${process.env.OPENWEATHER_API}`;
+
+            const reverseRes = await fetch(url);
+            const reverseResJson: ReverseGeo = (await reverseRes.json()) as ReverseGeo;
+
+            if (reverseRes.ok && reverseResJson?.[0]) {
+              const city = reverseResJson[0];
+
+              const checkedLocation = await db.cities.findUnique({
+                where: {
+                  slug: slugifyString(
+                    `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                  ),
+                },
+                select: {
+                  name: true,
+                  state: true,
+                  country: true,
+                  lat: true,
+                  lng: true,
+                  slug: true,
+                },
+              });
+              if (checkedLocation) {
+                console.log('❇️ Location already exists in DB:', checkedLocation);
+                return checkedLocation;
+              }
+
+              const newCity = await db.zipCodes.create({
+                data: {
+                  zipcode: input.zip,
+                  cities: {
+                    create: {
+                      city: {
+                        create: {
+                          slug: slugifyString(
+                            `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                          ),
+                          name: city.name,
+                          state: city.state,
+                          country: city.country,
+                          lat: city.lat,
+                          lng: city.lon,
+                        },
+                      },
+                    },
+                  },
+                },
+                select: {
+                  cities: {
+                    select: {
+                      city: {
+                        select: {
+                          name: true,
+                          state: true,
+                          country: true,
+                          lat: true,
+                          lng: true,
+                          slug: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+
+              if (!newCity) {
+                console.error('Failed to create new city in DB, trying again...');
+              }
+              if (newCity?.cities?.[0]?.city) {
+                console.log('❇️ New city created:', newCity);
+                return newCity?.cities?.[0].city;
+              }
+            }
+          }
+        } catch (error) {
+          console.error('ERROR FETCHING LOCATION BY ZIP:', error);
+        }
+        attempts++;
+        if (attempts >= input.maxRetries) {
+          console.error('MAX RETRIES REACHED: getLocationByZip');
+          return null;
+        }
+        console.warn(`Retrying (${attempts}/${input.maxRetries})`);
+      }
+    }),
+
+  // ----------------------------------------------------------
+  // GET LOCATION BY NAME - REFACTORED
+  // ----------------------------------------------------------
+
+  getLocationByName: publicProcedure
+    .input(getGeoByNameSchema)
+    .mutation(async ({ input }) => {
+      // return {
+      //   name: 'testName',
+      //   state: 'testState',
+      //   country: 'testCountry',
+      //   lat: 12.0,
+      //   lng: -12.0,
+      //   slug: 'test-slug',
+      // };
+      let attempts = 0;
+
+      while (attempts < input.maxRetries) {
+        try {
+          console.log(
+            '❇️ GETTING LOCATION BY NAME',
+            slugifyString(`${input.name} ${input?.state} ${input.countryCode}`),
+          );
+          const existingLocation = await db.cities.findUnique({
+            where: {
+              slug: slugifyString(
+                `${input.name} ${input?.state} ${input.countryCode ?? 'US'}`,
+              ),
+            },
+            select: {
+              name: true,
+              state: true,
+              country: true,
+              lat: true,
+              lng: true,
+              slug: true,
+            },
+          });
+
+          if (existingLocation) {
+            console.log(
+              '❇️ Existing location found in DB:',
+              existingLocation.name,
+              existingLocation.state,
+            );
+
+            return existingLocation;
+          }
+
+          console.log(
+            '🛑 Existing location NOT found in DB, fetching location by name:',
+            input.name,
+            input.state,
+          );
+
+          let url = `https://api.openweathermap.org/geo/1.0/direct?q=${input.name.replace(' ', '+')}`;
+          // console.log('GEOBYNAMEURL', url);
+          if (input.state) {
+            url += `,${stateAbv(input.state, true)}`;
+          }
+          if (input.countryCode) {
+            url += `,${input.countryCode}`;
+          }
+          url += `&appid=${process.env.OPENWEATHER_API}`;
+
+          console.log('Fetching location by name with URL:', url);
+
+          const res = await fetch(url);
+          const resJson: GeoByName = (await res.json()) as GeoByName;
+
+          if (!res.ok && !resJson) {
+            console.error('FAILED TO FETCH LOCATION BY NAME', res.status, url);
+          }
+
+          if (res.ok && resJson[0] && resJson.length > 0) {
+            const city = resJson[0];
+            console.log('❇️ Fetched location:', city);
+
+            const newCity = await db.cities.create({
+              data: {
+                name: city.name,
+                state: city.state,
+                country: city.country,
+                lat: city.lat,
+                lng: city.lon,
+                slug: slugifyString(
+                  `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                ),
+              },
+              select: {
+                name: true,
+                state: true,
+                country: true,
+                lat: true,
+                lng: true,
+                slug: true,
+              },
+            });
+
+            if (!newCity) {
+              console.error('Failed to create new city in DB, trying again...');
+            }
+            if (newCity) {
+              console.log('❇️ New city created:', newCity.name, newCity.state);
+              return newCity;
+            }
+          }
+        } catch (error) {
+          console.error('ERROR FETCHING GEO BY NAME:', error);
+        }
+        attempts++;
+        if (attempts >= input.maxRetries) {
+          console.error('MAX RETRIES REACHED: getGeoByName');
+          return null;
+        }
+        console.warn(`Retrying (${attempts}/${input.maxRetries})`);
+      }
+    }),
+
+  // ----------------------------------------------------------
+  // GET LOCATION BY REVERSE LOOKUP - REFACTORED
+  // ----------------------------------------------------------
+
+  getLocationReverse: publicProcedure
+    .input(
+      z.object({
+        lat: z.number({ message: 'Latitude is required' }),
+        lon: z.number({ message: 'Longitude is required' }),
+        limit: z.number().optional(),
+        maxRetries: z.number().optional().default(1),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const url = `https://api.openweathermap.org/geo/1.0/reverse?lat=${input.lat}&lon=${input.lon}&limit=${input.limit}&appid=${process.env.OPENWEATHER_API}`;
+
+      let attempts = 0;
+      while (attempts < input.maxRetries) {
+        try {
+          console.log('❇️ GETTING LOCATION BY REVERSE GEO');
+
+          const existingLocation = await db.cities.findMany({
+            where: {
+              lat: input.lat,
+              lng: input.lon,
+            },
+            select: {
+              name: true,
+              state: true,
+              country: true,
+              lat: true,
+              lng: true,
+            },
+          });
+
+          if (existingLocation?.[0]) {
+            console.log('❇️ Existing location found in DB:', existingLocation[0]);
+
+            return existingLocation[0];
+          }
+
+          console.log('🛑 Existing location NOT found in DB, fetching location:');
+          const res = await fetch(url);
+          const resJson: ReverseGeo = (await res.json()) as ReverseGeo;
+
+          if (!res.ok && !resJson) {
+            console.error('FAILED TO FETCH LOCATION BY GEO COORDINATES', res.status, url);
+          }
+
+          if (res.ok && resJson?.[0]) {
+            // console.log('LOCATION BY REVERSE GEO RESPONSE', resJson);
+            const city = resJson[0];
+            console.log('❇️ Fetched location:', city);
+
+            const checkedLocation = await db.cities.findUnique({
+              where: {
+                slug: slugifyString(
+                  `${city.name} ${stateAbv(city.state)} ${city.country ?? 'US'}`,
+                ),
+              },
+              select: {
+                name: true,
+                state: true,
+                country: true,
+                lat: true,
+                lng: true,
+                slug: true,
+              },
+            });
+
+            if (checkedLocation) {
+              console.log('❇️ Location already exists in DB:', checkedLocation);
+              return checkedLocation;
+            }
+
+            const newCity = await db.cities.create({
+              data: {
+                name: city.name,
+                state: city.state,
+                country: city.country,
+                lat: city.lat,
+                lng: city.lon,
+                slug: slugifyString(
+                  `${city.name} ${stateAbv(city.state)} ${city.country}`,
+                ),
+              },
+              select: {
+                name: true,
+                state: true,
+                country: true,
+                lat: true,
+                lng: true,
+              },
+            });
+
+            if (!newCity) {
+              console.error('Failed to create new city in DB, trying again...');
+            }
+
+            if (newCity) {
+              console.log('❇️ New city created:', newCity);
+              return newCity;
+            }
+          }
+          console.error(
+            `FAILED TO FETCH LOCATION BY GEO COORDINATES ${res.status}, ${url}`,
+          );
+        } catch (error) {
+          console.error('ERROR FETCHING REVERSE GEO:', error);
+        }
+        attempts++;
+        if (attempts >= input.maxRetries) {
+          console.error('MAX RETRIES REACHED: getReverseGeo');
           return null;
         }
         console.warn(`Retrying (${attempts}/${input.maxRetries})`);

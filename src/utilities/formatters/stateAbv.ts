@@ -51,6 +51,13 @@ const statesAbbreviations: Record<string, string> = {
   Wyoming: 'WY',
 };
 
-export function abbreviateState(stateName: string): string {
+const abbreviationsToStates = Object.fromEntries(
+  Object.entries(statesAbbreviations).map(([full, abbr]) => [abbr, full]),
+);
+
+export function stateAbv(stateName: string, flip = false): string {
+  if (flip) {
+    return abbreviationsToStates[stateName] ?? stateName;
+  }
   return statesAbbreviations[stateName] ?? stateName;
 }
