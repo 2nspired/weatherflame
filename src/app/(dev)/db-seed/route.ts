@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
   const handler = routeGuard(request);
 
   if (handler) {
-    return NextResponse.json({ message: handler.error }, { status: handler.status });
+    return handler;
   }
 
   const start = Date.now();

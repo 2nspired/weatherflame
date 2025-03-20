@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
   const handler = routeGuard(request);
 
   if (handler) {
-    return NextResponse.json({ message: handler.error }, { status: handler.status });
+    return handler;
   }
 
   const start = Date.now();
@@ -158,7 +158,10 @@ export async function GET(request: NextRequest) {
     const end = Date.now();
     console.log(`Upserting city forecasts completed in ${end - start}ms`);
     return NextResponse.json(
-      { message: 'Updating forecasts completed' },
+      {
+        success: true,
+        message: 'Updating forecasts completed',
+      },
       { status: 200 },
     );
   }
@@ -175,6 +178,12 @@ export async function GET(request: NextRequest) {
       console.error('Failed to create chron log:', error);
     }
 
-    return NextResponse.json({ message: 'Updating forecasts failed' }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Updating forecasts failed',
+      },
+      { status: 500 },
+    );
   }
 }
