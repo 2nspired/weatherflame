@@ -20,7 +20,7 @@ import {
 import { Input } from '~/components/ui/input';
 import { env } from '~/env';
 import { api } from '~/trpc/client';
-import { abbreviateState } from '~/utilities/formatters/abbreviateState';
+import { stateAbv } from '~/utilities/formatters/stateAbv';
 
 const locationSchema = z.object({
   name: z
@@ -109,19 +109,19 @@ export default function InputLocation({
           if (reverseGeoData?.[0]?.name && reverseGeoData?.[0]?.state) {
             form.setValue(
               'name',
-              `${reverseGeoData[0].name}, ${abbreviateState(reverseGeoData[0].state)}`,
+              `${reverseGeoData[0].name}, ${stateAbv(reverseGeoData[0].state)}`,
               {
                 shouldValidate: true,
               },
             );
 
             saveLocation(
-              `${reverseGeoData[0].name}, ${abbreviateState(reverseGeoData[0].state)}`,
+              `${reverseGeoData[0].name}, ${stateAbv(reverseGeoData[0].state)}`,
             );
 
             router.push(
               `/weather/us/${encodeURIComponent(
-                abbreviateState(reverseGeoData[0].state),
+                stateAbv(reverseGeoData[0].state),
               )}/${encodeURIComponent(reverseGeoData[0].name)}`,
             );
           }
@@ -157,7 +157,7 @@ export default function InputLocation({
                 `/weather/${encodeURIComponent(
                   zipData.country ?? 'us',
                 )}/${encodeURIComponent(
-                  abbreviateState(nameData[0].state),
+                  stateAbv(nameData[0].state),
                 )}/${encodeURIComponent(zipData.name)}`,
               );
             }
@@ -170,7 +170,7 @@ export default function InputLocation({
           const [name, state] = location.split(',');
           if (name && state) {
             router.push(
-              `/weather/us/${encodeURIComponent(abbreviateState(state.trim()))}/${encodeURIComponent(name.trim())}`,
+              `/weather/us/${encodeURIComponent(stateAbv(state.trim()))}/${encodeURIComponent(name.trim())}`,
             );
           } else {
             console.error('Invalid location format');
@@ -221,7 +221,7 @@ export default function InputLocation({
           const [name, state] = place.formatted_address.split(',');
           let formattedValue = '';
           if (name && state) {
-            formattedValue = `${name.trim()}, ${abbreviateState(state.trim())}`;
+            formattedValue = `${name.trim()}, ${stateAbv(state.trim())}`;
             form.setValue('name', formattedValue, {
               shouldValidate: true,
               shouldDirty: true,

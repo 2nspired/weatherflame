@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
-import InputLocation from '~/app/(main)/_components/InputLocation';
+// import InputLocation from '~/app/(main)/_components/InputLocation';
+import LocationInput from '~/app/(main)/_components/LocationInput';
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
 
 export default function WeatherHeader() {
@@ -20,11 +21,16 @@ export default function WeatherHeader() {
         </div>
 
         <div className="flex h-32 w-full flex-row items-start justify-end p-6 pt-10">
-          <InputLocation
+          <LocationInput
             className="flex flex-row space-x-2"
             buttonClassName="hidden lg:block"
             enableUserLocation={false}
           />
+          {/* <InputLocation
+            className="flex flex-row space-x-2"
+            buttonClassName="hidden lg:block"
+            enableUserLocation={false}
+          /> */}
         </div>
       </div>
     </SectionContainer>
