@@ -6,9 +6,9 @@ export function routeGuard(request: NextRequest) {
   if (env.NODE_ENV !== 'production') {
     return;
   }
-  const authHeader = request.headers.get('Authorization');
+  const authHeader = request.headers.get('authorization');
 
-  if (!authHeader || authHeader !== `Bearer ${env.CRON_SECRET}`) {
-    return { error: 'unauthorized', status: 401 };
+  if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
+    return new Response('unauthorized', { status: 401 });
   }
 }
