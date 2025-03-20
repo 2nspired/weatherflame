@@ -92,39 +92,6 @@ export default function LocationInput({
     }
   }, [isLoaded]);
 
-  // Handle Autocomplete Place Selection
-  // useEffect(() => {
-  //     if (autoComplete) {
-  //       autoComplete.addListener('place_changed', () => {
-  //         const place = autoComplete.getPlace();
-  //         if (place?.formatted_address) {
-  //           const [name, state] = place.formatted_address.split(',');
-  //           let formattedValue = '';
-  //           if (name && state) {
-  //             formattedValue = `${name.trim()}, ${stateAbv(state.trim())}`;
-  //             form.setValue('name', formattedValue, {
-  //               shouldValidate: true,
-  //               shouldDirty: true,
-  //               shouldTouch: true,
-  //             });
-  //             // Update input field to display "City, State"
-  //             if (placeAutoCompleteRef.current) {
-  //               placeAutoCompleteRef.current.value = formattedValue;
-  //             }
-  //           }
-  //           void form.trigger('name');
-  //         }
-  //         if (!isSubmitting) {
-  //           void form
-  //             .handleSubmit(handleSubmit)()
-  //             .catch((error) => {
-  //               console.error('Error submitting form:', error);
-  //             });
-  //         }
-  //       });
-  //     }
-  //   }, [autoComplete, form, handleSubmit, isSubmitting]);
-
   // Determines if browsers local storage already contains a location and then autofills the input with that location.
   useEffect(() => {
     if (typeof window !== 'undefined' && enableUserLocation) {
@@ -141,8 +108,6 @@ export default function LocationInput({
   }, [enableUserLocation, form]);
 
   // HANDLERS
-
-  // Use User Location Handler
 
   const handleGetUserLocation = useCallback(async () => {
     if (submitStatus) return;
@@ -228,10 +193,6 @@ export default function LocationInput({
               `/weather/us/${encodeURIComponent(stateAbv(cityData.state.trim()))}/${encodeURIComponent(cityData.name.trim())}`,
             );
           }
-
-          // router.push(
-          //   `/weather/us/${encodeURIComponent(stateAbv(state.trim()))}/${encodeURIComponent(name.trim())}`,
-          // );
           return;
         }
 
@@ -246,6 +207,16 @@ export default function LocationInput({
     [geoByZip, geoByName, router, submitStatus],
   );
 
+  // form will trigger a useEffect re-render as a direct dependency due to form state changes causing multiple re-renders and therefore submissions when an autocomplete selection is made.
+  const formRef = useRef(form);
+  const handleSubmitRef = useRef(handleSubmit);
+
+  // Update refs when form or handleSubmit changes, see note above.
+  useEffect(() => {
+    formRef.current = form;
+    handleSubmitRef.current = handleSubmit;
+  }, [form, handleSubmit]);
+
   useEffect(() => {
     if (autoComplete) {
       autoComplete.addListener('place_changed', () => {
@@ -258,7 +229,7 @@ export default function LocationInput({
           let formattedValue: string;
           if (name && state) {
             formattedValue = `${name.trim()}, ${stateAbv(state.trim())}`;
-            form.setValue('name', formattedValue, {
+            formRef.current.setValue('name', formattedValue, {
               shouldValidate: true,
               shouldDirty: true,
               shouldTouch: true,
@@ -270,15 +241,14 @@ export default function LocationInput({
         }
 
         if (!isSubmitting) {
-          form
-            .handleSubmit(handleSubmit)()
+          formRef.current
+            .handleSubmit(handleSubmitRef.current)()
             .catch((error) => {
               console.error('Error submitting form:', error);
             });
         }
       });
     }
-    //   }, [autoComplete, form, handleSubmit, isSubmitting]);
   }, [autoComplete, isSubmitting]);
 
   return (
