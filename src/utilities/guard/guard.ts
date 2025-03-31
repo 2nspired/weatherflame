@@ -11,4 +11,6 @@ export function routeGuard(request: NextRequest) {
   if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
     return new Response('unauthorized', { status: 401 });
   }
+
+  return Response.json({ success: true });
 }

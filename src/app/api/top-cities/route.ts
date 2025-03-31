@@ -6,6 +6,7 @@ import { db } from '~/utilities/prisma';
 
 const currentForecast = api.forecasts.getCurrentForecast;
 const weeklyForecast = api.forecasts.getWeeklyForecast;
+export const dynamic = 'force-dynamic';
 
 const updateWeather = async () => {
   // 1. FETCH LIST OF TOP CITIES TO DISPLAY
@@ -134,7 +135,7 @@ const updateWeather = async () => {
 export async function GET(request: NextRequest) {
   const handler = routeGuard(request);
 
-  if (handler) {
+  if (handler?.status === 401) {
     return handler;
   }
 
