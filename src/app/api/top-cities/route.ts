@@ -27,7 +27,7 @@ const updateWeather = async () => {
         lng: true,
         slug: true,
       },
-      take: 10,
+      take: 1,
     });
 
     if (!topCities || topCities.length === 0) {
