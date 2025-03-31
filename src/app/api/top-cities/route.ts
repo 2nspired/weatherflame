@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
   }
 
   const start = Date.now();
-  console.log('Seeding database...');
+  console.log('updating weather...');
 
   const status = await updateWeather();
 
