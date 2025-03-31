@@ -295,27 +295,37 @@ export const locationRouter = createTRPCRouter({
       let attempts = 0;
       while (attempts < input.maxRetries) {
         try {
-          const existingLocation = await db.zipCodes.findUnique({
-            where: {
-              zipcode: input.zip,
-            },
-            select: {
-              cities: {
-                select: {
-                  city: {
-                    select: {
-                      name: true,
-                      state: true,
-                      country: true,
-                      lat: true,
-                      lng: true,
+          console.log('❇️ GETTING LOCATION BY ZIPCODE', input.zip);
+
+          let existingLocation = null;
+
+          try {
+            existingLocation = await db.zipCodes.findUnique({
+              where: {
+                zipcode: input.zip,
+              },
+              select: {
+                cities: {
+                  select: {
+                    city: {
+                      select: {
+                        name: true,
+                        state: true,
+                        country: true,
+                        lat: true,
+                        lng: true,
+                      },
                     },
                   },
                 },
               },
-            },
-          });
-
+            });
+          } catch (error) {
+            console.error(
+              'Error fetching existing location, falling back to API:',
+              error,
+            );
+          }
           if (existingLocation?.cities[0]?.city) {
             const city = existingLocation.cities[0]?.city;
             console.log('❇️ Existing location found in DB:', city.name);
@@ -447,21 +457,30 @@ export const locationRouter = createTRPCRouter({
             '❇️ GETTING LOCATION BY NAME',
             slugifyString(`${input.name} ${input?.state} ${input.countryCode}`),
           );
-          const existingLocation = await db.cities.findUnique({
-            where: {
-              slug: slugifyString(
-                `${input.name} ${input?.state} ${input.countryCode ?? 'US'}`,
-              ),
-            },
-            select: {
-              name: true,
-              state: true,
-              country: true,
-              lat: true,
-              lng: true,
-              slug: true,
-            },
-          });
+
+          let existingLocation = null;
+          try {
+            existingLocation = await db.cities.findUnique({
+              where: {
+                slug: slugifyString(
+                  `${input.name} ${input?.state} ${input.countryCode ?? 'US'}`,
+                ),
+              },
+              select: {
+                name: true,
+                state: true,
+                country: true,
+                lat: true,
+                lng: true,
+                slug: true,
+              },
+            });
+          } catch (error) {
+            console.error(
+              'Error fetching existing location, falling back to API:',
+              error,
+            );
+          }
 
           if (existingLocation) {
             console.log(
@@ -564,19 +583,27 @@ export const locationRouter = createTRPCRouter({
         try {
           console.log('❇️ GETTING LOCATION BY REVERSE GEO');
 
-          const existingLocation = await db.cities.findMany({
-            where: {
-              lat: input.lat,
-              lng: input.lon,
-            },
-            select: {
-              name: true,
-              state: true,
-              country: true,
-              lat: true,
-              lng: true,
-            },
-          });
+          let existingLocation = null;
+          try {
+            existingLocation = await db.cities.findMany({
+              where: {
+                lat: input.lat,
+                lng: input.lon,
+              },
+              select: {
+                name: true,
+                state: true,
+                country: true,
+                lat: true,
+                lng: true,
+              },
+            });
+          } catch (error) {
+            console.error(
+              'Error fetching existing location, falling back to API:',
+              error,
+            );
+          }
 
           if (existingLocation?.[0]) {
             console.log('❇️ Existing location found in DB:', existingLocation[0]);
