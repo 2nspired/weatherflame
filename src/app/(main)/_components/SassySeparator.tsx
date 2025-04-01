@@ -30,7 +30,7 @@ export default function SassySeparator() {
   const randomSaying = sayings[randomIndex];
 
   return (
-    <SectionContainer className="border-t border-black bg-zinc-200 text-black">
+    <SectionContainer className="border-t border-black bg-zinc-200 text-black lg:bg-transparent">
       <div className="flex flex-col items-center justify-center bg-zinc-200 py-6 text-center font-mono">
         <div className="flex w-full flex-col items-center justify-center space-y-2 border-y border-black bg-zinc-100 py-3">
           <div>{randomSaying?.line1}</div>
