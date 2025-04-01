@@ -1,12 +1,9 @@
-// TODO: ANIMATE ICONS - BASED ON CONDITION and COMPONENT INITIALIZATION - https://motion.dev/docs/react-quick-start
-// TODO: LOADING STATES and ERROR HANDLING
-
 'use client';
 
-import { CloudRain, Droplet, Droplets, Wind } from 'lucide-react';
+import { CloudRain, Droplets, Wind } from 'lucide-react';
 
 import SassySeparator from '~/app/(main)/_components/SassySeparator';
-// import AlertsDisplay from '~/app/(main)/weather/_components/AlertsDisplay';
+import AlertsDisplay from '~/app/(main)/weather/_components/AlertsDisplay';
 import WeatherHeader from '~/app/(main)/weather/_components/WeatherHeader';
 import WeatherIcon from '~/app/(main)/weather/_components/WeatherIcons';
 import {
@@ -60,8 +57,17 @@ export default function WeatherDisplay({
     trpcSettings,
   );
 
+  const alertZones = api.location.getZoneByGeo.useQuery(trpcProps, {
+    enabled: true,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
   const isLoading =
-    currentForecast.isLoading || hourlyForecast.isLoading || weeklyForecast.isLoading;
+    currentForecast.isLoading ||
+    hourlyForecast.isLoading ||
+    weeklyForecast.isLoading ||
+    alertZones.isLoading;
 
   const currentWeather = currentForecast.data;
 
@@ -77,6 +83,13 @@ export default function WeatherDisplay({
   const weeklyForecasts = weeklyForecast.data;
 
   console.log('hourlyForecasts', hourlyForecasts);
+
+  console.log(
+    'alertZones',
+    `${alertZones?.data?.map((alert) => {
+      return alert.zone;
+    })}`,
+  );
 
   return (
     <div className="flex h-full max-w-full flex-col items-center">
@@ -97,8 +110,7 @@ export default function WeatherDisplay({
       ) : (
         <>
           <SectionContainer
-            // className={`${weatherData.data?.alertZones ? 'mt-0' : 'mt-3'} bg-zinc-200 text-black`}
-            className="mt-0 bg-zinc-200 text-black"
+            className={`${alertZones ? 'mt-0' : 'mt-3'} bg-zinc-200 text-black`}
           >
             <div className="flex w-full flex-col items-center">
               <div className="flex w-full flex-row">
@@ -117,9 +129,16 @@ export default function WeatherDisplay({
             </div>
           </SectionContainer>
           {/* TODO: UPDATE ALERT ZONES */}
-          {/* {weatherData?.data?.alertZones && (
-            <AlertsDisplay zones={weatherData.data.alertZones} />
-          )} */}
+          <div className="w-full">
+            {alertZones?.data && (
+              <AlertsDisplay
+                // zones={['LAZ241']}
+                zones={alertZones.data.map((alert) => {
+                  return alert.zone;
+                })}
+              />
+            )}
+          </div>
           <SectionContainer className="border-t border-black bg-green-500">
             {currentWeather && (
               <div className="w-full p-6 text-center font-mono uppercase text-black lg:text-xl">
@@ -198,7 +217,7 @@ export default function WeatherDisplay({
                       currentForecast?.data.humidity !== undefined && (
                         <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
                           <div className="pb-3">
-                            <Droplet size={36} />
+                            <Droplets size={36} />
                           </div>
                           <div className="font-mono">
                             {currentForecast?.data.humidity}%
@@ -275,7 +294,7 @@ export default function WeatherDisplay({
                             <div className="col-start-2 col-end-2 flex flex-col space-y-2">
                               <div>Humidity</div>
                               <div className="flex w-20 flex-row space-x-3">
-                                <Droplet size={24} />
+                                <Droplets size={24} />
                                 <div className="font-mono">{forecast.humidity}%</div>
                               </div>
                             </div>
@@ -428,7 +447,7 @@ export default function WeatherDisplay({
                         currentWeather?.humidity !== undefined && (
                           <div className="flex w-full flex-row items-center justify-between space-x-10 py-3">
                             <div className="flex flex-row items-center space-x-3">
-                              <Droplet size={40} />
+                              <Droplets size={40} />
                               <div className="text-2xl">Humidity</div>
                             </div>
                             <div className="font-mono text-xl">
@@ -489,7 +508,7 @@ export default function WeatherDisplay({
                         key={forecast.number}
                         className={`flex flex-col items-center justify-center space-y-2 ${index !== 7 && 'border-r border-black'} pb-6`}
                       >
-                        <div className="mb-2 text-lg font-semibold">
+                        <div className="mb-2 text-lg">
                           {forecast.startTime && formatDateHour(forecast.startTime)}
                         </div>
                         {forecast.shortForecast && (
@@ -502,7 +521,7 @@ export default function WeatherDisplay({
                         )}
                         <div className="font-mono text-lg">{forecast.temperature}°</div>
                         <div className="flex flex-row items-center space-x-2 font-mono">
-                          <Droplets size={16} />
+                          <CloudRain size={16} />
                           <div>{forecast.precipitation}%</div>
                         </div>
                       </div>
