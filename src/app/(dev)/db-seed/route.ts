@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { type Feature } from '~/server/api/routers/location';
 import { api } from '~/trpc/server';
 import { routeGuard } from '~/utilities/guard/guard';
 import { db } from '~/utilities/prisma';
