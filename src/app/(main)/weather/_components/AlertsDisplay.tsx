@@ -1,8 +1,7 @@
 'use client';
 
-// TODO: CLEAN UP IN GENERAL
 import { CloudAlert } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import type { components } from '~/app/types/weather-gov/weatherGov';
@@ -33,6 +32,8 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
 
   const alertFeatures = alertsData?.data?.map((alert: AlertFeature) => alert);
 
+  console.log('alertFeatures', alertFeatures);
+
   return (
     <>
       {alertsData.data && alertFeatures && alertFeatures.length > 0 && (
@@ -43,7 +44,6 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
                 key={alert.id}
                 value={`index-${index + 1}`}
                 className={`border-b-0 px-6 hover:no-underline ${index === alertFeatures.length - 1 ? '' : 'border-b border-black '}`}
-                // className={`border-b-0 px-3 hover:no-underline ${index === alertFeatures.length - 1 ? '' : 'border-b border-black '}`}
               >
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex flex-col space-y-2">

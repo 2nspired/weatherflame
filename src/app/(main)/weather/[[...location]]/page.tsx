@@ -1,10 +1,6 @@
-// TODO: ADD A MORE CREATIVE WAY TO HANDLE NO RESULTS
-
 import { api } from 'src/trpc/server';
 
 import WeatherDisplay from '~/app/(main)/weather/_components/WeatherDisplay';
-
-// import { stateAbv } from '~/utilities/formatters/stateAbv';
 
 import WeatherHeader from '../_components/WeatherHeader';
 
