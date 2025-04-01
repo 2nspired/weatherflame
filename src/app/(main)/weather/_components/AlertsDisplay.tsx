@@ -37,8 +37,8 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
   return (
     <>
       {alertsData.data && alertFeatures && alertFeatures.length > 0 && (
-        <SectionContainer className="border-t border-black bg-zinc-200 text-red-500">
-          <Accordion type="single" collapsible className="bg-zinc-100">
+        <SectionContainer className="animate-fade-expand border-t border-black bg-red-500 text-white">
+          <Accordion type="single" collapsible className="bg-red-500">
             {alertFeatures?.map((alert, index) => (
               <AccordionItem
                 key={alert.id}
