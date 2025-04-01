@@ -3,7 +3,7 @@
 
 'use client';
 
-import { CloudRain, Droplet, Wind } from 'lucide-react';
+import { CloudRain, Droplet, Droplets, Wind } from 'lucide-react';
 
 import SassySeparator from '~/app/(main)/_components/SassySeparator';
 // import AlertsDisplay from '~/app/(main)/weather/_components/AlertsDisplay';
@@ -310,7 +310,7 @@ export default function WeatherDisplay({
             </div>
           )}
           {/* MOBILE: SASSY SEPARATOR */}
-          <div className="w-full text-sm">
+          <div className="w-full text-sm lg:hidden">
             <SassySeparator />
           </div>
           {/* MOBILE: WEEKLY FORECASTS */}
@@ -474,8 +474,8 @@ export default function WeatherDisplay({
               )}
           </div>
           {/* DESKTOP: HOURLY & WEEKLY FORECASTS */}
-          <SectionContainer className="hidden h-full bg-pink-500 lg:flex">
-            <div className="flex size-full flex-col pb-3">
+          <SectionContainer className="hidden h-full bg-zinc-200 lg:flex">
+            <div className="flex size-full flex-col">
               {/* <div className="flex size-full flex-row"> */}
               {/* <div className="w-8 border-r border-black"></div> */}
 
@@ -486,12 +486,12 @@ export default function WeatherDisplay({
                     Hourly Forecast
                   </div>
                   <div className="grid grid-cols-8 gap-3 bg-pink-500">
-                    {hourlyForecasts.map((forecast) => (
+                    {hourlyForecasts.map((forecast, index) => (
                       <div
                         key={forecast.number}
-                        className="flex flex-col items-center justify-center space-y-2 pb-6"
+                        className={`flex flex-col items-center justify-center space-y-2 ${index !== 7 && 'border-r border-black'} pb-6`}
                       >
-                        <div className="text-lg font-semibold">
+                        <div className="mb-2 text-lg font-semibold">
                           {forecast.startTime && formatDateHour(forecast.startTime)}
                         </div>
                         {forecast.shortForecast && (
@@ -502,8 +502,11 @@ export default function WeatherDisplay({
                             />
                           </div>
                         )}
-                        <div className="font-mono">{forecast.temperature}°</div>
-                        <div className="font-mono">{forecast.precipitation}%</div>
+                        <div className="font-mono text-lg">{forecast.temperature}°</div>
+                        <div className="flex flex-row items-center space-x-2 font-mono">
+                          <Droplets size={16} />
+                          <div>{forecast.precipitation}%</div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -514,104 +517,17 @@ export default function WeatherDisplay({
           <div className="hidden w-full lg:flex lg:flex-col">
             <SassySeparator />
           </div>
-          <SectionContainer className="hidden h-full border-t border-black bg-orange-500 lg:flex">
+          <SectionContainer className="hidden h-full border-t border-black bg-zinc-200 lg:flex">
             <div className="flex size-full flex-col">
-              {/* {hourlyForecasts && (
-                <div className="w-1/3 bg-pink-500 text-black">
-                  <div className="border-r border-black p-6 text-xl font-semibold">
-                    Hourly Forecast
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <Accordion
-                      type="single"
-                      collapsible
-                      className="h-full border-r border-black"
-                      defaultValue="index-1"
-                    >
-                      {hourlyForecasts.map((forecast, index) => (
-                        <AccordionItem
-                          key={forecast.number}
-                          className={`border-b-0 px-3 hover:no-underline ${index === hourlyForecasts.length - 1 ? '' : 'border-b border-black '}`}
-                          value={`index-${index + 1}`}
-                        >
-                          <AccordionTrigger className="px-3 hover:no-underline">
-                            <div className="grid w-full grid-cols-3 gap-3">
-                              <div className="col-start-1 col-end-1 text-left text-xl">
-                                {forecast.startTime && formatDateHour(forecast.startTime)}
-                              </div>
-                              {forecast.shortForecast && (
-                                <div className="col-start-2 col-end-2">
-                                  <WeatherIcon
-                                    shortForecast={forecast.shortForecast}
-                                    size={36}
-                                  />
-                                </div>
-                              )}
-
-                              <div className="col-start-3 col-end-3 flex font-mono text-xl">
-                                {typeof forecast.temperature === 'number'
-                                  ? forecast.temperature
-                                  : forecast.temperature}
-                                <div>°</div>
-                              </div>
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent className="pl-3 pr-6">
-                            <div className="grid grid-cols-3 gap-3">
-                              <div className="col-start-1 col-end-1 flex flex-col space-y-2">
-                                <div>Rain</div>
-                                <div className="flex w-20 flex-row space-x-3">
-                                  <CloudRain size={24} />
-                                  <div className="font-mono">
-                                    {forecast.precipitation}%
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="col-start-2 col-end-2 flex flex-col space-y-2">
-                                <div>Humidity</div>
-                                <div className="flex w-20 flex-row space-x-3">
-                                  <Droplet size={24} />
-                                  <div className="font-mono">{forecast.humidity}%</div>
-                                </div>
-                              </div>
-
-                              <div className="col-start-3 col-end-3 flex flex-col space-y-2">
-                                <div>Wind</div>
-                                <div className="flex w-32 flex-row">
-                                  <Wind size={24} />
-                                  <div className="pl-3 font-mono">
-                                    {typeof forecast.windSpeed === 'string'
-                                      ? forecast.windSpeed
-                                      : forecast.windSpeed}{' '}
-                                    {forecast.windDirection}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            {forecast.shortForecast && (
-                              <div className="col-span-3 col-end-3 flex flex-row space-x-2 pt-3">
-                                <div className="font-semibold">Forecast:</div>
-                                <div>{forecast.shortForecast}</div>
-                              </div>
-                            )}
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                  </div>
-                </div>
-              )} */}
-
               {/* DESKTOP: WEEKLY FORECASTS */}
               {weeklyForecasts && (
-                <div className="flex h-full flex-col bg-orange-500 text-black">
-                  <div className="p-6 text-xl font-semibold">7-Day Forecast</div>
+                <div className="flex h-full flex-col bg-orange-500 pb-6 text-black">
+                  <div className="px-6 pt-6 text-xl font-semibold">7-Day Forecast</div>
                   <div className="grid h-full grid-rows-7 text-black">
                     {weeklyForecasts?.map((forecast, index) => (
                       <div
                         key={forecast.day.number}
-                        className={`grid grow grid-cols-9 ${index !== 0 && 'border-t'} border-black px-6 py-3`}
+                        className={`grid grow grid-cols-9 ${index !== 0 && 'border-t '} border-black px-6 py-3`}
                       >
                         <div className="col-span-2 col-start-1 flex flex-col justify-center">
                           {forecast.day.name && (
