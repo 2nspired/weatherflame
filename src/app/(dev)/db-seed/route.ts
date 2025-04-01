@@ -51,24 +51,19 @@ const seedCities = async () => {
 
       // 2. GET ZONES
       const zoneData = await getZones({
-        lat: city.lat.toString(),
-        lon: city.lng.toString(),
+        lat: city.lat,
+        lng: city.lng,
         maxRetries: 1,
       });
 
-      if (!zoneData || zoneData.features.length === 0) {
+      if (!zoneData || zoneData.length === 0) {
         console.error('Failed to get zone data for city:', city.name, city.state);
         continue;
       }
 
-      const zones = zoneData.features.map((feature: Feature) => ({
-        zone: feature.properties.id,
-        type: feature.properties.type,
-      }));
-
       // 3. UPSERT ZONES
 
-      for (const zone of zones) {
+      for (const zone of zoneData) {
         const zoneRecord = await db.alertZones.upsert({
           where: { zone: zone.zone },
           update: {
