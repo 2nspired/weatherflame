@@ -88,7 +88,7 @@ export default function WeatherDisplay({
       {isLoading ? (
         <div className="flex h-full flex-col items-center justify-center">
           <div className="rounded-lg border-2 border-zinc-100 text-zinc-100">
-            <div className="px-6 py-1 font-mono text-3xl">
+            <div className="px-6 py-1 font-mono text-xl md:text-2xl lg:text-3xl">
               <TypewriterText className="flex" text="loading">
                 <span className="animate-pulse">.</span>
                 <span className="animate-pulse delay-150">.</span>
