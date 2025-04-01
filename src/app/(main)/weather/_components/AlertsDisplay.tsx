@@ -1,7 +1,7 @@
 'use client';
 
 import { CloudAlert } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import type { components } from '~/app/types/weather-gov/weatherGov';
@@ -31,8 +31,6 @@ export default function AlertsDisplay({ zones }: { zones: string[] }) {
   });
 
   const alertFeatures = alertsData?.data?.map((alert: AlertFeature) => alert);
-
-  console.log('alertFeatures', alertFeatures);
 
   return (
     <>

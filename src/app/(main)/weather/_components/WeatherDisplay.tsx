@@ -82,19 +82,9 @@ export default function WeatherDisplay({
   const hourlyForecasts = hourlyForecast.data?.slice(0, 8);
   const weeklyForecasts = weeklyForecast.data;
 
-  console.log('hourlyForecasts', hourlyForecasts);
-
-  console.log(
-    'alertZones',
-    `${alertZones?.data?.map((alert) => {
-      return alert.zone;
-    })}`,
-  );
-
   return (
     <div className="flex h-full max-w-full flex-col items-center">
       <WeatherHeader />
-      {/* TODO: CONSOLIDATED ISLOADING STATUS */}
       {isLoading ? (
         <div className="flex h-full flex-col items-center justify-center">
           <div className="rounded-lg border-2 border-zinc-100 text-zinc-100">
@@ -128,11 +118,9 @@ export default function WeatherDisplay({
               </div>
             </div>
           </SectionContainer>
-          {/* TODO: UPDATE ALERT ZONES */}
           <div className="w-full">
             {alertZones?.data && (
               <AlertsDisplay
-                // zones={['LAZ241']}
                 zones={alertZones.data.map((alert) => {
                   return alert.zone;
                 })}
@@ -555,7 +543,7 @@ export default function WeatherDisplay({
                     {weeklyForecasts?.map((forecast, index) => (
                       <div
                         key={forecast.day.number}
-                        className={`grid grow grid-cols-9 ${index !== 0 && 'border-t '} border-black px-6 py-6`}
+                        className={`grid grow grid-cols-9 ${index !== 0 && 'border-t '} border-black p-6`}
                       >
                         <div className="col-span-2 col-start-1 flex flex-col justify-center">
                           {forecast.day.name && (
