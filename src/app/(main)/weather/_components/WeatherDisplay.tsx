@@ -5,7 +5,8 @@
 
 import { CloudRain, Droplet, Wind } from 'lucide-react';
 
-import AlertsDisplay from '~/app/(main)/weather/_components/AlertsDisplay';
+import SassySeparator from '~/app/(main)/_components/SassySeparator';
+// import AlertsDisplay from '~/app/(main)/weather/_components/AlertsDisplay';
 import WeatherHeader from '~/app/(main)/weather/_components/WeatherHeader';
 import WeatherIcon from '~/app/(main)/weather/_components/WeatherIcons';
 import {
@@ -17,6 +18,7 @@ import {
 import { api } from '~/trpc/client';
 import {
   dateAddDays,
+  formatDate,
   formatDateHour,
   formatShortDate,
 } from '~/utilities/formatters/formatDate';
@@ -36,36 +38,53 @@ export default function WeatherDisplay({
   locationName: string;
   locationState: string;
 }) {
-  const weatherData = api.weather.getAllWeather.useQuery(
+  const currentForecast = api.forecasts.getCurrentForecast.useQuery(
     {
-      lat: lat.toString(),
-      lon: lon.toString(),
+      lat: lat,
+      lng: lon,
     },
-    { enabled: true, refetchOnMount: false, refetchOnWindowFocus: false },
+    { enabled: true, refetchOnMount: true, refetchOnWindowFocus: true },
   );
 
-  if (weatherData.error) {
-    return <div>Error: {weatherData.error.message}</div>;
-  }
+  const hourlyForecast = api.forecasts.getHourlyForecast.useQuery(
+    {
+      lat: lat,
+      lng: lon,
+    },
+    { enabled: true, refetchOnMount: true, refetchOnWindowFocus: true },
+  );
 
-  const currentWeather = weatherData.data?.currentWeather;
-  const shortHourlyForecasts = weatherData.data?.hourlyForecast
-    ? weatherData.data.hourlyForecast.slice(0, 4)
+  const weeklyForecast = api.forecasts.getWeeklyForecast.useQuery(
+    {
+      lat: lat,
+      lng: lon,
+    },
+    { enabled: true, refetchOnMount: true, refetchOnWindowFocus: true },
+  );
+
+  const isLoading =
+    currentForecast.isLoading || hourlyForecast.isLoading || weeklyForecast.isLoading;
+
+  const currentWeather = currentForecast.data;
+
+  const shortHourlyForecasts = hourlyForecast.data
+    ? hourlyForecast.data.slice(0, 4)
     : null;
 
-  const shortWeeklyForecasts = weatherData.data?.weeklyForecast
-    ? weatherData.data.weeklyForecast.slice(0, 4)
+  const shortWeeklyForecasts = weeklyForecast.data
+    ? weeklyForecast.data.slice(0, 4)
     : null;
 
-  const hourlyForecasts = weatherData.data?.hourlyForecast;
-  const weeklyForecasts = weatherData.data?.weeklyForecast;
+  const hourlyForecasts = hourlyForecast.data?.slice(0, 8);
+  const weeklyForecasts = weeklyForecast.data;
 
-  const randomIndex = Math.floor(Math.random() * 10);
+  console.log('hourlyForecasts', hourlyForecasts);
 
   return (
     <div className="flex h-full max-w-full flex-col items-center">
       <WeatherHeader />
-      {weatherData.isLoading ? (
+      {/* TODO: CONSOLIDATED ISLOADING STATUS */}
+      {isLoading ? (
         <div className="flex h-full flex-col items-center justify-center">
           <div className="rounded-lg border-2 border-zinc-100 text-zinc-100">
             <div className="px-6 py-1 font-mono">
@@ -80,7 +99,8 @@ export default function WeatherDisplay({
       ) : (
         <>
           <SectionContainer
-            className={`${weatherData.data?.alertZones ? 'mt-0' : 'mt-3'} bg-zinc-200 text-black`}
+            // className={`${weatherData.data?.alertZones ? 'mt-0' : 'mt-3'} bg-zinc-200 text-black`}
+            className="mt-0 bg-zinc-200 text-black"
           >
             <div className="flex w-full flex-col items-center">
               <div className="flex w-full flex-row">
@@ -89,26 +109,26 @@ export default function WeatherDisplay({
                 </div>
 
                 <div className="flex w-1/3 flex-row items-center justify-center">
-                  {currentWeather?.date && (
+                  {currentWeather?.startTime && (
                     <div className="text-xl lg:text-2xl" suppressHydrationWarning>
-                      {currentWeather.date}
+                      {formatDate(currentWeather?.startTime)}
                     </div>
                   )}
                 </div>
               </div>
             </div>
           </SectionContainer>
-          {weatherData?.data?.alertZones && (
+          {/* TODO: UPDATE ALERT ZONES */}
+          {/* {weatherData?.data?.alertZones && (
             <AlertsDisplay zones={weatherData.data.alertZones} />
-          )}
+          )} */}
           <SectionContainer className="border-t border-black bg-green-500">
             {currentWeather && (
               <div className="w-full p-3 text-center font-mono uppercase text-black lg:text-xl">
-                {currentWeather.shortForecast}
+                {currentWeather?.shortForecast}
               </div>
             )}
           </SectionContainer>
-
           {/* MOBILE: CURRENT TEMP */}
           {currentWeather && (
             <SectionContainer className="grow border-t border-black lg:hidden">
@@ -119,21 +139,25 @@ export default function WeatherDisplay({
                       <div className="flex h-full flex-col justify-center p-6 py-10">
                         <div className="text-[10rem] leading-none">{`${currentWeather.temperature}°`}</div>
                         <div className="flex flex-row justify-between px-2">
-                          {currentWeather.highTemperature && (
-                            <div className="flex flex-row items-center space-x-2 text-lg">
-                              <div className="font-semibold">Day:</div>
-                              <div className="font-mono leading-none">
-                                {currentWeather.highTemperature}°
-                              </div>
-                            </div>
-                          )}
-                          {currentWeather.lowTemperature && (
-                            <div className="flex flex-row items-center space-x-2 text-lg">
-                              <div className="font-semibold">Night:</div>
-                              <div className="font-mono leading-none">
-                                {currentWeather.lowTemperature}°
-                              </div>
-                            </div>
+                          {weeklyForecast?.data && (
+                            <>
+                              {weeklyForecast.data[0]?.day.temperature && (
+                                <div className="flex flex-row items-center space-x-2 text-lg">
+                                  <div className="font-semibold">Day:</div>
+                                  <div className="font-mono leading-none">
+                                    {weeklyForecast.data[0]?.day.temperature}°
+                                  </div>
+                                </div>
+                              )}
+                              {weeklyForecast.data[0]?.night.temperature && (
+                                <div className="flex flex-row items-center space-x-2 text-lg">
+                                  <div className="font-semibold">Night:</div>
+                                  <div className="font-mono leading-none">
+                                    {weeklyForecast.data[0]?.night.temperature}°
+                                  </div>
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
@@ -142,49 +166,57 @@ export default function WeatherDisplay({
               </div>
             </SectionContainer>
           )}
-
           {/* MOBILE: DAILY SUMMARY */}
           <div className="w-full lg:hidden">
-            {currentWeather?.longForecast && (
-              <SectionContainer className="border-y border-black bg-zinc-200 text-black">
-                <div className="flex flex-col space-y-3">
-                  <div className="px-6 pt-6 font-semibold">Daily Summary</div>
-                  <div className="px-6 pb-6">{currentWeather.longForecast}</div>
-                </div>
-              </SectionContainer>
-            )}
-            {currentWeather && (
+            {weeklyForecast.data &&
+              Array.isArray(weeklyForecast.data) &&
+              weeklyForecast.data[0]?.day.detailedForecast && (
+                <SectionContainer className="border-y border-black bg-zinc-200 text-black">
+                  <div className="flex flex-col space-y-3">
+                    <div className="px-6 pt-6 font-semibold">Daily Summary</div>
+                    <div className="px-6 pb-6">
+                      {weeklyForecast.data[0]?.day.detailedForecast}
+                    </div>
+                  </div>
+                </SectionContainer>
+              )}
+            {currentForecast.data && (
               <SectionContainer className="bg-zinc-200 text-black">
                 <div>
                   <div className="flex flex-row justify-evenly bg-zinc-100">
-                    {currentWeather?.rainChance !== null &&
-                      currentWeather?.rainChance !== undefined && (
+                    {currentForecast?.data?.precipitation !== null &&
+                      currentForecast?.data.precipitation !== undefined && (
                         <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
                           <div className="pb-3">
                             <CloudRain size={36} />
                           </div>
-                          <div className="font-mono">{currentWeather.rainChance}%</div>
+                          <div className="font-mono">
+                            {currentForecast.data.precipitation}%
+                          </div>
                           <div className="text-xs">Rain</div>
                         </div>
                       )}
-                    {currentWeather?.humidity !== null &&
-                      currentWeather?.humidity !== undefined && (
+                    {currentForecast?.data.humidity !== null &&
+                      currentForecast?.data.humidity !== undefined && (
                         <div className="flex w-1/3 flex-col items-center justify-center border-r border-black py-3">
                           <div className="pb-3">
                             <Droplet size={36} />
                           </div>
-                          <div className="font-mono">{currentWeather.humidity}%</div>
+                          <div className="font-mono">
+                            {currentForecast?.data.humidity}%
+                          </div>
                           <div className="text-xs">Humidity</div>
                         </div>
                       )}
-                    {currentWeather?.windSpeed !== null &&
-                      currentWeather?.windSpeed !== undefined && (
+                    {currentForecast?.data.windSpeed !== null &&
+                      currentForecast?.data.windSpeed !== undefined && (
                         <div className="flex w-1/3 flex-col items-center justify-center py-6">
                           <div className="pb-3">
                             <Wind size={36} />
                           </div>
                           <div className="font-mono">
-                            {currentWeather.windSpeed} {currentWeather.windDirection}
+                            {currentForecast?.data.windSpeed}{' '}
+                            {currentForecast?.data.windDirection}
                           </div>
                           <div className="text-xs">Wind</div>
                         </div>
@@ -227,7 +259,7 @@ export default function WeatherDisplay({
                             <div className="col-start-3 col-end-3 flex font-mono">
                               {typeof forecast.temperature === 'number'
                                 ? forecast.temperature
-                                : forecast.temperature?.value}
+                                : forecast.temperature}
                               <div>°</div>
                             </div>
                           </div>
@@ -238,9 +270,7 @@ export default function WeatherDisplay({
                               <div>Rain</div>
                               <div className="flex w-20 flex-row space-x-3">
                                 <CloudRain size={24} />
-                                <div className="font-mono">
-                                  {forecast.probabilityOfPrecipitation?.value}%
-                                </div>
+                                <div className="font-mono">{forecast.precipitation}%</div>
                               </div>
                             </div>
 
@@ -248,9 +278,7 @@ export default function WeatherDisplay({
                               <div>Humidity</div>
                               <div className="flex w-20 flex-row space-x-3">
                                 <Droplet size={24} />
-                                <div className="font-mono">
-                                  {forecast.relativeHumidity?.value}%
-                                </div>
+                                <div className="font-mono">{forecast.humidity}%</div>
                               </div>
                             </div>
                             <div className="col-start-3 col-end-3 flex flex-col space-y-2">
@@ -260,7 +288,7 @@ export default function WeatherDisplay({
                                 <div className="pl-3 font-mono">
                                   {typeof forecast.windSpeed === 'string'
                                     ? forecast.windSpeed
-                                    : forecast.windSpeed?.value}{' '}
+                                    : forecast.windSpeed}{' '}
                                   {forecast.windDirection}
                                 </div>
                               </div>
@@ -281,14 +309,10 @@ export default function WeatherDisplay({
               </SectionContainer>
             </div>
           )}
-
           {/* MOBILE: SASSY SEPARATOR */}
-          <SectionContainer className="border-t border-black bg-zinc-200 text-black lg:hidden">
-            <div className="bg-zinc-100 px-10 py-6 text-center font-mono text-sm">
-              <SassySeparator randomIndex={randomIndex} />
-            </div>
-          </SectionContainer>
-
+          <div className="w-full text-sm">
+            <SassySeparator />
+          </div>
           {/* MOBILE: WEEKLY FORECASTS */}
           {shortWeeklyForecasts && (
             <div className="w-full lg:hidden">
@@ -320,7 +344,7 @@ export default function WeatherDisplay({
                         <div className="font-mono">
                           {typeof forecast.day.temperature === 'number'
                             ? forecast.day.temperature
-                            : forecast.day.temperature?.value}
+                            : forecast.day.temperature}
                           °
                         </div>
                         {forecast.night && (
@@ -329,7 +353,7 @@ export default function WeatherDisplay({
                             <div className="text-sm">
                               {typeof forecast.night?.temperature === 'number'
                                 ? forecast.night.temperature
-                                : forecast.night?.temperature?.value}
+                                : forecast.night?.temperature}
                               °
                             </div>
                           </>
@@ -337,11 +361,11 @@ export default function WeatherDisplay({
                       </div>
 
                       <div className="pt-2 text-sm">
-                        {forecast.day.startTime
-                          ? formatShortDate(forecast.day.startTime)
-                          : currentWeather?.date &&
+                        {forecast.day
+                          ? formatShortDate(forecast.date)
+                          : currentWeather?.startTime &&
                             dateAddDays({
-                              date: currentWeather.date,
+                              date: currentWeather.startTime,
                               days: index === 0 ? 1 : index,
                             })}
                       </div>
@@ -352,9 +376,7 @@ export default function WeatherDisplay({
               </SectionContainer>
             </div>
           )}
-
           {/* DESKTOP */}
-
           {/* DESKTOP: CURRENT WEATHER */}
           <div className="hidden w-full lg:flex lg:grow lg:flex-row">
             {currentWeather && (
@@ -367,19 +389,19 @@ export default function WeatherDisplay({
                           <div className="flex h-full flex-col justify-center p-6">
                             <div className="text-[10rem] leading-none">{`${currentWeather.temperature}°`}</div>
                             <div className="flex flex-row justify-between px-2">
-                              {currentWeather.highTemperature && (
+                              {weeklyForecasts?.[0]?.day?.temperature && (
                                 <div className="flex flex-row items-center space-x-2 text-lg">
                                   <div className="font-semibold">Day:</div>
                                   <div className="font-mono leading-none">
-                                    {currentWeather.highTemperature}°
+                                    {weeklyForecasts[0]?.day?.temperature}°
                                   </div>
                                 </div>
                               )}
-                              {currentWeather.lowTemperature && (
+                              {weeklyForecasts?.[0]?.night?.temperature && (
                                 <div className="flex flex-row items-center space-x-2 text-lg">
                                   <div className="font-semibold">Night:</div>
                                   <div className="font-mono leading-none">
-                                    {currentWeather.lowTemperature}°
+                                    {weeklyForecasts?.[0]?.night?.temperature}°
                                   </div>
                                 </div>
                               )}
@@ -391,15 +413,15 @@ export default function WeatherDisplay({
 
                   <div className="flex h-full w-1/3 flex-col items-center justify-center border-t border-black">
                     <div className="flex size-full grow flex-col space-y-6 p-6">
-                      {currentWeather?.rainChance !== null &&
-                        currentWeather?.rainChance !== undefined && (
+                      {currentWeather?.precipitation !== null &&
+                        currentWeather?.precipitation !== undefined && (
                           <div className="flex w-full flex-row items-center justify-between space-x-6 py-3">
                             <div className="flex flex-row items-center space-x-3">
                               <CloudRain size={40} />
                               <div className="text-2xl">Rain</div>
                             </div>
                             <div className="font-mono text-xl">
-                              {currentWeather.rainChance}%
+                              {currentWeather.precipitation}%
                             </div>
                           </div>
                         )}
@@ -434,34 +456,72 @@ export default function WeatherDisplay({
             )}
           </div>
           <div className="hidden w-full lg:flex lg:flex-col">
-            {currentWeather?.longForecast && (
-              <SectionContainer className="border-y border-black bg-zinc-200 text-black">
-                <div className="h-10"></div>
-                <div className="flex flex-col space-y-3 border-y border-black bg-zinc-100">
-                  <div className="px-6 pt-6 font-semibold lg:text-lg">Daily Summary</div>
-                  <div className="px-6 pb-6">{currentWeather.longForecast}</div>
-                </div>
-                <div className="h-10"></div>
-              </SectionContainer>
-            )}
+            {weeklyForecast.data &&
+              Array.isArray(weeklyForecast.data) &&
+              weeklyForecast.data[0]?.day.detailedForecast && (
+                <SectionContainer className="border-y border-black bg-zinc-200 text-black">
+                  <div className="h-10"></div>
+                  <div className="flex flex-col space-y-3 border-y border-black bg-zinc-100">
+                    <div className="px-6 pt-6 font-semibold lg:text-xl">
+                      Daily Summary
+                    </div>
+                    <div className="px-6 pb-6">
+                      {weeklyForecast.data[0]?.day.detailedForecast}
+                    </div>
+                  </div>
+                  <div className="h-10"></div>
+                </SectionContainer>
+              )}
           </div>
-
           {/* DESKTOP: HOURLY & WEEKLY FORECASTS */}
-
-          <SectionContainer className="hidden h-full bg-zinc-200 lg:flex">
-            <div className="flex size-full flex-row">
+          <SectionContainer className="hidden h-full bg-pink-500 lg:flex">
+            <div className="flex size-full flex-col pb-3">
               {/* <div className="flex size-full flex-row"> */}
               {/* <div className="w-8 border-r border-black"></div> */}
 
               {/* DESKTOP: HOURLY FORECAST */}
-
               {hourlyForecasts && (
+                <div className="text-black">
+                  <div className="border-black bg-pink-500 p-6 text-xl font-semibold">
+                    Hourly Forecast
+                  </div>
+                  <div className="grid grid-cols-8 gap-3 bg-pink-500">
+                    {hourlyForecasts.map((forecast) => (
+                      <div
+                        key={forecast.number}
+                        className="flex flex-col items-center justify-center space-y-2 pb-6"
+                      >
+                        <div className="text-lg font-semibold">
+                          {forecast.startTime && formatDateHour(forecast.startTime)}
+                        </div>
+                        {forecast.shortForecast && (
+                          <div className="flex flex-col items-center justify-center">
+                            <WeatherIcon
+                              shortForecast={forecast.shortForecast}
+                              size={36}
+                            />
+                          </div>
+                        )}
+                        <div className="font-mono">{forecast.temperature}°</div>
+                        <div className="font-mono">{forecast.precipitation}%</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </SectionContainer>
+          <div className="hidden w-full lg:flex lg:flex-col">
+            <SassySeparator />
+          </div>
+          <SectionContainer className="hidden h-full border-t border-black bg-orange-500 lg:flex">
+            <div className="flex size-full flex-col">
+              {/* {hourlyForecasts && (
                 <div className="w-1/3 bg-pink-500 text-black">
                   <div className="border-r border-black p-6 text-xl font-semibold">
                     Hourly Forecast
                   </div>
                   <div className="flex flex-col justify-center">
-                    {/* TODO: HOW DO I MAKE THE ROWS FILL THE CONTAINER */}
                     <Accordion
                       type="single"
                       collapsible
@@ -491,7 +551,7 @@ export default function WeatherDisplay({
                               <div className="col-start-3 col-end-3 flex font-mono text-xl">
                                 {typeof forecast.temperature === 'number'
                                   ? forecast.temperature
-                                  : forecast.temperature?.value}
+                                  : forecast.temperature}
                                 <div>°</div>
                               </div>
                             </div>
@@ -503,7 +563,7 @@ export default function WeatherDisplay({
                                 <div className="flex w-20 flex-row space-x-3">
                                   <CloudRain size={24} />
                                   <div className="font-mono">
-                                    {forecast.probabilityOfPrecipitation?.value}%
+                                    {forecast.precipitation}%
                                   </div>
                                 </div>
                               </div>
@@ -512,9 +572,7 @@ export default function WeatherDisplay({
                                 <div>Humidity</div>
                                 <div className="flex w-20 flex-row space-x-3">
                                   <Droplet size={24} />
-                                  <div className="font-mono">
-                                    {forecast.relativeHumidity?.value}%
-                                  </div>
+                                  <div className="font-mono">{forecast.humidity}%</div>
                                 </div>
                               </div>
 
@@ -525,7 +583,7 @@ export default function WeatherDisplay({
                                   <div className="pl-3 font-mono">
                                     {typeof forecast.windSpeed === 'string'
                                       ? forecast.windSpeed
-                                      : forecast.windSpeed?.value}{' '}
+                                      : forecast.windSpeed}{' '}
                                     {forecast.windDirection}
                                   </div>
                                 </div>
@@ -543,56 +601,57 @@ export default function WeatherDisplay({
                     </Accordion>
                   </div>
                 </div>
-              )}
+              )} */}
 
               {/* DESKTOP: WEEKLY FORECASTS */}
               {weeklyForecasts && (
-                <div className="flex h-full w-2/3 flex-col bg-orange-500 text-black">
+                <div className="flex h-full flex-col bg-orange-500 text-black">
                   <div className="p-6 text-xl font-semibold">7-Day Forecast</div>
-                  <div className="flex h-full flex-col pt-3 text-black">
+                  <div className="grid h-full grid-rows-7 text-black">
                     {weeklyForecasts?.map((forecast, index) => (
                       <div
                         key={forecast.day.number}
-                        className="grid grow grid-cols-9 px-6"
+                        className={`grid grow grid-cols-9 ${index !== 0 && 'border-t'} border-black px-6 py-3`}
                       >
-                        <div className="col-span-2 col-start-1 flex flex-col">
+                        <div className="col-span-2 col-start-1 flex flex-col justify-center">
                           {forecast.day.name && (
                             <div className="text-2xl">{forecast.day.name}</div>
                           )}
                           <div>
                             {forecast.day.startTime
                               ? formatShortDate(forecast.day.startTime)
-                              : currentWeather?.date &&
+                              : hourlyForecast.data?.[0]?.startTime &&
                                 dateAddDays({
-                                  date: currentWeather.date,
+                                  date: currentWeather?.startTime ?? '',
                                   days: index === 0 ? 1 : index,
                                 })}
                           </div>
                         </div>
-                        <div className="col-start-3 col-end-3 font-mono">
-                          <div className="text-2xl">
-                            {typeof forecast.day.temperature === 'number'
-                              ? forecast.day.temperature
-                              : forecast.day.temperature?.value}
-                            °
-                          </div>
-                          {forecast.night && (
-                            <div className="text-xl">
-                              {typeof forecast.night.temperature === 'number'
-                                ? forecast.night.temperature
-                                : forecast.night.temperature?.value}
-                              °
-                            </div>
-                          )}
-                        </div>
                         {forecast.day.shortForecast && (
-                          <div className="col-start-4 col-end-5 flex h-full items-start pt-2">
+                          <div className="col-start-3 col-end-3 flex h-full flex-col items-start justify-center">
                             <WeatherIcon
                               shortForecast={forecast.day.shortForecast}
                               size={36}
                             />
                           </div>
                         )}
+                        <div className="col-start-4 col-end-4 flex flex-col justify-center font-mono">
+                          <div className="text-2xl">
+                            {typeof forecast.day.temperature === 'number'
+                              ? forecast.day.temperature
+                              : forecast.day.temperature}
+                            °
+                          </div>
+                          {forecast.night && (
+                            <div className="text-xl">
+                              {typeof forecast.night.temperature === 'number'
+                                ? forecast.night.temperature
+                                : forecast.night.temperature}
+                              °
+                            </div>
+                          )}
+                        </div>
+
                         {forecast.day.detailedForecast && (
                           <div className="col-span-6 col-start-5">
                             {forecast.day.detailedForecast}
@@ -610,18 +669,3 @@ export default function WeatherDisplay({
     </div>
   );
 }
-const SassySeparator = ({ randomIndex }: { randomIndex: number }) => {
-  const sayings = [
-    'Short-term drama up top, long-term speculation below.',
-    'Hourly: for the impatient. Weekly: for the planners.',
-    'If the next hour isn’t looking good, check below for some hope.',
-    'Because predicting the future is hard enough without weather.',
-    'Up there: weather gossip. Down below: weather novels.',
-    'Hourly: the TikTok of weather. Weekly: the Netflix binge.',
-    'For those living in the moment up top. For dreamers, check below.',
-    'Hourly forecast: reality. Weekly forecast: optimism.',
-    'One’s for now, one’s for later. Either way, bring a jacket just in case.',
-    'Hourly: the tea. Weekly: the prophecy.',
-  ];
-  return sayings[randomIndex];
-};

@@ -239,6 +239,7 @@ export const forecastRouter = createTRPCRouter({
             // console.log('HOURLY FORECAST RESPONSE', data.properties.periods);
 
             const hourlyForecast = data.properties.periods.map((period) => ({
+              number: period.number,
               startTime: period.startTime,
               endTime: period.endTime,
               temperature: period.temperature
@@ -387,6 +388,10 @@ export const forecastRouter = createTRPCRouter({
               return {
                 date: date,
                 day: {
+                  name: forecast.day.name,
+                  startTime: forecast.day.startTime,
+                  endTime: forecast.day.endTime,
+                  number: forecast.day.number,
                   temperature:
                     typeof forecast.day.temperature === 'number'
                       ? forecast.day.temperature === 0
@@ -410,6 +415,10 @@ export const forecastRouter = createTRPCRouter({
                 },
                 night: forecast.night
                   ? {
+                      number: forecast.night.number,
+                      name: forecast.night.name,
+                      startTime: forecast.night.startTime,
+                      endTime: forecast.night.endTime,
                       temperature:
                         typeof forecast.night?.temperature === 'number'
                           ? forecast.night.temperature === 0

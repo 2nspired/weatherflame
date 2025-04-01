@@ -16,6 +16,7 @@ const getGeoData = async (locationParam: string) => {
     locationParam.length !== 0 &&
     isNaN(Number(locationParam))
   ) {
+    console.log('locationParam', locationParam);
     const nameData = await api.location.getGeoByName({
       name: locationParam,
       countryCode: 'US',
@@ -30,6 +31,8 @@ export default async function WeatherPage({
   params: Promise<{ location: string[] }>;
 }) {
   const routeParams = await params;
+
+  console.log('routeParams', routeParams);
 
   if (!routeParams.location || routeParams.location.length === 0) {
     console.error('Location parameter is missing or invalid');
