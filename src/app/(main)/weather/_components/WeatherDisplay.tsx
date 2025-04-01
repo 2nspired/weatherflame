@@ -38,28 +38,26 @@ export default function WeatherDisplay({
   locationName: string;
   locationState: string;
 }) {
+  const trpcProps = { lat: lat, lng: lon };
+  const trpcSettings = {
+    enabled: true,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  };
+
   const currentForecast = api.forecasts.getCurrentForecast.useQuery(
-    {
-      lat: lat,
-      lng: lon,
-    },
-    { enabled: true, refetchOnMount: true, refetchOnWindowFocus: true },
+    trpcProps,
+    trpcSettings,
   );
 
   const hourlyForecast = api.forecasts.getHourlyForecast.useQuery(
-    {
-      lat: lat,
-      lng: lon,
-    },
-    { enabled: true, refetchOnMount: true, refetchOnWindowFocus: true },
+    trpcProps,
+    trpcSettings,
   );
 
   const weeklyForecast = api.forecasts.getWeeklyForecast.useQuery(
-    {
-      lat: lat,
-      lng: lon,
-    },
-    { enabled: true, refetchOnMount: true, refetchOnWindowFocus: true },
+    trpcProps,
+    trpcSettings,
   );
 
   const isLoading =
@@ -124,7 +122,7 @@ export default function WeatherDisplay({
           )} */}
           <SectionContainer className="border-t border-black bg-green-500">
             {currentWeather && (
-              <div className="w-full p-3 text-center font-mono uppercase text-black lg:text-xl">
+              <div className="w-full p-6 text-center font-mono uppercase text-black lg:text-xl">
                 {currentWeather?.shortForecast}
               </div>
             )}
@@ -476,16 +474,13 @@ export default function WeatherDisplay({
           {/* DESKTOP: HOURLY & WEEKLY FORECASTS */}
           <SectionContainer className="hidden h-full bg-zinc-200 lg:flex">
             <div className="flex size-full flex-col">
-              {/* <div className="flex size-full flex-row"> */}
-              {/* <div className="w-8 border-r border-black"></div> */}
-
               {/* DESKTOP: HOURLY FORECAST */}
               {hourlyForecasts && (
                 <div className="text-black">
                   <div className="border-black bg-pink-500 p-6 text-xl font-semibold">
                     Hourly Forecast
                   </div>
-                  <div className="grid grid-cols-8 gap-3 bg-pink-500">
+                  <div className="grid grid-cols-8 bg-pink-500">
                     {hourlyForecasts.map((forecast, index) => (
                       <div
                         key={forecast.number}
@@ -527,11 +522,11 @@ export default function WeatherDisplay({
                     {weeklyForecasts?.map((forecast, index) => (
                       <div
                         key={forecast.day.number}
-                        className={`grid grow grid-cols-9 ${index !== 0 && 'border-t '} border-black px-6 py-3`}
+                        className={`grid grow grid-cols-9 ${index !== 0 && 'border-t '} border-black px-6 py-6`}
                       >
                         <div className="col-span-2 col-start-1 flex flex-col justify-center">
                           {forecast.day.name && (
-                            <div className="text-2xl">{forecast.day.name}</div>
+                            <div className="text-xl">{forecast.day.name}</div>
                           )}
                           <div>
                             {forecast.day.startTime
@@ -551,15 +546,15 @@ export default function WeatherDisplay({
                             />
                           </div>
                         )}
-                        <div className="col-start-4 col-end-4 flex flex-col justify-center font-mono">
-                          <div className="text-2xl">
+                        <div className="col-start-4 col-end-5 flex flex-col justify-center font-mono">
+                          <div className="text-center text-2xl">
                             {typeof forecast.day.temperature === 'number'
                               ? forecast.day.temperature
                               : forecast.day.temperature}
                             °
                           </div>
                           {forecast.night && (
-                            <div className="text-xl">
+                            <div className="text-center text-xl">
                               {typeof forecast.night.temperature === 'number'
                                 ? forecast.night.temperature
                                 : forecast.night.temperature}
@@ -569,8 +564,9 @@ export default function WeatherDisplay({
                         </div>
 
                         {forecast.day.detailedForecast && (
-                          <div className="col-span-6 col-start-5">
-                            {forecast.day.detailedForecast}
+                          <div className="col-span-6 col-start-6 flex flex-col justify-center">
+                            {forecast.day.shortForecast}
+                            {/* {forecast.day.detailedForecast} */}
                           </div>
                         )}
                       </div>

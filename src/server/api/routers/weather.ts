@@ -1,3 +1,5 @@
+// DEPRECATED - USE FORECASTS ROUTE INSTEAD, THIS IS ONLY USED FOR EXPERIMENTS
+
 import createClient from 'openapi-fetch';
 import { z } from 'zod';
 

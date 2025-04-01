@@ -4,24 +4,22 @@ import { api } from 'src/trpc/server';
 
 import WeatherDisplay from '~/app/(main)/weather/_components/WeatherDisplay';
 
+// import { stateAbv } from '~/utilities/formatters/stateAbv';
+
 import WeatherHeader from '../_components/WeatherHeader';
 
-const getGeoData = async (locationParam: string) => {
-  if (!locationParam || locationParam.length === 0) {
+const getGeoData = async ({ location, state }: { location: string; state: string }) => {
+  if (!location || !state) {
     return null;
   }
 
-  if (
-    typeof locationParam === 'string' &&
-    locationParam.length !== 0 &&
-    isNaN(Number(locationParam))
-  ) {
-    console.log('locationParam', locationParam);
+  if (typeof location === 'string' && location.length !== 0 && isNaN(Number(location))) {
     const nameData = await api.location.getGeoByName({
-      name: locationParam,
+      name: location,
+      state: state,
       countryCode: 'US',
     });
-    return nameData?.[0] ?? null;
+    return nameData ?? null;
   }
 };
 
@@ -38,14 +36,19 @@ export default async function WeatherPage({
     console.error('Location parameter is missing or invalid');
     return <div>Invalid request. Please check the URL.</div>;
   }
-  const locationParam = decodeURIComponent(routeParams.location.slice(-1)[0] ?? '');
+  const locationName = decodeURIComponent(routeParams.location.slice(-1)[0] ?? '');
+  const locationState = decodeURIComponent(routeParams.location.slice(-2)[0] ?? '');
+  console.log('locationState', locationState);
+  console.log('locationName', locationName);
 
-  if (!locationParam || locationParam.length === 0) {
+  if (!locationName || locationName.length === 0) {
     console.error('Location parameter is missing or invalid');
     return <div>Invalid request. Please check the URL.</div>;
   }
 
-  const geoData = await getGeoData(locationParam);
+  const geoData = (
+    await getGeoData({ location: locationName, state: locationState })
+  )?.[0];
 
   return (
     <div className="flex size-full flex-col bg-zinc-200">
