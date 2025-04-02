@@ -3,15 +3,11 @@ import React from 'react';
 import LocationInput from '~/app/(main)/_components/LocationInput';
 import SectionContainer from '~/app/(main)/_components/SectionContainer';
 import TypewriterText from '~/app/(main)/_components/TextAnimations';
-import { api } from '~/trpc/server';
 
 import Disclaimer from './_components/Disclaimer';
 import TopCityWeather from './_components/TopCityWeather';
 
 export default async function Home() {
-  const topCitiesData = api.forecasts.getTopCityForecasts;
-  const topCitiesForecasts = await topCitiesData({ limit: 9 });
-
   return (
     <div className="flex size-full flex-col items-center border-b border-black bg-zinc-700">
       <SectionContainer className="mt-3 flex grow flex-col items-center justify-center border-t border-black">
