@@ -79,7 +79,7 @@ export default function WeatherDisplay({
     ? weeklyForecast.data.slice(0, 4)
     : null;
 
-  const hourlyForecasts = hourlyForecast.data?.slice(0, 8);
+  const hourlyForecasts = hourlyForecast.data?.slice(0, 6);
   const weeklyForecasts = weeklyForecast.data;
 
   return (
@@ -486,21 +486,23 @@ export default function WeatherDisplay({
               {/* DESKTOP: HOURLY FORECAST */}
               {hourlyForecasts && (
                 <div className="text-black">
-                  <div className="border-black bg-pink-500 p-6 text-xl font-semibold">
+                  <div className="border-black bg-zinc-200 p-6 text-xl font-semibold">
                     Hourly Forecast
                   </div>
-                  <div className="grid grid-cols-8">
+                  <div className="grid grid-cols-6">
                     {hourlyForecasts.map((forecast, index) => (
                       <div
                         key={forecast.number}
-                        className={`flex flex-col items-center justify-center pt-3 ${index !== 7 && 'border-r border-black'} bg-pink-500`}
+                        className={`flex flex-col items-center justify-center bg-zinc-200 pt-3`}
                       >
                         <div className="mb-2 py-2 text-lg">
                           {forecast.startTime && formatDateHour(forecast.startTime)}
                         </div>
-                        <div className="flex w-full flex-row items-center border-y border-black">
+                        <div
+                          className={`flex w-full flex-row items-center border-y border-black bg-zinc-100 ${index !== 5 && 'border-r'}`}
+                        >
                           {forecast.shortForecast && (
-                            <div className="flex w-1/2 flex-col items-center justify-center border-r border-black py-6">
+                            <div className="flex w-1/2 flex-col items-center justify-center border-black py-6">
                               <WeatherIcon
                                 shortForecast={forecast.shortForecast}
                                 size={36}
@@ -511,7 +513,9 @@ export default function WeatherDisplay({
                             {forecast.temperature}°
                           </div>
                         </div>
-                        <div className="flex w-full flex-col justify-center py-3">
+                        <div
+                          className={`flex w-full flex-col justify-center bg-zinc-100 py-3 ${index !== 5 && 'border-r border-black'}`}
+                        >
                           <div className="flex flex-row items-center justify-around space-x-6 py-3 font-mono">
                             <CloudRain size={24} />
                             <div>{forecast.precipitation}%</div>
@@ -539,13 +543,13 @@ export default function WeatherDisplay({
             <div className="flex size-full flex-col">
               {/* DESKTOP: WEEKLY FORECASTS */}
               {weeklyForecasts && (
-                <div className="flex h-full flex-col bg-orange-500 pb-6 text-black">
-                  <div className="px-6 pt-6 text-xl font-semibold">Weekly Forecast</div>
+                <div className="flex h-full flex-col bg-zinc-200 text-black">
+                  <div className="p-6 text-xl font-semibold">Weekly Forecast</div>
                   <div className="grid h-full grid-rows-7 text-black">
                     {weeklyForecasts?.map((forecast, index) => (
                       <div
                         key={forecast.day.number}
-                        className={`grid grow grid-cols-9 ${index !== 0 && 'border-t '} border-black p-6`}
+                        className={`grid grow grid-cols-9 border-t border-black bg-zinc-100 p-6`}
                       >
                         <div className="col-span-2 col-start-1 flex flex-col justify-center">
                           {forecast.day.name && (
