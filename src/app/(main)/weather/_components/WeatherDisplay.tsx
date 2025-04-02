@@ -316,6 +316,7 @@ export default function WeatherDisplay({
           )}
           {/* MOBILE: SASSY SEPARATOR */}
           <div className="w-full text-sm lg:hidden">
+          <div className="w-full text-sm lg:hidden">
             <SassySeparator />
           </div>
           {/* MOBILE: WEEKLY FORECASTS */}
