@@ -251,13 +251,13 @@ export const locationRouter = createTRPCRouter({
   getZoneByGeo: publicProcedure
     .input(
       z.object({
-        lat: z.string({ message: 'Latitude is required' }),
-        lon: z.string({ message: 'Longitude is required' }),
+        lat: z.number({ message: 'Latitude is required' }),
+        lng: z.number({ message: 'Longitude is required' }),
         maxRetries: z.number().optional().default(1),
       }),
     )
     .query(async ({ input }) => {
-      const url = `https://api.weather.gov/zones?point=${input.lat},${input.lon}`;
+      const url = `https://api.weather.gov/zones?point=${input.lat.toString()},${input.lng.toString()}`;
       // console.log('URL', url);
 
       let attempts = 0;
@@ -268,7 +268,18 @@ export const locationRouter = createTRPCRouter({
 
           if (res.ok && resJson) {
             console.log('ZONE BY GEO RESPONSE', resJson);
-            return resJson;
+
+            if (resJson.features.length === 0) {
+              console.error('Failed to get zone data for location');
+              continue;
+            }
+
+            const zones = resJson.features.map((feature: Feature) => ({
+              zone: feature.properties.id,
+              type: feature.properties.type,
+            }));
+
+            return zones;
           }
           console.error(
             `FAILED TO FETCH LOCATION BY GEO COORDINATES ${res.status}, ${url}`,
