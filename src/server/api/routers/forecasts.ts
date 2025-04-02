@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { paths } from '~/app/types/weather-gov/weatherGov';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 import { formatDate } from '~/utilities/formatters/formatDate';
+import { db } from '~/utilities/prisma';
 
 // --------------------------------------------------------------
 // TYPES
@@ -470,10 +471,137 @@ export const forecastRouter = createTRPCRouter({
         console.warn(`Retrying (${attempts}/${input.maxRetries})`);
       }
     }),
+
+  // ----------------------------------------------------------
+  // GET TOP CITY FORECASTS
+  // ----------------------------------------------------------
+  getTopCityForecasts: publicProcedure
+    .input(
+      z.object({
+        limit: z
+          .number()
+          .min(1, { message: 'Must be greater than 0' })
+          .max(10, { message: 'Must be less than 10' }),
+      }),
+    )
+    .query(async ({ input }) => {
+      let attempts = 0;
+      while (attempts < 3) {
+        try {
+          const topCities = await db.cities.findMany({
+            where: {
+              display: true,
+            },
+            orderBy: {
+              id: 'asc',
+            },
+            take: input.limit,
+          });
+
+          if (!topCities || topCities.length === 0) {
+            console.error('Failed to get top cities');
+            return null;
+          }
+
+          const forecasts = await Promise.all(
+            topCities.map(async (city) => {
+              const pointData = await getPointStation({
+                lat: city.lat,
+                lng: city.lng,
+                maxRetries: 1,
+              });
+
+              if (!pointData?.cwa || !pointData?.gridX || !pointData?.gridY) {
+                console.error('Failed to get point data');
+                return null;
+              }
+
+              const { response, data, error } = await fetchClient.GET(
+                '/gridpoints/{wfo}/{x},{y}/forecast/hourly',
+                {
+                  params: {
+                    path: {
+                      wfo: pointData.cwa,
+                      x: pointData.gridX,
+                      y: pointData.gridY,
+                    },
+                  },
+                },
+              );
+
+              if (response.ok && data?.properties?.periods?.[0]) {
+                // console.log('HOURLY FORECAST RESPONSE', data.properties.periods);
+                const forecast = data.properties.periods[0];
+
+                const currentForecast = {
+                  city: city.name,
+                  state: city.state,
+                  country: city.country,
+                  lat: city.lat,
+                  lng: city.lng,
+                  startTime: forecast.startTime,
+                  temperature: forecast.temperature
+                    ? typeof forecast.temperature === 'number'
+                      ? forecast.temperature
+                      : (forecast.temperature?.value ?? undefined)
+                    : undefined,
+                  precipitation: forecast.probabilityOfPrecipitation
+                    ? typeof forecast.probabilityOfPrecipitation === 'number'
+                      ? String(forecast.probabilityOfPrecipitation)
+                      : (String(forecast.probabilityOfPrecipitation?.value) ?? undefined)
+                    : undefined,
+                  humidity: forecast.relativeHumidity
+                    ? typeof forecast.relativeHumidity === 'number'
+                      ? forecast.relativeHumidity
+                      : (forecast.relativeHumidity?.value ?? undefined)
+                    : undefined,
+                  dewpoint: forecast.dewpoint
+                    ? typeof forecast.dewpoint === 'number'
+                      ? forecast.dewpoint
+                      : (forecast.dewpoint?.value ?? undefined)
+                    : undefined,
+                  windSpeed: forecast.windSpeed
+                    ? typeof forecast.windSpeed === 'string'
+                      ? forecast.windSpeed
+                      : (String(forecast.windSpeed?.value) ?? undefined)
+                    : undefined,
+                  windDirection: forecast.windDirection,
+                  shortForecast: forecast.shortForecast,
+                };
+
+                return currentForecast;
+              }
+              if (error) {
+                console.error('ERROR FETCHING TOP CITY FORECASTS', error);
+              }
+              console.error(`FAILED TO FETCH FORECASE BY POINT, ${response.status}`);
+            }),
+          );
+
+          if (!forecasts || forecasts.length === 0) {
+            console.error('FAIlED TO GET TOP CITY FORECASTS');
+            return null;
+          }
+
+          return forecasts;
+        } catch (error) {
+          console.error('ERROR FETCHING TOP CITY FORECASTS', error);
+        }
+        attempts++;
+
+        if (attempts >= 3) {
+          console.error('MAX RETRIES REACHED: GET TOP CITY FORECASTS');
+          return null;
+        }
+        console.warn(`Retrying (${attempts}/${3})`);
+      }
+    }),
 });
 
 // --------------------------------------------------------------
+// --------------------------------------------------------------
 // REUSED QUERY - CANNOT CALL a tRPC query/route from another tRPC query/route.
+// --------------------------------------------------------------
 // --------------------------------------------------------------
 const getPointStation = async ({
   lat,

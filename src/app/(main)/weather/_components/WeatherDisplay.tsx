@@ -88,7 +88,7 @@ export default function WeatherDisplay({
       {isLoading ? (
         <div className="flex h-full flex-col items-center justify-center">
           <div className="rounded-lg border-2 border-zinc-100 text-zinc-100">
-            <div className="px-6 py-1 font-mono text-3xl">
+            <div className="animate-pulse px-6 py-1 font-mono text-xl md:text-2xl">
               <TypewriterText className="flex" text="loading">
                 <span className="animate-pulse">.</span>
                 <span className="animate-pulse delay-150">.</span>
@@ -483,7 +483,6 @@ export default function WeatherDisplay({
           {/* DESKTOP: HOURLY & WEEKLY FORECASTS */}
           <SectionContainer className="hidden h-full bg-zinc-700 lg:flex">
             <div className="flex size-full flex-col">
-
               {/* DESKTOP: HOURLY FORECAST */}
               {hourlyForecasts && (
                 <div className="text-black">
@@ -492,7 +491,6 @@ export default function WeatherDisplay({
                   </div>
                   <div className="grid grid-cols-8">
                     {hourlyForecasts.map((forecast, index) => (
-
                       <div
                         key={forecast.number}
                         className={`flex flex-col items-center justify-center pt-3 ${index !== 7 && 'border-r border-black'} bg-pink-500`}
