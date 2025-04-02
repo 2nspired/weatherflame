@@ -464,23 +464,26 @@ export default function WeatherDisplay({
             {weeklyForecast.data &&
               Array.isArray(weeklyForecast.data) &&
               weeklyForecast.data[0]?.day.detailedForecast && (
-                <SectionContainer className="border-y border-black bg-zinc-200 text-black">
-                  <div className="h-10"></div>
-                  <div className="flex flex-col space-y-3 border-y border-black bg-zinc-100">
-                    <div className="px-6 pt-6 font-semibold lg:text-xl">
-                      Daily Summary
+                <SectionContainer className="border-y border-black text-black">
+                  <div className="bg-zinc-200">
+                    <div className="h-10"></div>
+                    <div className="flex flex-col space-y-3 border-y border-black bg-zinc-100">
+                      <div className="px-6 pt-6 font-semibold lg:text-xl">
+                        Daily Summary
+                      </div>
+                      <div className="px-6 pb-6">
+                        {weeklyForecast.data[0]?.day.detailedForecast}
+                      </div>
                     </div>
-                    <div className="px-6 pb-6">
-                      {weeklyForecast.data[0]?.day.detailedForecast}
-                    </div>
+                    <div className="h-10"></div>
                   </div>
-                  <div className="h-10"></div>
                 </SectionContainer>
               )}
           </div>
           {/* DESKTOP: HOURLY & WEEKLY FORECASTS */}
           <SectionContainer className="hidden h-full bg-zinc-700 lg:flex">
             <div className="flex size-full flex-col">
+
               {/* DESKTOP: HOURLY FORECAST */}
               {hourlyForecasts && (
                 <div className="text-black">
@@ -489,6 +492,7 @@ export default function WeatherDisplay({
                   </div>
                   <div className="grid grid-cols-8">
                     {hourlyForecasts.map((forecast, index) => (
+
                       <div
                         key={forecast.number}
                         className={`flex flex-col items-center justify-center pt-3 ${index !== 7 && 'border-r border-black'} bg-pink-500`}
