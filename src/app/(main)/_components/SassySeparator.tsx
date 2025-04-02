@@ -34,7 +34,7 @@ export default function SassySeparator() {
       <div className="flex flex-col items-center justify-center bg-zinc-200 py-6 text-center font-mono">
         <div className="flex w-full flex-col items-center justify-center space-y-2 border-y border-black bg-zinc-100 py-6">
           <div>{randomSaying?.line1}</div>
-          <div>{randomSaying?.line2}</div>
+          {randomSaying?.line2 && <div>{randomSaying?.line2}</div>}
         </div>
       </div>
     </SectionContainer>
