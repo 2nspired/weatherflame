@@ -104,7 +104,7 @@ export default function WeatherDisplay({
           >
             <div className="flex w-full flex-col items-center">
               <div className="flex w-full flex-row">
-                <div className="w-2/3 border-r border-black p-6 text-xl font-bold lg:px-6 lg:text-3xl">
+                <div className="w-2/3 border-r border-black p-6 text-xl font-bold lg:h-[85px] lg:px-6 lg:text-3xl">
                   <div>{`${locationName}, ${stateAbv(locationState)}`}</div>
                 </div>
 
@@ -129,8 +129,8 @@ export default function WeatherDisplay({
           </div>
           <SectionContainer className="border-t border-black bg-green-500">
             {currentWeather && (
-              <div className="w-full p-6 text-center font-mono uppercase text-black lg:text-xl">
-                {currentWeather?.shortForecast}
+              <div className="flex w-full flex-row items-center justify-center p-6 text-center font-mono uppercase text-black lg:h-[85px] lg:text-xl">
+                <div>{currentWeather?.shortForecast}</div>
               </div>
             )}
           </SectionContainer>
