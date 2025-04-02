@@ -98,7 +98,7 @@ export default function WeatherDisplay({
       {isLoading ? (
         <div className="flex h-full flex-col items-center justify-center">
           <div className="rounded-lg border-2 border-zinc-100 text-zinc-100">
-            <div className="px-6 py-1 font-mono">
+            <div className="px-6 py-1 font-mono text-3xl">
               <TypewriterText className="flex" text="loading">
                 <span className="animate-pulse">.</span>
                 <span className="animate-pulse delay-150">.</span>
@@ -494,7 +494,7 @@ export default function WeatherDisplay({
               )}
           </div>
           {/* DESKTOP: HOURLY & WEEKLY FORECASTS */}
-          <SectionContainer className="hidden h-full bg-zinc-200 lg:flex">
+          <SectionContainer className="hidden h-full bg-zinc-700 lg:flex">
             <div className="flex size-full flex-col">
               {/* DESKTOP: HOURLY FORECAST */}
               {hourlyForecasts && (
@@ -502,27 +502,41 @@ export default function WeatherDisplay({
                   <div className="border-black bg-pink-500 p-6 text-xl font-semibold">
                     Hourly Forecast
                   </div>
-                  <div className="grid grid-cols-8 bg-pink-500">
+                  <div className="grid grid-cols-8">
                     {hourlyForecasts.map((forecast, index) => (
                       <div
                         key={forecast.number}
-                        className={`flex flex-col items-center justify-center space-y-2 ${index !== 7 && 'border-r border-black'} pb-6`}
+                        className={`flex flex-col items-center justify-center pt-3 ${index !== 7 && 'border-r border-black'} bg-pink-500`}
                       >
-                        <div className="mb-2 text-lg">
+                        <div className="mb-2 py-2 text-lg">
                           {forecast.startTime && formatDateHour(forecast.startTime)}
                         </div>
-                        {forecast.shortForecast && (
-                          <div className="flex flex-col items-center justify-center">
-                            <WeatherIcon
-                              shortForecast={forecast.shortForecast}
-                              size={36}
-                            />
+                        <div className="flex w-full flex-row items-center border-y border-black">
+                          {forecast.shortForecast && (
+                            <div className="flex w-1/2 flex-col items-center justify-center border-r border-black py-6">
+                              <WeatherIcon
+                                shortForecast={forecast.shortForecast}
+                                size={36}
+                              />
+                            </div>
+                          )}
+                          <div className="flex w-1/2 flex-col items-center justify-center font-mono text-xl">
+                            {forecast.temperature}°
                           </div>
-                        )}
-                        <div className="font-mono text-lg">{forecast.temperature}°</div>
-                        <div className="flex flex-row items-center space-x-2 font-mono">
-                          <CloudRain size={16} />
-                          <div>{forecast.precipitation}%</div>
+                        </div>
+                        <div className="flex w-full flex-col justify-center py-3">
+                          <div className="flex flex-row items-center justify-around space-x-6 py-3 font-mono">
+                            <CloudRain size={24} />
+                            <div>{forecast.precipitation}%</div>
+                          </div>
+                          <div className="flex flex-row items-center justify-around space-x-6 py-3 font-mono">
+                            <Droplets size={24} />
+                            <div>{forecast.humidity}%</div>
+                          </div>
+                          <div className="flex flex-row items-center justify-around space-x-6 py-3 font-mono">
+                            <Wind size={24} className="ml-3" />
+                            <div>{forecast.windSpeed}</div>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -534,12 +548,12 @@ export default function WeatherDisplay({
           <div className="hidden w-full lg:flex lg:flex-col">
             <SassySeparator />
           </div>
-          <SectionContainer className="hidden h-full border-t border-black bg-zinc-200 lg:flex">
+          <SectionContainer className="hidden h-full border-t border-black bg-zinc-700 lg:flex">
             <div className="flex size-full flex-col">
               {/* DESKTOP: WEEKLY FORECASTS */}
               {weeklyForecasts && (
                 <div className="flex h-full flex-col bg-orange-500 pb-6 text-black">
-                  <div className="px-6 pt-6 text-xl font-semibold">7-Day Forecast</div>
+                  <div className="px-6 pt-6 text-xl font-semibold">Weekly Forecast</div>
                   <div className="grid h-full grid-rows-7 text-black">
                     {weeklyForecasts?.map((forecast, index) => (
                       <div
