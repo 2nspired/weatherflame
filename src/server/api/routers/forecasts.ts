@@ -584,7 +584,6 @@ export const forecastRouter = createTRPCRouter({
             console.error('FAIlED TO GET TOP CITY FORECASTS');
             return null;
           }
-          console.log('TOP CITY FORECASTS', forecasts);
           return forecasts;
         } catch (error) {
           console.error('ERROR FETCHING TOP CITY FORECASTS', error);
