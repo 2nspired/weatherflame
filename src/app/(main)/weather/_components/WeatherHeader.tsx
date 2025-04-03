@@ -8,15 +8,23 @@ export default function WeatherHeader() {
   return (
     <SectionContainer className="border-y border-black">
       <div className="flex w-full flex-row">
-        <div className="hidden shrink-0 border-r border-black px-6 font-mono sm:flex sm:flex-col sm:justify-center sm:text-3xl">
-          <Link href="/">
+        <div className="group relative hidden shrink-0 border-r border-black font-mono sm:flex sm:flex-col sm:justify-center sm:text-3xl">
+          <div className="absolute inset-0 w-0 bg-orange-500 transition-all duration-300 group-hover:w-full" />
+          <Link
+            className="z-10 flex h-full w-full flex-col justify-center px-6 transition-colors duration-300 group-hover:text-zinc-900"
+            href="/"
+          >
             <div>WEATHERFLAME</div>
             <div className="text-xs">pretty accurate weather</div>
           </Link>
         </div>
-        <div className="flex flex-col items-center justify-center border-r border-black font-mono text-3xl sm:hidden">
-          <Link href="/">
-            <div className="px-8">WF°</div>
+        <div className="group relative flex flex-col items-center justify-center border-r border-black font-mono text-4xl sm:hidden">
+          <div className="absolute inset-0 w-0 bg-orange-500 transition-all duration-300 group-hover:w-full" />
+          <Link
+            className="z-10 transition-colors duration-300 group-hover:text-zinc-900"
+            href="/"
+          >
+            <div className="pl-8 pr-6">WF°</div>
           </Link>
         </div>
 
