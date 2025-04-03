@@ -512,7 +512,7 @@ export const forecastRouter = createTRPCRouter({
               });
 
               if (!pointData?.cwa || !pointData?.gridX || !pointData?.gridY) {
-                console.error('Failed to get point data');
+                console.error('Failed to get point data', city.name);
                 return null;
               }
 
@@ -574,7 +574,9 @@ export const forecastRouter = createTRPCRouter({
               if (error) {
                 console.error('ERROR FETCHING TOP CITY FORECASTS', error);
               }
-              console.error(`FAILED TO FETCH FORECASE BY POINT, ${response.status}`);
+              console.error(
+                `FAILED TO FETCH FORECASE BY POINT, ${response.status}, ${city.name}`,
+              );
             }),
           );
 
@@ -582,7 +584,7 @@ export const forecastRouter = createTRPCRouter({
             console.error('FAIlED TO GET TOP CITY FORECASTS');
             return null;
           }
-
+          console.log('TOP CITY FORECASTS', forecasts);
           return forecasts;
         } catch (error) {
           console.error('ERROR FETCHING TOP CITY FORECASTS', error);
