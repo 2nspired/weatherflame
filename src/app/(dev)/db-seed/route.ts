@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { api } from '~/trpc/server';
+import { stateAbv } from '~/utilities/formatters/stateAbv';
 import { routeGuard } from '~/utilities/guard/guard';
 import { db } from '~/utilities/prisma';
 import slugifyString from '~/utilities/slug/slugify';
@@ -25,7 +26,7 @@ const seedCities = async () => {
           lat: city.lat,
           lng: city.lng,
           state: city.state,
-          slug: slugifyString(`${city.name} ${city.state} ${city.country}`),
+          slug: slugifyString(`${city.name} ${stateAbv(city.state)} ${city.country}`),
           display: city.display,
         },
         update: {
