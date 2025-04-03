@@ -100,9 +100,9 @@ export default function WeatherDisplay({
       ) : (
         <>
           <SectionContainer
-            className={`${alertZones ? 'mt-0' : 'mt-3'} bg-zinc-200 text-black`}
+            className={`${alertZones ? 'mt-0' : 'mt-3'} bg-zinc-zinc-700 text-black`}
           >
-            <div className="flex w-full flex-col items-center">
+            <div className="flex w-full flex-col items-center text-white">
               <div className="flex w-full flex-row">
                 <div className="w-2/3 border-r border-black p-6 text-xl font-bold lg:h-[85px] lg:px-6 lg:text-3xl">
                   <div>{`${locationName}, ${stateAbv(locationState)}`}</div>
@@ -460,7 +460,7 @@ export default function WeatherDisplay({
               </SectionContainer>
             )}
           </div>
-          <div className="hidden w-full lg:flex lg:flex-col">
+          <div className="hidden w-full bg-zinc-200 lg:flex lg:flex-col">
             {weeklyForecast.data &&
               Array.isArray(weeklyForecast.data) &&
               weeklyForecast.data[0]?.day.detailedForecast && (
@@ -481,7 +481,7 @@ export default function WeatherDisplay({
               )}
           </div>
           {/* DESKTOP: HOURLY & WEEKLY FORECASTS */}
-          <SectionContainer className="hidden h-full bg-zinc-700 lg:flex">
+          <SectionContainer className="hidden h-full bg-zinc-200 lg:flex">
             <div className="flex size-full flex-col">
               {/* DESKTOP: HOURLY FORECAST */}
               {hourlyForecasts && (
@@ -539,7 +539,7 @@ export default function WeatherDisplay({
           <div className="hidden w-full lg:flex lg:flex-col">
             <SassySeparator />
           </div>
-          <SectionContainer className="hidden h-full border-t border-black bg-zinc-700 lg:flex">
+          <SectionContainer className="hidden h-full border-t border-black bg-zinc-200 lg:flex">
             <div className="flex size-full flex-col">
               {/* DESKTOP: WEEKLY FORECASTS */}
               {weeklyForecasts && (
