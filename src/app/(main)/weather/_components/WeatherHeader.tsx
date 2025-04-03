@@ -11,7 +11,7 @@ export default function WeatherHeader() {
         <div className="group relative hidden shrink-0 border-r border-black font-mono sm:flex sm:flex-col sm:justify-center sm:text-3xl">
           <div className="absolute inset-0 w-0 bg-orange-500 transition-all duration-300 group-hover:w-full" />
           <Link
-            className="z-10 flex h-full w-full flex-col justify-center px-6 transition-colors duration-300 group-hover:text-zinc-900"
+            className="z-10 flex size-full flex-col justify-center px-6 transition-colors duration-300 group-hover:text-zinc-900"
             href="/"
           >
             <div>WEATHERFLAME</div>

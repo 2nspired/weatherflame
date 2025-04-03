@@ -25,7 +25,7 @@ export default function TopCityWeather() {
 
   if (topCitiesForecastsFiltered && topCitiesForecastsFiltered.length !== 0) {
     return (
-      <div className="flex w-full animate-fade-in flex-col items-center overflow-hidden border-b border-black text-white md:border-b-0">
+      <div className="animate-fade-in flex w-full flex-col items-center overflow-hidden border-b border-black text-white md:border-b-0">
         <div className="flex w-full flex-col md:grid md:max-w-full md:grid-cols-4 md:grid-rows-2">
           {topCitiesForecastsFiltered.map(
             (city, index) =>
