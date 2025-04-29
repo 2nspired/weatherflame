@@ -2,7 +2,6 @@
 
 
 ## [weatherflame.com](https://www.weatherflame.com)
-_Sounds more serious than it is, now let's jump in._
 
 ## About
 This project was created to help me hone and continue to develop my own web development skills. It's a playground of sorts that I will test new frameworks and libraries in. Being built from selfish ambitions that have started with weather, but where I hope to finish with surf forecasts utilizing [National Oceanic and Atmospheric Administration (NOAA)](https://www.noaa.gov/) data and [NOAA Buoy Data](https://www.ndbc.noaa.gov/) specifically. 
