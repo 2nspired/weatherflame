@@ -10,6 +10,7 @@ import {
   Haze,
   Sun,
 } from 'lucide-react';
+import type { JSX } from 'react';
 
 type IconMapping = Record<string, JSX.Element>;
 
